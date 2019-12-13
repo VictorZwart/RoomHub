@@ -1,0 +1,7 @@
+{
+    "require": {
+        "bramus/router": "^1.4",
+        "nextras/orm": "^3.1",
+        "twig/twig": "^3.0"
+    }
+}
