@@ -2,6 +2,10 @@ DROP DATABASE IF EXISTS ddwt19_fp;
 CREATE DATABASE ddwt19_fp;
 USE ddwt19_fp;
 
+CREATE USER IF NOT EXISTS 'ddwt19'@'localhost' IDENTIFIED BY 'ddwt19';
+GRANT ALL PRIVILEGES ON ddwt19_fp.* TO 'ddwt19'@'localhost';
+FLUSH PRIVILEGES;
+
 CREATE TABLE user
 (
     user_id      int auto_increment not null primary key,

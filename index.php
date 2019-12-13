@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 include 'models.php';
 
 /* Connect to DB */
-$db = connect_db('localhost', 'ddwt19_week3', 'ddwt19', 'ddwt19');
+$db = connect_db('localhost', 'ddwt19_fp', 'ddwt19', 'ddwt19');
 
 /* Create Router instance */
 $router = new \Bramus\Router\Router();
