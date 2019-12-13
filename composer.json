@@ -1,6 +1,8 @@
 {
-    "require": {
-        "bramus/router": "^1.4",
-        "twig/twig": "^3.0"
-    }
+  "require": {
+    "bramus/router": "^1.4",
+    "twig/twig": "^3.0",
+    "ext-pdo": "*",
+    "cakephp/orm": "^3.8"
+  }
 }
