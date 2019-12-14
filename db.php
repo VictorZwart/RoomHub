@@ -24,8 +24,10 @@ class DB {
 	 */
 	function __construct($cnf) {
 		$config = $cnf->get('db', []);
+		$schema = @$config['schema'] ?? 'mysql';
+
 		try {
-			$dsn = "mysql://${config['user']}:${config['pass']}@${config['host']}/${config['db']}";
+			$dsn = "$schema://${config['user']}:${config['pass']}@${config['host']}/${config['db']}";
 			ConnectionManager::setConfig('default', ['url' => $dsn]);
 
 			$this->conn = ConnectionManager::get('default');
