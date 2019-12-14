@@ -4,15 +4,20 @@
 /* define db models here */
 
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\{Table, TableRegistry};
 
 
 /**
+ * DB is a wrapper for database related functions
+ *
+ * @property object $conn database connection, can be used for queries and such
+ *
+ * automatic properties based on the schema:
  * @property object $user database table for users
  * @property object $migration database table for migrations (internal use)
  */
 class DB {
-	private $conn;
+	public $conn;
 
 	/**
 	 * @param Config $cnf config object
@@ -34,11 +39,23 @@ class DB {
 		}
 	}
 
-
+	/**
+	 * Magic function (syntactic sugar) to access db tables:
+	 * $db->name to access a specific table
+	 *
+	 * @param string $name of the table
+	 *
+	 * @return Table
+	 */
 	function __get($name) {
 		return TableRegistry::getTableLocator()->get($name);
 	}
 
+	/**
+	 * Perform database migration, based on an sql file
+	 *
+	 * @param string $filename sql file to migrate
+	 */
 	function _migrate($filename) {
 		$migrations = $this->migration;
 
@@ -46,27 +63,28 @@ class DB {
 		$migrations->save($migrations->newEntity(['migration_file' => $filename]));
 	}
 
+	/**
+	 * Migrate all files in /migration that have not been done yet
+	 *
+	 * @param null|string $last_migration_file previous migration
+	 */
 	function auto_migrate($last_migration_file = null) {
 		$migrations = $this->migration;
 
 
 		try {
-			# last migration:
-			# SELECT migration_id FROM migration ORDER BY migration_id DESC LIMIT 1
+			# get last migration (if not given):
 			$last_migration_file = $last_migration_file ??
 			                       $migrations->find()->order(['migration_id' => 'DESC'])->first()->migration_file;
 		} catch(Exception $e) {
-
-
 			try {
 				// commit initial migration
 				$this->_migrate('0.sql');
 
-
-				# last migration: 0 (check in db anyway, to check if db is working)
-
+				// check if migration succeeded
 				$last_migration_file = $migrations->find()->order(['migration_id' => 'DESC'])->first()->migration_file;
 			} catch(Exception $e) {
+				// initial migration failed, give up now
 				http_response_code(500);
 				echo 'the database could not be set-up. Please check your initial migration';
 				die();
@@ -75,7 +93,7 @@ class DB {
 		}
 
 
-		// check if migration file > last_migration and migrate it
+		// check if there is a migration file > last_migration and migrate it
 
 		$migration_files = scandir('migrations');
 		$migration_index = array_search($last_migration_file, $migration_files);
@@ -87,6 +105,7 @@ class DB {
 		if ($new_file) {
 			$this->_migrate($new_file);
 
+			// continue checking the rest
 			$this->auto_migrate($new_file);
 		} // else: no files left
 

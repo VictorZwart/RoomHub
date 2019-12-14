@@ -10,14 +10,20 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
+/**
+ * setup the templating engine
+ *
+ * @param array $cache settings about cache
+ *
+ * @return Environment: templating instance
+ */
 function load_templating($cache) {
 	// only use cache if enabled in config
-	$use_cache = isset($cache['enable']) && $cache['enable'];
 
 	$loader = new FilesystemLoader('views');
 	$opts   = [];
 
-	if ($use_cache) {
+	if (@$cache['enable']) {
 		$opts['cache'] = @$cache['path'] ?? '/tmp/twig/cache';
 	}
 
@@ -27,7 +33,7 @@ function load_templating($cache) {
 
 class Config {
 	/**
-	 * @var array|false
+	 * Config holds all settings that can be set in config.ini
 	 */
 	private $config;
 
@@ -41,6 +47,14 @@ class Config {
 		$this->config = parse_ini_file($inifile, true);
 	}
 
+	/**
+	 * Syntactic sugar for using config with a fallback value (like .get in python)
+	 *
+	 * @param string $key the setting you are looking for
+	 * @param mixed $default fallback value if key is not found
+	 *
+	 * @return mixed value of the key of default
+	 */
 	function get($key, $default = null) {
 		$c = $this->config;
 		if (isset($c[$key])) {
@@ -49,9 +63,4 @@ class Config {
 
 		return $default;
 	}
-}
-
-
-function load_config() {
-
 }
