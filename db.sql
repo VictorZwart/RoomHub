@@ -3,8 +3,6 @@ CREATE DATABASE ddwt19_fp;
 USE ddwt19_fp;
 
 CREATE USER IF NOT EXISTS 'ddwt19'@'localhost' IDENTIFIED BY 'ddwt19';
--- in psql: CREATE USER ddwt19 PASSWORD 'ddwt19';
 GRANT ALL PRIVILEGES ON ddwt19_fp.* TO 'ddwt19'@'localhost';
--- GRANT ALL ON DATABASE ddwt19_fp TO ddwt19;
 FLUSH PRIVILEGES;
 
