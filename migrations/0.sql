@@ -1,5 +1,4 @@
 # assuming ddwt19_fp with right user privileges exist
-USE ddwt19_fp;
 
 CREATE TABLE user
 (
