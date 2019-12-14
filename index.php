@@ -4,20 +4,25 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+use Bramus\Router\Router;
+
 include 'models.php';
 
 /* load config from config.ini or config.example.ini */
-$config = load_config();
+$config = new Config();
+
 
 /* Connect to DB */
-$db = connect_db($config['db']);
+$db = new DB($config->get('db', []));
 
+
+print_r($db->user);
 
 /* setup templating */
-$twig = load_templating($config['cache']);
+$twig = load_templating($config->get('cache', []));
 
 /* Create Router instance */
-$router = new Bramus\Router\Router();
+$router = new Router();
 
 // Add routes here
 

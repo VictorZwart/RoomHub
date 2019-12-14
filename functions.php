@@ -16,20 +16,42 @@ function load_templating($cache) {
 
 	$loader = new FilesystemLoader('views');
 	$opts   = [];
+
 	if ($cache) {
-		$opts['cache'] = '/tmp/twig/cache';
+		$opts['cache'] = isset($cache['path']) ? $cache['path'] : '/tmp/twig/cache';
 	}
 
 	return new Environment($loader, $opts);
 }
 
 
-function load_config() {
-	if (file_exists('config.ini')) {
-		$inifile = 'config.ini';
-	} else {
-		$inifile = 'config.example.ini';
+class Config {
+	/**
+	 * @var array|false
+	 */
+	private $config;
+
+	function __construct() {
+		if (file_exists('config.ini')) {
+			$inifile = 'config.ini';
+		} else {
+			$inifile = 'config.example.ini';
+		}
+
+		$this->config = parse_ini_file($inifile, true);
 	}
 
-	return parse_ini_file($inifile, true);
+	function get($key, $default = null) {
+		$c = $this->config;
+		if (isset($c[$key])) {
+			return $c[$key];
+		}
+
+		return $default;
+	}
+}
+
+
+function load_config() {
+
 }
