@@ -12,13 +12,13 @@ error_reporting(E_ALL);
 
 function load_templating($cache) {
 	// only use cache if enabled in config
-	$cache = isset($cache['enable']) && $cache['enable'];
+	$use_cache = isset($cache['enable']) && $cache['enable'];
 
 	$loader = new FilesystemLoader('views');
 	$opts   = [];
 
-	if ($cache) {
-		$opts['cache'] = isset($cache['path']) ? $cache['path'] : '/tmp/twig/cache';
+	if ($use_cache) {
+		$opts['cache'] = @$cache['path'] ?? '/tmp/twig/cache';
 	}
 
 	return new Environment($loader, $opts);
