@@ -13,10 +13,10 @@ $config = new Config();
 
 
 /* Connect to DB */
-$db = new DB($config->get('db', []));
+$db = new DB($config);
 
 
-print_r($db->user);
+// print_r($db->user);
 
 /* setup templating */
 $twig = load_templating($config->get('cache', []));
@@ -38,7 +38,8 @@ $router->set404(function() {
 
 // welcome page
 $router->get('/', function() use ($db, $twig) {
-	echo $twig->render('index.html', ['name' => 'Fabien']);
+	$name = $db->user->find()->first()->first_name;
+	echo $twig->render('index.html', ['name' => $name]);
 
 });
 
