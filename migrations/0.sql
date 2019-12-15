@@ -1,4 +1,4 @@
-# assuming ddwt19_fp with right user privileges exist
+-- assuming ddwt19_fp with right user privileges exist
 
 CREATE TABLE user
 (

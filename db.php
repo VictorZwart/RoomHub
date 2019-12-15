@@ -13,8 +13,8 @@ use Cake\ORM\{Table, TableRegistry};
  * @property object $conn database connection, can be used for queries and such
  *
  * automatic properties based on the schema:
- * @property object $user database table for users
- * @property object $migration database table for migrations (internal use)
+ * @property Table $user database table for users
+ * @property Table $migration database table for migrations (internal use)
  */
 class DB {
 	public $conn;
