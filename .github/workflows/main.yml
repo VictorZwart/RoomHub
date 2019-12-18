@@ -13,4 +13,10 @@ jobs:
         username: roomhub
         key: ${{ secrets.KEY }}
         port: 22
-        script: whoami
+        script: |
+          cd public_html
+          git pull
+          composer install
+          php migrate.php
+          rm /tmp/twig_cache -r
+
