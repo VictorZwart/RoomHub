@@ -1,5 +1,6 @@
 <?php
 
+// script to manually migrate. Only execute in cli
 
 require __DIR__ . '/vendor/autoload.php';
 
