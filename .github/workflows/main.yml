@@ -6,8 +6,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: PHP Insights Action
-      uses: stefanzweifel/phpinsights-action@v1.0.0
+    - name: PHP Lint
+      uses: michaelw90/PHP-Lint@1.0.0
 
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
