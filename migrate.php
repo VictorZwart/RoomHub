@@ -4,8 +4,9 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-include 'models.php';
-
+foreach(glob("models/*.php") as $filename) {
+        include $filename;
+}
 
 use Cake\ORM\{Table, TableRegistry};
 
