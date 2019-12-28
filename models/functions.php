@@ -2,7 +2,7 @@
 
 /* Enable error reporting */
 
-use Twig\Environment;
+use Twig\{Environment, TwigFunction};
 use Twig\Loader\FilesystemLoader;
 
 ini_set('display_errors', 1);
@@ -17,7 +17,7 @@ error_reporting(E_ALL);
  *
  * @return Environment: templating instance
  */
-function load_templating($cache) {
+function load_templating($cache, $basepath) {
 	// only use cache if enabled in config
 
 	$loader = new FilesystemLoader('views');
@@ -27,7 +27,17 @@ function load_templating($cache) {
 		$opts['cache'] = @$cache['path'] ?? '/tmp/twig/cache';
 	}
 
-	return new Environment($loader, $opts);
+	$twig = new Environment($loader, $opts);
+
+
+	$twig->addFunction(new TwigFunction('static',
+		function($relative_path) use ($basepath) {
+			// load static files from base path
+			return $basepath . 'static/' . $relative_path;
+		}));
+
+	return $twig;
+
 }
 
 
