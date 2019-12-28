@@ -1,4 +1,4 @@
-name: remote ssh command
+name: linting + remote ssh command
 on: [push]
 jobs:
 
@@ -6,6 +6,9 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+    - name: PHP Insights Action
+      uses: stefanzweifel/phpinsights-action@v1.0.0
+
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
       with:
