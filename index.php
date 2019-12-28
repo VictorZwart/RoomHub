@@ -93,11 +93,14 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 $router->mount('/account', function() use ($router, $db, $twig) {
 
+	/* GET to view your account */
+	$router->get('/', function($id) use ($db, $twig) {
+		echo $twig->render('account.twig', []);
+	});
 
 	/* GET to view specific account */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
 		echo $twig->render('account.twig', []);
-
 	});
 
 
