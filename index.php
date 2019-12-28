@@ -6,7 +6,12 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Bramus\Router\Router;
 
-include 'models.php';
+/* include all models from the model folder here */
+
+foreach(glob("models/*.php") as $filename) {
+	include $filename;
+}
+
 
 /* load config from config.ini or config.example.ini */
 $config = new Config();
@@ -15,14 +20,12 @@ $config = new Config();
 /* Connect to DB */
 $db = new DB($config);
 
-
-// print_r($db->user);
-
-/* setup templating */
-$twig = load_templating($config->get('cache', []));
-
 /* Create Router instance */
 $router = new Router();
+
+/* setup templating */
+$twig = load_templating($config->get('cache', []), $router->getBasePath());
+
 
 // Add routes here
 
@@ -36,50 +39,95 @@ $router->set404(function() {
 });
 
 
-// welcome page
+// GET for welcome page
 $router->get('/', function() use ($db, $twig) {
 	$name = $db->user->find()->first()->first_name;
-	echo $twig->render('index.html', ['name' => $name]);
+	echo $twig->render('index.twig', ['name' => $name]);
 
 });
 
-/* GET for getting an overview of all rooms */
-$router->get('/rooms', function() use ($db) {
-	echo 'rooms here';
+
+$router->mount('/rooms', function() use ($router, $db, $twig) {
+
+	/* GET for getting an overview of all rooms */
+	$router->get('/', function() use ($db, $twig) {
+		echo $twig->render('rooms.twig', []);
+	});
+
+	/* GET for reading specific rooms */
+	$router->get('/(\d+)', function($id) use ($db, $twig) {
+		echo $twig->render('room.twig', []);
+
+
+	});
+
+	/* GET for editing room */
+	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
+		echo $twig->render('edit_room.twig', []);
+	});
+
+	/* GET for adding room */
+	$router->get('/new', function() use ($db, $twig) {
+		echo $twig->render('new_room.twig', []);
+	});
+
+
+	/* DELETE for removing your own room */
+	$router->delete('/(\d+)', function($id) use ($db) {
+
+	});
+
+
+	/* POST for adding room */
+	$router->post('/', function() use ($db) {
+	});
+
+
+	/* PUT for editing room */
+	$router->put('/(\d+)', function($id) use ($db) {
+		$_PUT = array();
+		parse_str(file_get_contents('php://input'), $_PUT);
+	});
+
 });
 
-/* GET for reading specific rooms */
-$router->get('/rooms/(\d+)', function($id) use ($db) {
+$router->mount('/account', function() use ($router, $db, $twig) {
+
+
+	/* GET to view specific account */
+	$router->get('/(\d+)', function($id) use ($db, $twig) {
+		echo $twig->render('account.twig', []);
+
+	});
+
+
+	/* GET for adding account */
+	$router->get('/signup', function($id) use ($db, $twig) {
+		echo $twig->render('new_account.twig', []);
+	});
+
+	/* GET for editing account */
+	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
+		echo $twig->render('edit_account.twig', []);
+	});
+
+	/* PUT for editing account */
+	$router->put('/(\d+)', function($id) use ($db) {
+		$_PUT = array();
+		parse_str(file_get_contents('php://input'), $_PUT);
+	});
+
+	/* POST for adding account */
+	$router->post('/', function($id) use ($db) {
+
+	});
+
+	/* DELETE for removing your account */
+	$router->delete('/(\d+)', function($id) use ($db) {
+
+	});
 
 });
-/* GET to view specific account */
-$router->get('/account/(\d+)', function($id) use ($db) {
-
-});
-
-/* DELETE for removing your own room */
-$router->delete('/rooms/(\d+)/delete', function($id) use ($db) {
-
-
-});
-
-/* POST for adding room*/
-$router->post('/rooms', function() use ($db) {
-});
-
-/* PUT for Editing rooms */
-$router->put('/rooms/(\d+)', function($id) use ($db) {
-	$_PUT = array();
-	parse_str(file_get_contents('php://input'), $_PUT);
-
-});
-/* PUT for Editing account */
-$router->put('/account/(\d+)', function($id) use ($db) {
-	$_PUT = array();
-	parse_str(file_get_contents('php://input'), $_PUT);
-
-});
-
 
 /* Run the router */
 $router->run();
