@@ -1,0 +1,36 @@
+
+server {
+    listen 80 http2;
+    listen [::]:80 http2;
+
+    listen 443 http2;
+	listen [::]:443 http2;
+
+	server_name ssh.roomhub.ga;
+
+    include /etc/nginx/include/php-roomhub.conf;
+
+
+	}
+
+
+server {
+    listen 80 http2;
+    listen [::]:80 http2;
+
+    listen 443 http2;
+	listen [::]:443 http2;
+
+    root /home/roomhub/public_html;
+    index index.php;
+
+    server_name roomhub.ga;
+
+    ssl on;
+    ssl_certificate              /home/roomhub/cloudflare/key.pub;
+    ssl_certificate_key          /home/roomhub/cloudflare/key.priv;
+
+
+    include /etc/nginx/include/php-roomhub.conf;
+
+}
