@@ -14,6 +14,7 @@ use Cake\ORM\{Table, TableRegistry};
  *
  * automatic properties based on the schema:
  * @property Table $user database table for users
+ * @property Table $room database table for rooms
  * @property Table $migration database table for migrations (internal use)
  */
 class DB {

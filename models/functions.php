@@ -74,3 +74,10 @@ class Config {
 		return $default;
 	}
 }
+
+// debug
+function pprint($something) {
+	echo '<pre>';
+	print_r($something);
+	echo '</pre>';
+}
