@@ -64,9 +64,9 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	/* GET for editing room */
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
 
-		crud($db->room, ['id']);
+		$form_html = crud($twig, $db->room, ['id']);
 
-		echo $twig->render('edit_room.twig', []);
+		echo $twig->render('edit_room.twig', ['form' => $form_html]);
 	});
 
 	/* GET for adding room */
