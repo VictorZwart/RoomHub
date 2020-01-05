@@ -8,7 +8,7 @@ use Bramus\Router\Router;
 
 /* include all models from the model folder here */
 
-foreach(glob("models/*.php") as $filename) {
+foreach (glob("models/*.php") as $filename) {
 	include $filename;
 }
 
@@ -109,7 +109,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET for adding account */
 	$router->get('/signup', function() use ($db, $twig) {
-		echo $twig->render('new_account.twig', []);
+		echo $twig->render('account_new.twig', []);
 	});
 
 	/* GET for editing account */
@@ -126,7 +126,20 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* POST for adding account */
 	$router->post('/signup', function() use ($db) {
 		// todo: logic for validating and inserting
-		echo 'WIP';
+		// https://book.cakephp.org/3/en/orm/saving-data.html
+
+		$new_user = $db->user->newEntity([
+			'username' => $_POST['username'],
+			// ...
+		]);
+
+		if ($db->user->save($new_user)) {
+			echo 'het ging goed';
+			echo $new_user->id;
+		} else {
+			echo 'iets ging mis :(';
+		}
+
 
 	});
 
