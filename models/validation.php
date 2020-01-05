@@ -13,6 +13,27 @@ function validate_user($post, $required_fields = null) {
 			          ->notEmptyString($field, "This field is required");
 		}
 	}
+	$validator->add('email', 'validFormat',
+        ['rule' => 'email',
+        'message' => 'PLease enter a valid email format.'
+    ]);
+
+	$validator->add('birthdate', 'custom', [
+	    'rule' => function() {
+            $dateString = $_POST['birthdate'];
+            if ($dateString < '1920-01-01') {
+                return "Please fill in a date later than 1920";
+            }
+            if ($dateString > date("Y-m-d")) {
+                return "PLease fill in a date that is not in the future";
+            }
+            else{
+                return true;
+            }
+        },
+        'message' => 'Generic error message used when `false` is returned'
+    ]);
+
 
 //	$validator
 //		->requirePresence('email')
