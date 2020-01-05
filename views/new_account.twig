@@ -2,6 +2,47 @@
 
 {% block title %}Sign Up{% endblock %}
 {% block content %}
-Hier de nieuw account form
+    <form action="add" method="POST">
+        <div class="form-group">
+            <label for="inputUsername">Username</label>
+            <input type="text" class="form-control" id="inputUsername" placeholder="j.jansen" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input type="password" class="form-control" id="inputPassword" placeholder="******" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="inputFirstname">First name</label>
+            <input type="text" class="form-control" id="inputFirstname" placeholder="Jan" name="firstname" required>
+        </div>
+        <div class="form-group">
+            <label for="inputLastname">Last name</label>
+            <input type="text" class="form-control" id="inputLastname" placeholder="Jansen" name="lastname" required>
+        </div>
+
+        <div class="form-group">
+            <label for="inputEmail">Email</label>
+            <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="inputPhoneNumber">Phone number</label>
+            <input type="text" class="form-control" id="inputPhoneNumber" placeholder="0123456789" name="phonenumber" required>
+        </div>
+        <div class="form-group">
+            <label for="inputLanguage">Language</label>
+            <input type="text" class="form-control" id="inputLanguage" placeholder="0123456789" name="language" required>
+        </div>
+        <div class="form-group">
+            <label for="inputBirthdate">Birthdate</label>
+            <input type="text" class="form-control" id="inputBirthdate" placeholder="0123456789" name="birthdate" required>
+        </div>
+        <div class="form-group">
+            <textarea name="inputBiography" class="form-control" id="inputBiography">Enter sth abt yoself  here...</textarea>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Register now</button>
+    </form>
 {% endblock %}
 
