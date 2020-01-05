@@ -102,23 +102,23 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 	/* GET to view specific account */
-	$router->get('/(\d+)', function($id) use ($db, $twig) {
+	$router->get('/(\d+)', function() use ($db, $twig) {
 		echo $twig->render('account.twig', []);
 	});
 
 
 	/* GET for adding account */
-	$router->get('/signup', function($id) use ($db, $twig) {
+	$router->get('/signup', function() use ($db, $twig) {
 		echo $twig->render('new_account.twig', []);
 	});
 
 	/* GET for editing account */
-	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
+	$router->get('/edit/(\d+)', function() use ($db, $twig) {
 		echo $twig->render('edit_account.twig', []);
 	});
 
 	/* PUT for editing account */
-	$router->put('/(\d+)', function($id) use ($db) {
+	$router->put('/(\d+)', function() use ($db) {
 		$_PUT = array();
 		parse_str(file_get_contents('php://input'), $_PUT);
 	});
