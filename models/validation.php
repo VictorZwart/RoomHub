@@ -9,10 +9,8 @@ function validate_user($post, $required_fields = null) {
 
 	if ($required_fields) {
 		foreach ($required_fields as $field) {
-
 			$validator->requirePresence($field)
 			          ->notEmptyString($field, "This field is required");
-
 		}
 	}
 
