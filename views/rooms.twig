@@ -6,7 +6,7 @@
 
     <ul>
         {% for room in all_rooms %}
-            <li><a href="{{ room.room_id }}">GOTO ROOM</a> {{ room }}</li>
+            <li><a href="{{ base() }}/rooms/{{ room.room_id }}">GOTO ROOM</a> {{ room }}</li>
         {% endfor %}
     </ul>
 {% endblock %}
