@@ -38,6 +38,20 @@ function validate_user($post, $schema = null) {
         'message' => 'PLease enter a valid email format.'
     ]);
 
+    // add a validator for the phone number
+    $validator->add('phone_number', 'phone number check', [
+        'rule' => function() {
+            $number = $_POST['phone_number'];
+            if (preg_match('/^\d{2}-?\d{8}$/', $number) or preg_match('/^\d{4}-?\d{6}$/', $number)){
+                return true;
+            }
+            else {
+                return 'You have not entered a good number';
+                }
+        }
+
+    ]);
+    //add a validator for birthdate
 	$validator->add('birthdate', 'custom', [
 	    'rule' => function() {
             $dateString = $_POST['birthdate'];
