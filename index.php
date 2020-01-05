@@ -6,6 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Bramus\Router\Router;
 
+
 /* include all models from the model folder here */
 
 foreach (glob("models/*.php") as $filename) {
@@ -133,11 +134,33 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			// ...
 		]);
 
-		if ($db->user->save($new_user)) {
-			echo 'het ging goed';
-			echo $new_user->id;
+		$errors = validate_user($_POST);
+
+		if ($errors) {
+			// there are errors
+			echo 'not allowed';
+			print_r($errors);
+
+			return;
+		};
+
+
+		if ($new_user->getErrors()) {
+			// Entity failed validation.
+			echo 'nee er ging iets mis';
+			print_r($new_user->getErrors());
 		} else {
-			echo 'iets ging mis :(';
+			// no errors
+			print_r($new_user->getErrors());
+			echo $new_user->hasErrors();
+
+			if ($db->user->save($new_user)) {
+				echo 'het ging goed';
+				echo $new_user->id;
+			} else {
+				echo 'iets ging mis :(';
+			}
+
 		}
 
 
