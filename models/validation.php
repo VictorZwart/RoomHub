@@ -1,11 +1,31 @@
 <?php
 
+use Cake\Database\Schema\TableSchema;
 use Cake\Validation\Validator;
 
-function validate_user($post, $required_fields = null) {
-	// check if user form is filled in correctly
+/**
+ * @param array $post
+ * @param null|TableSchema $schema
+ *
+ * @return array
+ *
+ */
+function validate_user($post, $schema = null) {
+	$required_fields = [];
+	$validator       = new Validator();
 
-	$validator = new Validator();
+	// if schema is supplied, auto-check required (NOT NULL) fields
+
+	if ($schema) {
+
+		foreach ($schema->columns() as $column_name) {
+			$column = $schema->getColumn($column_name);
+			if (!$column['null'] && !@$column['autoIncrement']) {
+				$required_fields[] = $column_name;
+			}
+
+		}
+	}
 
 	if ($required_fields) {
 		foreach ($required_fields as $field) {
@@ -13,6 +33,11 @@ function validate_user($post, $required_fields = null) {
 			          ->notEmptyString($field, "This field is required");
 		}
 	}
+
+	// check for 'unique' fields
+	// TODO
+
+	// Other validations
 
 //	$validator
 //		->requirePresence('email')

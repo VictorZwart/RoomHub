@@ -84,25 +84,52 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* POST for adding room */
 	$router->post('/new', function() use ($db) {
-        $new_room = $db->room->newEntity([
-            'description' => $_POST['description'],
-            'price' => $_POST['price'],
-            'size' => $_POST['size'],
-            'type' => $_POST['type'],
-            'city' => $_POST['city'],
-            'zipcode' => $_POST['zipcode'],
-            'street_name' => $_POST['streetname'],
-            'number' => $_POST['number'],
-            //todo: Add owner id to the list.
-            //'owner_id' => '1'
-        ]);
 
-        if ($db->room->save($new_room)) {
-            echo 'het ging goed';
-            echo $new_room->id;
-        } else {
-            echo 'iets ging mis D:';
-        }
+		$room_data = [
+			'description' => @$_POST['description'],
+			'price'       => @$_POST['price'],
+			'size'        => @$_POST['size'],
+			'type'        => @$_POST['type'],
+			'city'        => @$_POST['city'],
+			'zipcode'     => @$_POST['zipcode'],
+			'street_name' => @$_POST['street_name'],
+			'number'      => @$_POST['number'],
+			//todo: Add owner id to the list.
+			'owner_id' => '1'
+		];
+
+		$errors = validate_user($room_data, $db->room->getSchema());
+
+		if ($errors) {
+			// there are errors
+			echo 'not allowed -> redirect signup with errors';
+			pprint($errors);
+
+			return;
+		};
+
+		$new_room = $db->room->newEntity($room_data);
+
+		if ($new_room->getErrors()) {
+			echo 'nee er ging iets mis -> redirect signup with errors';
+			pprint($new_room->getErrors());
+
+			return;
+		}
+
+		try {
+			$result = $db->room->save($new_room);
+		} catch (PDOException $e) {
+			pprint($e);
+			$result = false;
+		}
+
+		if ($result) {
+			echo 'het ging goed -> redirect to room page';
+			echo $new_room->id;
+		} else {
+			echo 'iets ging mis D: -> redirect to edit page';
+		}
 
 	});
 
@@ -150,39 +177,25 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		// https://book.cakephp.org/3/en/orm/saving-data.html
 
 		$user_data = [
-			'username' => @$_POST['username'],
-			'password' => @$_POST['password'],
-			'first_name' => @$_POST['first_name'],
-			'last_name' => @$_POST['last_name'],
-			'email' => @$_POST['email'],
+			'username'     => @$_POST['username'],
+			'password'     => @$_POST['password'],
+			'first_name'   => @$_POST['first_name'],
+			'last_name'    => @$_POST['last_name'],
+			'email'        => @$_POST['email'],
 			'phone_number' => @$_POST['phone_number'],
-			'language' => @$_POST['language'],
-			'birthdate' => @$_POST['birthdate'],
-			'biography' => @$_POST['biography'],
-			'occupation' => @$_POST['occupation'],
-			'role' => @$_POST['role']
+			'language'     => @$_POST['language'],
+			'birthdate'    => @$_POST['birthdate'],
+			'biography'    => @$_POST['biography'],
+			'occupation'   => @$_POST['occupation'],
+			'role'         => @$_POST['role']
 		];
 
 
-		$schema = $db->user->getSchema();
-
-		$required_fields = [];
-
-		foreach ($schema->columns() as $column_name) {
-			$column = $schema->getColumn($column_name);
-			// pprint($column);
-			if(!$column['null'] && !@$column['autoIncrement']){
-				$required_fields[] = $column_name;
-				// pprint($user_data[$column_name]);
-			}
-
-		}
-
-		$errors = validate_user($_POST, $required_fields);
+		$errors = validate_user($_POST, $db->user->getSchema());
 
 		if ($errors) {
 			// there are errors
-			echo 'not allowed';
+			echo 'not allowed -> redirect signup with errors';
 			pprint($errors);
 
 			return;
@@ -191,25 +204,29 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$new_user = $db->user->newEntity($user_data);
 
 
-
-
-
 		if ($new_user->getErrors()) {
 			// Entity failed validation.
-			echo 'nee er ging iets mis';
-			print_r($new_user->getErrors());
+			echo 'nee er ging iets mis -> redirect signup with errors';
+			pprint($new_user->getErrors());
+
+			return;
+		}
+		// no errors
+
+		try {
+			$result = $db->user->save($new_user);
+		} catch (PDOException $e) {
+			$result = false;
+		}
+		if ($result) {
+			echo 'het ging goed -> redirect account page';
+			echo $new_user->id;
+
+			return;
 		} else {
-			// no errors
-			print_r($new_user->getErrors());
-			echo $new_user->hasErrors();
+			echo 'iets ging mis :( -> redirect signup';
 
-			if ($db->user->save($new_user)) {
-				echo 'het ging goed';
-				echo $new_user->id;
-			} else {
-				echo 'iets ging mis :(';
-			}
-
+			return;
 		}
 
 
