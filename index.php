@@ -129,29 +129,49 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		// todo: logic for validating and inserting
 		// https://book.cakephp.org/3/en/orm/saving-data.html
 
-		$new_user = $db->user->newEntity([
+		$user_data = [
 			'username' => $_POST['username'],
 			'password' => $_POST['password'],
-            'first_name' => $_POST['firstname'],
-            'last_name' => $_POST['lastname'],
-            'email' => $_POST['email'],
-            'phone_number' => $_POST['phonenumber'],
-            'language' => $_POST['language'],
-            'birthdate' => $_POST['birthdate'],
-            'biography' => $_POST['biography'],
-            'occupation' => $_POST['occupation'],
-            'role' => $_POST['role']
-		]);
+			'first_name' => $_POST['first_name'],
+			'last_name' => $_POST['last_name'],
+			'email' => $_POST['email'],
+			'phone_number' => $_POST['phone_number'],
+			'language' => $_POST['language'],
+			'birthdate' => $_POST['birthdate'],
+			'biography' => $_POST['biography'],
+			'occupation' => $_POST['occupation'],
+			'role' => $_POST['role']
+		];
 
-		$errors = validate_user($_POST);
+
+		$schema = $db->user->getSchema();
+
+		$required_fields = [];
+
+		foreach ($schema->columns() as $column_name) {
+			$column = $schema->getColumn($column_name);
+			// pprint($column);
+			if(!$column['null'] && !@$column['autoIncrement']){
+				$required_fields[] = $column_name;
+				// pprint($user_data[$column_name]);
+			}
+
+		}
+
+		$errors = validate_user($_POST, $required_fields);
 
 		if ($errors) {
 			// there are errors
 			echo 'not allowed';
-			print_r($errors);
+			pprint($errors);
 
 			return;
 		};
+
+		$new_user = $db->user->newEntity($user_data);
+
+
+
 
 
 		if ($new_user->getErrors()) {
