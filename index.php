@@ -130,7 +130,16 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 		$new_user = $db->user->newEntity([
 			'username' => $_POST['username'],
-			// ...
+			'password' => $_POST['password'],
+            'first_name' => $_POST['firstname'],
+            'last_name' => $_POST['lastname'],
+            'email' => $_POST['email'],
+            'phone_number' => $_POST['phonenumber'],
+            'language' => $_POST['language'],
+            'birthdate' => $_POST['birthdate'],
+            'biography' => $_POST['biography'],
+            'occupation' => $_POST['occupation'],
+            'role' => $_POST['role']
 		]);
 
 		if ($db->user->save($new_user)) {
