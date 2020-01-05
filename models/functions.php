@@ -36,6 +36,12 @@ function load_templating($cache, $basepath) {
 			return $basepath . 'static/' . $relative_path;
 		}));
 
+	$twig->addFunction(new TwigFunction('base',
+		function() use ($basepath) {
+			// load static files from base path
+			return $basepath;
+		}));
+
 	return $twig;
 
 }
