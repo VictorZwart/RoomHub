@@ -66,12 +66,12 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		$form_html = crud($twig, $db->room, ['id']);
 
-		echo $twig->render('edit_room.twig', ['form' => $form_html]);
+		echo $twig->render('room_edit.twig', ['form' => $form_html]);
 	});
 
 	/* GET for adding room */
 	$router->get('/new', function() use ($db, $twig) {
-		echo $twig->render('new_room.twig', []);
+		echo $twig->render('room_new.twig', []);
 	});
 
 
@@ -114,7 +114,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET for editing account */
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
-		echo $twig->render('edit_account.twig', []);
+		echo $twig->render('account_edit.twig', []);
 	});
 
 	/* PUT for editing account */
@@ -124,7 +124,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 	/* POST for adding account */
-	$router->post('/', function($id) use ($db) {
+	$router->post('add', function($id) use ($db) {
+		// todo: logic for validating and inserting
 
 	});
 
