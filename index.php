@@ -150,17 +150,17 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		// https://book.cakephp.org/3/en/orm/saving-data.html
 
 		$user_data = [
-			'username' => $_POST['username'],
-			'password' => $_POST['password'],
-			'first_name' => $_POST['first_name'],
-			'last_name' => $_POST['last_name'],
-			'email' => $_POST['email'],
-			'phone_number' => $_POST['phone_number'],
-			'language' => $_POST['language'],
-			'birthdate' => $_POST['birthdate'],
-			'biography' => $_POST['biography'],
-			'occupation' => $_POST['occupation'],
-			'role' => $_POST['role']
+			'username' => @$_POST['username'],
+			'password' => @$_POST['password'],
+			'first_name' => @$_POST['first_name'],
+			'last_name' => @$_POST['last_name'],
+			'email' => @$_POST['email'],
+			'phone_number' => @$_POST['phone_number'],
+			'language' => @$_POST['language'],
+			'birthdate' => @$_POST['birthdate'],
+			'biography' => @$_POST['biography'],
+			'occupation' => @$_POST['occupation'],
+			'role' => @$_POST['role']
 		];
 
 
