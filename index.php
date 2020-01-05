@@ -82,7 +82,27 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 
 	/* POST for adding room */
-	$router->post('/', function() use ($db) {
+	$router->post('/new', function() use ($db) {
+        $new_room = $db->room->newEntity([
+            'description' => $_POST['description'],
+            'price' => $_POST['price'],
+            'size' => $_POST['size'],
+            'type' => $_POST['type'],
+            'city' => $_POST['city'],
+            'zipcode' => $_POST['zipcode'],
+            'street_name' => $_POST['streetname'],
+            'number' => $_POST['number'],
+            //todo: Add owner id to the list.
+            //'owner_id' => '1'
+        ]);
+
+        if ($db->room->save($new_room)) {
+            echo 'het ging goed';
+            echo $new_room->id;
+        } else {
+            echo 'iets ging mis D:';
+        }
+
 	});
 
 
