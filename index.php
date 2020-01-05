@@ -52,12 +52,16 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for getting an overview of all rooms */
 	$router->get('/', function() use ($db, $twig) {
-		echo $twig->render('rooms.twig', []);
+
+		$rooms = $db->room->find('all');
+
+		echo $twig->render('rooms.twig', ['all_rooms'=>$rooms]);
 	});
 
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
-		echo $twig->render('room.twig', []);
+		$room = $db->room->get($id);
+		echo $twig->render('room.twig', ['room'=>$room]);
 
 
 	});
@@ -98,7 +102,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'owner_id' => '1'
 		];
 
-		$errors = validate_user($room_data, $db->room->getSchema());
+		$errors = validate_room($room_data, $db->room);
 
 		if ($errors) {
 			// there are errors
@@ -191,7 +195,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		];
 
 
-		$errors = validate_user($_POST, $db->user->getSchema());
+		$errors = validate_user($_POST, $db->user);
 
 		if ($errors) {
 			// there are errors
@@ -217,6 +221,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			$result = $db->user->save($new_user);
 		} catch (PDOException $e) {
 			$result = false;
+			pprint($e);
 		}
 		if ($result) {
 			echo 'het ging goed -> redirect account page';

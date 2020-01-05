@@ -1,31 +1,26 @@
 <?php
 
 use Cake\Database\Schema\TableSchema;
+use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * @param array $post
- * @param null|TableSchema $schema
+ * Add validation to all required fields in the schema
  *
- * @return array
- *
+ * @param Validator $validator
+ * @param TableSchema $schema
  */
-function validate_user($post, $schema = null) {
+function _validate_required_fields($validator, $schema) {
 	$required_fields = [];
-	$validator       = new Validator();
 
-	// if schema is supplied, auto-check required (NOT NULL) fields
-
-	if ($schema) {
-
-		foreach ($schema->columns() as $column_name) {
-			$column = $schema->getColumn($column_name);
-			if (!$column['null'] && !@$column['autoIncrement']) {
-				$required_fields[] = $column_name;
-			}
-
+	foreach ($schema->columns() as $column_name) {
+		$column = $schema->getColumn($column_name);
+		if (!$column['null'] && !@$column['autoIncrement']) {
+			$required_fields[] = $column_name;
 		}
+
 	}
+
 
 	if ($required_fields) {
 		foreach ($required_fields as $field) {
@@ -33,43 +28,71 @@ function validate_user($post, $schema = null) {
 			          ->notEmptyString($field, "This field is required");
 		}
 	}
-	$validator->add('email', 'validFormat',
-        ['rule' => 'email',
-        'message' => 'PLease enter a valid email format.'
-    ]);
+}
 
-	$validator->add('birthdate', 'custom', [
-	    'rule' => function() {
-            $dateString = $_POST['birthdate'];
-            if ($dateString < '1920-01-01') {
-                return "Please fill in a date later than 1920";
-            }
-            if ($dateString > date("Y-m-d")) {
-                return "PLease fill in a date that is not in the future";
-            }
-            else{
-                return true;
-            }
-        },
-        'message' => 'Generic error message used when `false` is returned'
-    ]);
+/**
+ * Validate input for the user table
+ *
+ * @param array $post
+ * @param null|Table $table (user)
+ *
+ * @return array of errors
+ *
+ */
+function validate_user($post, $table) {
+	$validator = new Validator();
 
+	_validate_required_fields($validator, $table->getSchema());
 
-	// check for 'unique' fields
-	// TODO
+	$validator
+		->add('email', 'validFormat',
+			[
+				'rule'    => 'email',
+				'message' => 'PLease enter a valid email format.'
+			])
+		->add('birthdate', 'custom', [
+			'rule' => function() use ($post) {
+				$dateString = $post['birthdate'];
+				if ($dateString < '1920-01-01') {
+					return "Please fill in a date later than 1920";
+				}
+				if ($dateString > date("Y-m-d")) {
+					return "PLease fill in a date that is not in the future";
+				} else {
+					return true;
+				}
+			}
+		])
+		->add('username', 'custom', [
+			// username must not exist!
+			'rule' => function() use ($post, $table) {
 
-	// Other validations
+				if ($table->find('all')->where([
+					'username' => $post['username']
+				])->count()) {
+					return 'This username is taken.';
+				} else {
+					return true;
+				}
 
-//	$validator
-//		->requirePresence('email')
-//		->add('email', 'validFormat', [
-//			'rule'    => 'email',
-//			'message' => 'E-mail must be valid'
-//		])
-//		->requirePresence('name')
-//		->notEmptyString('name', 'We need your name.')
-//		->requirePresence('comment')
-//		->notEmptyString('comment', 'You need to give a comment.');
+			}
+		]);
 
+	return $validator->errors($post);
+}
+
+/**
+ * Validate input for the room table
+ *
+ * @param array $post
+ * @param null|Table $table (room)
+ *
+ * @return array of errors
+ *
+ */
+function validate_room($post, $table){
+	$validator = new Validator();
+
+	_validate_required_fields($validator, $table->getSchema());
 	return $validator->errors($post);
 }

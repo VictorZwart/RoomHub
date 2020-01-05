@@ -2,6 +2,12 @@
 
 {% block title %}Room Overview{% endblock %}
 {% block content %}
-Alle rooms hier
+    Alle rooms hier
+
+    <ul>
+        {% for room in all_rooms %}
+            <li><a href="{{ room.room_id }}">GOTO ROOM</a> {{ room }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 
