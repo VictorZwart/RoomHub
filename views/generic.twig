@@ -19,9 +19,11 @@
 
 </head>
 <body>
-    <header>
+<header>
+    <a href="{{ base() }}">
         <img src="{{ static('images/RoomhubLogo.png') }}" alt="The Roomhub Logo">
-    </header>
+    </a>
+</header>
 
 <div id="content">{% block content %}{% endblock %}</div>
 <div id="footer">
