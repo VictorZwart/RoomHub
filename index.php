@@ -108,7 +108,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 
 	/* GET for adding account */
-	$router->get('/signup', function($id) use ($db, $twig) {
+	$router->get('/signup', function() use ($db, $twig) {
 		echo $twig->render('new_account.twig', []);
 	});
 
@@ -118,19 +118,20 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 	/* PUT for editing account */
-	$router->put('/(\d+)', function($id) use ($db) {
+	$router->post('/update/(\d+)', function($id) use ($db) {
 		$_PUT = array();
 		parse_str(file_get_contents('php://input'), $_PUT);
 	});
 
 	/* POST for adding account */
-	$router->post('add', function($id) use ($db) {
+	$router->post('/signup', function() use ($db) {
 		// todo: logic for validating and inserting
+		echo 'WIP';
 
 	});
 
 	/* DELETE for removing your account */
-	$router->delete('/(\d+)', function($id) use ($db) {
+	$router->post('/delete/(\d+)', function($id) use ($db) {
 
 	});
 
