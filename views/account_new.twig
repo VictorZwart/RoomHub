@@ -1,68 +1,73 @@
 {% extends "generic.twig" %}
 
 {% block title %}Sign Up{% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/account_new.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
     <!-- todo: streepje wegslopen bij telefoonnummers -->
-    <form action="" method="POST">
-        <div class="form-group">
-            <label for="inputUsername">Username</label>
-            <input type="text" class="form-control" id="inputUsername" placeholder="j.jansen" name="username" required>
-        </div>
-        <div class="form-group">
-            <label for="inputPassword">Password</label>
-            <input type="password" class="form-control" id="inputPassword" placeholder="******" name="password"
-                   required>
-        </div>
-        <div class="form-group">
-            <label for="inputFirstname">First name</label>
-            <input type="text" class="form-control" id="inputFirstname" placeholder="Jan" name="first_name" required>
-        </div>
-        <div class="form-group">
-            <label for="inputLastname">Last name</label>
-            <input type="text" class="form-control" id="inputLastname" placeholder="Jansen" name="last_name" required>
-        </div>
+    <div id="new_account_form">
+        <h1>Registreren</h1>
+        <form action="" method="POST">
+            <div class="form-group">
+                <label for="inputUsername">Username</label>
+                <input type="text" class="form-control" id="inputUsername" placeholder="j.jansen" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword">Password</label>
+                <input type="password" class="form-control" id="inputPassword" placeholder="******" name="password"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="inputFirstname">First name</label>
+                <input type="text" class="form-control" id="inputFirstname" placeholder="Jan" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="inputLastname">Last name</label>
+                <input type="text" class="form-control" id="inputLastname" placeholder="Jansen" name="last_name" required>
+            </div>
 
-        <div class="form-group">
-            <label for="inputEmail">Email</label>
-            <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" name="email"
-                   required>
-        </div>
+            <div class="form-group">
+                <label for="inputEmail">Email</label>
+                <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" name="email"
+                       required>
+            </div>
 
-        <div class="form-group">
-            <label for="inputPhoneNumber">Phone number</label>
-            <input type="text" class="form-control" id="inputPhoneNumber" placeholder="0123456789" name="phone_number"
-                   required>
-        </div>
-        <div class="form-group">
-            <label for="inputLanguage">Language</label>
-            <input type="text" class="form-control" id="inputLanguage" placeholder="Dutch/English" name="language"
-                   required>
-        </div>
-        <div class="form-group">
-            <label for="inputBirthdate">Birthdate</label>
-            <input type="date" class="form-control" id="inputBirthdate" placeholder="DD/MM/YYYY" name="birthdate"
-                   required>
-        </div>
-        <div class="form-group">
-            <label for="inputBiography">Biography</label>
-            <textarea name="biography" class="form-control" id="inputBiography"
-                      placeholder="Enter Sth aboot yrslf"> </textarea>
-        </div>
-        <div class="form-group">
-            <label for="inputOccupation">Occupation</label>
-            <input type="text" class="form-control" id="inputOccupation" placeholder="Student/Scientist/Glasswasher"
-                   name="occupation" required>
-        </div>
-        <div class="form-group">
-            <label for="inputRole">Role</label>
-            <select name="role" class="form-control" id="inputRole">
-                <option value="tennant">Tennant</option>
-                <option value="owner">Owner</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="inputPhoneNumber">Phone number</label>
+                <input type="text" class="form-control" id="inputPhoneNumber" placeholder="0123456789" name="phone_number"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="inputLanguage">Language</label>
+                <input type="text" class="form-control" id="inputLanguage" placeholder="Dutch/English" name="language"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="inputBirthdate">Birthdate</label>
+                <input type="date" class="form-control" id="inputBirthdate" placeholder="DD/MM/YYYY" name="birthdate"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="inputBiography">Biography</label>
+                <textarea name="biography" class="form-control" id="inputBiography"
+                          placeholder="Enter Sth aboot yrslf"> </textarea>
+            </div>
+            <div class="form-group">
+                <label for="inputOccupation">Occupation</label>
+                <input type="text" class="form-control" id="inputOccupation" placeholder="Student/Scientist/Glasswasher"
+                       name="occupation" required>
+            </div>
+            <div class="form-group">
+                <label for="inputRole">Role</label>
+                <select name="role" class="form-control" id="inputRole">
+                    <option value="tennant">Tennant</option>
+                    <option value="owner">Owner</option>
+                </select>
+            </div>
 
-
-        <button type="submit" class="btn btn-primary">Register now</button>
-    </form>
+            <button type="submit" class="btn btn-primary">Register now</button>
+        </form>
+    </div>
 {% endblock %}
 

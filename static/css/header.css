@@ -1,0 +1,23 @@
+header{
+    background-color: black;
+    header: 100vw;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#header_logo{
+    display: block;
+    max-height: 80px;
+}
+
+#reg_log_buttons{
+    display: flex;
+    height: 100%;
+    width: 200px;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 25px;
+}
