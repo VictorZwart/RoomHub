@@ -40,11 +40,11 @@
         </div>
     {% else %}
         <div id="account_menu">
-            <button id='account_button' type="button" class="btn btn-light">Welkom, Jannes <img src="{{ static('images/drop-down-arrow.png') }}"></button>
+            <button id='account_button' type="button" class="btn btn-light">Welkom, Jannes <img style="margin-left: 2px;" src="{{ static('images/drop-down-arrow.png') }}"></button>
             <div id="account_options">
                 <a href="{{ base() }}account/">Account homepage</a>
-                <a href="{{ base() }}">Mijn kamers</a>
-                <a href="{{ base() }}">Uitloggen</a>
+                <a href="{{ base() }}">My Rooms</a>
+                <a href="{{ base() }}">Log out</a>
             </div>
         </div>
     {% endif %}
