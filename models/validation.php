@@ -48,7 +48,7 @@ function validate_user($post, $table) {
 		->add('email', 'validFormat',
 			[
 				'rule'    => 'email',
-				'message' => 'PLease enter a valid email format.'
+				'message' => 'Please enter a valid email format.'
 			])
 		// add a validator for the phone number
 		->add('phone_number', 'phone number check', [
@@ -70,7 +70,7 @@ function validate_user($post, $table) {
 					return "Please fill in a date later than 1920";
 				}
 				if ($dateString > date("Y-m-d")) {
-					return "PLease fill in a date that is not in the future";
+					return "Please fill in a date that is not in the future";
 				} else {
 					return true;
 				}

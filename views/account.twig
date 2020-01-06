@@ -1,10 +1,14 @@
 {% extends "generic.twig" %}
 
 {% block title %}Your Account{% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/account.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
 
     <div id="account_homepage">
-        
+        <img src="{{ static('images/placeholder_tenant.png') }}" alt="The profile picture of the account">
+        <h1>Account Homepage</h1>
     </div>
 
 {% endblock %}

@@ -4,6 +4,9 @@
 {% block head %}
 {{ parent() }}
 {% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/index.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
     <h1>Welcome to RoomHub!</h1>
     <h3 class="intro"> A place for both tenants and owners to meet.</h3>
