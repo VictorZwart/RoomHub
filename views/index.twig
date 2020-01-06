@@ -4,27 +4,20 @@
 {% block head %}
 {{ parent() }}
 <style type="text/css">
-    .welcome {
+    .intro {
         position: absolute;
-        width: 420px;
-        height: 48px;
-        left: 390px;
-        top: 302px;
-    }
-    .underwelcome {
-        position: absolute;
-        width: 307px;
-        height: 41px;
-        left: 446px;
-        top: 379px;
-
+        text-align: center;
     }
 </style>
 {% endblock %}
 {% block content %}
-    <h1 class="welcome">Welcome to RoomHub!</h1>
-    <h3 class="underwelcome"> A place for both tenants and owners.</h3>
-    <button type="button" class="btn btn-primary tenant">Tenant</button>
-    <button type="button" class="btn btn-primary owner">Owner</button>
+    <div class="intro">
+        <h1>Welcome to RoomHub!</h1>
+        <h3> A place for both tenants and owners.</h3>
+        <button type="button" class="btn btn-primary tenant">Tenant</button>
+        <button type="button" class="btn btn-primary owner">Owner</button>
+        <h3>Not your first time visiting? Log in directly using the button below!</h3>
+        <button type="button" class="btn btn-primary login">Log In</button>
+    </div>
 {% endblock %}
 
