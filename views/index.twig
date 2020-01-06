@@ -4,15 +4,20 @@
 {% block head %}
 {{ parent() }}
 <style type="text/css">
-    .important {
-        color: #336699;
+    .intro {
+        position: absolute;
+        text-align: center;
     }
 </style>
 {% endblock %}
 {% block content %}
-<h1>Welkom op de index, je moeder</h1>
-<p class="important">
-    Hoi {{ name }}!
-</p>
+    <div class="intro">
+        <h1>Welcome to RoomHub!</h1>
+        <h3> A place for both tenants and owners.</h3>
+        <button type="button" class="btn btn-primary tenant">Tenant</button>
+        <button type="button" class="btn btn-primary owner">Owner</button>
+        <h3>Not your first time visiting? Log in directly using the button below!</h3>
+        <button type="button" class="btn btn-primary login">Log In</button>
+    </div>
 {% endblock %}
 
