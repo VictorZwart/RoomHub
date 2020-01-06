@@ -12,6 +12,10 @@ body {
     padding-bottom: 50px;
 }
 
+.iam {
+    padding-bottom: 20px;
+}
+
 .btn-xlarge {
     padding: 18px 28px;
     font-size: 35px; //change this to your desired size
