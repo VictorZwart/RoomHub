@@ -15,10 +15,13 @@ error_reporting(E_ALL);
  *
  * @param array $cache settings about cache
  *
+ * @param string $basepath home of the project (can be in a folder when developing)
+ *
  * @return Environment: templating instance
  */
-function load_templating($cache, $basepath) {
+function load_templating($cache) {
 	// only use cache if enabled in config
+	$basepath = $_SERVER['basepath'];
 
 	$loader = new FilesystemLoader('views');
 	$opts   = [];
@@ -90,4 +93,24 @@ function pprint($something) {
 	echo '<pre>';
 	print_r($something);
 	echo '</pre>';
+}
+
+function redirect($to){
+	$basepath = $_SERVER['basepath'];
+	header("Location: $basepath$to");
+	die();
+}
+
+
+function require_login(){
+	if(!isset($_SESSION['user_id'])){
+		echo 'reee';
+		redirect('account/login');
+	}
+}
+
+function require_anonymous($fallback='account'){
+	if(isset($_SESSION['user_id'])){
+		redirect($fallback);
+	}
 }

@@ -50,8 +50,8 @@
             </button>
             <div id="account_options">
                 <a href="{{ url('account') }}">My Account</a>
-                <a href="{{ base('rooms') }}">My Rooms</a>
-                <a href="{{ base() }}">Log out</a>
+                <a href="{{ url('rooms') }}">My Rooms</a>
+                <a href="{{ url('account/logout') }}">Log out</a>
             </div>
         </div>
     {% endif %}

@@ -6,6 +6,8 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Bramus\Router\Router;
 
+session_start();
+
 
 /* include all models from the model folder here */
 
@@ -24,8 +26,10 @@ $db = new DB($config);
 /* Create Router instance */
 $router = new Router();
 
+$_SERVER['basepath'] = $router->getBasePath();
+
 /* setup templating */
-$twig = load_templating($config->get('cache', []), $router->getBasePath());
+$twig = load_templating($config->get('cache', []));
 
 
 // Add routes here
@@ -42,8 +46,9 @@ $router->set404(function() {
 
 // GET for welcome page
 $router->get('/', function() use ($db, $twig) {
+	require_anonymous('rooms');
 	$name = $db->user->find()->first()->first_name;
-	echo $twig->render('index.twig', ['name' => $name, 'availablerooms' => '(iets uit de db)']);
+	echo $twig->render('index.twig', ['availablerooms' => '(iets uit de db)']);
 
 });
 
@@ -150,6 +155,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET to view your account */
 	$router->get('/', function() use ($db, $twig) {
+		require_login();
 		echo $twig->render('account.twig', ['name' => '(get from db)']);
 	});
 
@@ -161,28 +167,58 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET for adding account */
 	$router->get('/signup', function() use ($db, $twig) {
+		require_anonymous();
 		echo $twig->render('account_new.twig', ['role_default' => strtolower(@$_GET['role'] ?: '')]);
 	});
 
 	/* GET for editing account */
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
+		require_login();
 		echo $twig->render('account_edit.twig', []);
 	});
 
 	/* GET for login page */
 
 	$router->get('/login', function() use ($db, $twig) {
+		require_anonymous();
 		echo $twig->render('login.twig', []);
+	});
+
+	/* GET for logging out */
+	$router->get('/logout', function(){
+		session_destroy();
+		redirect('');
 	});
 
 	/* POST for logging in */
 	$router->post('/login', function() use ($db) {
-		echo 'todo';
+		require_anonymous();
+		$user = $db->user->find()->where([
+			'username' => $_POST['username']
+		])->first();
+
+		if (!$user) {
+			echo 'doe ff registreren ait doeiii';
+
+			return;
+		}
+
+		if (!password_verify($_POST['password'], $user->password)) {
+			echo 'je wachtwoord is fout idioot';
+
+			return;
+		} else {
+
+			$_SESSION['user_id'] = $user['user_id'];
+
+			redirect('account');
+		}
 	});
 
 
 	/* PUT for editing account */
 	$router->post('/update/(\d+)', function($id) use ($db) {
+		require_login();
 		$_PUT = array();
 		parse_str(file_get_contents('php://input'), $_PUT);
 	});
@@ -190,7 +226,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* POST for adding account */
 	$router->post('/signup', function() use ($db) {
-
+		require_anonymous();
 
 		$errors = validate_user($_POST, $db->user);
 
@@ -238,6 +274,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			echo 'het ging goed -> redirect account page';
 			echo $new_user->id;
 
+			$_SESSION['user_id'] = $new_user->id;
+
 			return;
 		} else {
 			echo 'iets ging mis :( -> redirect signup';
@@ -250,6 +288,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* DELETE for removing your account */
 	$router->post('/delete/(\d+)', function($id) use ($db) {
+		require_login();
 
 	});
 
