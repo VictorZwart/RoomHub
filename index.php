@@ -73,11 +73,11 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for editing room */
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
-        require_login();
-        $room_info = get_info($db->room, 'room_id', $id);
-        if ($room_info['owner_id'] !== $_SESSION['user_id']){
-            redirect('account/login');
-        }
+		require_login();
+		$room_info = get_info($db->room, 'room_id', $id);
+		if ($room_info['owner_id'] !== $_SESSION['user_id']) {
+			redirect('account/login');
+		}
 
 
 		echo $twig->render('room_new.twig', ['room_info' => $room_info]);
@@ -247,8 +247,10 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 
 	/* POST for editing account */
-	$router->post('/update/', function() use ($db) {
+	$router->post('/edit/', function() use ($db) {
 		require_login();
+		pprint($_POST);
+		echo 'hier ff saven';
 		// TODO
 	});
 
@@ -291,34 +293,14 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$new_user = $db->user->newEntity($user_data);
 
 
-		if ($new_user->getErrors()) {
-			// Entity failed validation.
-			echo 'nee er ging iets mis -> redirect signup with errors';
-			pprint($new_user->getErrors());
+		$result = safe_save($new_user, $db->user);
 
-			return;
-		}
-		// no errors
-
-		try {
-			$result = $db->user->save($new_user);
-		} catch(PDOException $e) {
-			$result = false;
-			pprint($e);
-		}
 		if ($result) {
-			echo 'het ging goed -> redirect account page';
-			echo $new_user->id;
-
-			$_SESSION['user_id'] = $new_user->id;
-
-			return;
+			$_SESSION['user_id'] = $result;
+			redirect('account');
 		} else {
-			echo 'iets ging mis :( -> redirect signup';
-
-			return;
+			redirect('account/signup');
 		}
-
 
 	});
 
