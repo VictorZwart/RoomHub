@@ -158,7 +158,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 
 	/* POST for editing room */
-	$router->post('/edit/(\d+)', function($id) use ($db) {
+	$router->post('/edit/(\d+)', function($room_id) use ($db) {
         $_SESSION['post'] = $_POST;
 	    $room_data = [
 	        'description' => $_POST['description'],
@@ -168,8 +168,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
             'city' => $_POST['city'],
             'zipcode' => $_POST['zipcode'],
             'street_name' => $_POST['street_name'],
-            'number' => $_POST['number'],
-            'owner_id' => $id
+            'number' => $_POST['number']
             ];
         pprint($room_data);
         $errors = validate_room($room_data, $db->room);
@@ -180,17 +179,17 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
             $_SESSION['feedback'] = [
                 'message' => $errors
             ];
-            redirect("rooms/edit/$id");
+            redirect("rooms/edit/$room_id");
         };
-        $active_room = $db->room->get($id);
+        $active_room = $db->room->get($room_id);
         $db->room->patchEntity($active_room, $room_data);
 
         $result = safe_save($active_room, $db->room);
 
         if ($result) {
-            redirect("rooms/$id");
+            redirect("rooms/$room_id");
         } else {
-            redirect("rooms/edit/$id");
+            redirect("rooms/edit/$room_id");
         }
 	});
 
