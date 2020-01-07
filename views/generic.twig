@@ -28,15 +28,15 @@
     </a>
 
 
-    {% if user %}
+    {% if user.loggedin %}
         <!-- logged in -->
         <div id="account_menu">
             <button id='account_button'
                     type="button"
                     class="btn btn-light">
-                Welkom, {{ user.name }} <img alt="v"
-                                    style="margin-left: 2px;"
-                                    src="{{ static('images/drop-down-arrow.png') }}">
+                Welkom, {{ user.first_name }} <img alt="v"
+                                                   style="margin-left: 2px;"
+                                                   src="{{ static('images/drop-down-arrow.png') }}">
             </button>
             <div id="account_options">
                 <a href="{{ url('account') }}">My Account</a>

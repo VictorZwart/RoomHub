@@ -21,7 +21,7 @@ $config = new Config();
 
 
 /* Connect to DB */
-$db = new DB($config);
+$db = $_SERVER['db'] = new DB($config);
 
 /* Create Router instance */
 $router = new Router();
@@ -156,12 +156,21 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* GET to view your account */
 	$router->get('/', function() use ($db, $twig) {
 		require_login();
-		echo $twig->render('account.twig', ['name' => '(get from db)']);
+		echo $twig->render('account.twig', []);
 	});
 
 	/* GET to view specific account by username */
 	$router->get('/u/(\w+)', function($username) use ($db, $twig) {
-		echo $twig->render('account.twig', ['name' => $username]);
+		$user_info = get_user_from_username($username);
+
+		if(!$user_info){
+			redirect('account');
+		}
+
+		// we dont want that in the front end!
+		unset($user_info['password']);
+
+		echo $twig->render('account.twig', ['user' => $user_info]);
 	});
 
 

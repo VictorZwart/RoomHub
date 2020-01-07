@@ -28,8 +28,16 @@ function load_templating($cache) {
 	}
 
 	$twig = new Environment($loader, $opts);
+	$db   = $_SERVER['db'];
 
-	$twig->addGlobal('user', ['name' => 'WIP']);
+
+	if (isset($_SESSION['user_id'])) {
+		$current_user             = get_account_info($db->user, $_SESSION['user_id']);
+		$current_user['loggedin'] = true;
+	} else {
+		$current_user = [];
+	}
+	$twig->addGlobal('user', $current_user);
 
 
 	$twig->addFunction(new TwigFunction('static',
@@ -51,13 +59,19 @@ function load_templating($cache) {
 	return $twig;
 
 }
-function get_account_info($table, $id){
-    $info = $table
-        ->find('all')
-        ->where(['user_id' => $id])
-        ->first();
 
-    return $info;
+function get_account_info($table, $id) {
+	return $table
+		->find('all')
+		->where(['user_id' => $id])
+		->first();
+}
+
+function get_user_from_username($username) {
+	return $_SERVER['db']->user
+		->find()
+		->where(['username' => $username])
+		->first();
 }
 
 class Config {
