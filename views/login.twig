@@ -1,14 +1,17 @@
 {% extends "generic.twig" %}
-
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/login.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ static('css/header.css') }}" type="text/css">
+{% endblock %}
 {% block title %}Log in{% endblock %}
 {% block content %}
     <form action="" method="POST">
-        <!-- front end pls fix -->
+        <!-- front end pls fix okiedo -->
         <label for="username">Username or email</label>
         <input type="text" name="username" id="username" value="{{ feedback.username }}"/>
 
         <label for="password">Password</label>
-        <input type="password" name="password" id="password"/>
-        <button>Go</button>
+        <input class="inputpass" type="password" name="password" id="password"/>
+        <button>Log in</button>
     </form>
 {% endblock %}
