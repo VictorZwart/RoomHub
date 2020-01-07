@@ -38,7 +38,9 @@ function load_templating($cache) {
 	} else {
 		$current_user = [];
 	}
+
 	$twig->addGlobal('user', $current_user);
+	$twig->addGlobal('feedback', @$_SESSION['feedback']);
 
 
 	$twig->addFunction(new TwigFunction('static',
