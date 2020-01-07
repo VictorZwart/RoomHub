@@ -85,7 +85,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for adding room */
 	$router->get('/new', function() use ($db, $twig) {
-        $owner_role = get_info($db->room, 'owner_id', $_SESSION['user_id'])['role'];
+        $owner_role = get_info($db->user, 'user_id', $_SESSION['user_id'])['role'];
         if($owner_role !== 'owner'){
             $_SESSION['feedback'] = ['message' => 'You should be listed as owner to publish a room!'];
             redirect('account/login');
