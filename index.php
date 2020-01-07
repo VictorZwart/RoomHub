@@ -250,7 +250,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			return;
 		};
 
-		$phone_number = $_POST['phone_number'];
+		$phone_number = @$_POST['phone_number'] ?: '';
         if (strpos($phone_number, '-') !== false){
             $phone_number = str_replace('-', '', $phone_number);
         }
