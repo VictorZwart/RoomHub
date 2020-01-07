@@ -42,6 +42,10 @@ function load_templating($cache, $basepath) {
 			return $basepath;
 		}));
 
+	$twig->addFunction(new TwigFunction('url', function($url) use ($basepath) {
+		return $basepath . $url;
+	}));
+
 	return $twig;
 
 }

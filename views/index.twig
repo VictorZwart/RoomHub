@@ -11,10 +11,10 @@
     <h1>Welcome to RoomHub!</h1>
     <h3 class="intro"> A place for both tenants and owners to meet.</h3>
     <h3 class="iam">I am a...</h3>
-    <a href="{{ base() }}account/signup">
+    <a href="{{ url('account/signup?role=tenant') }}">
         <button class="btn btn-xlarge btn-dark tenant" type="button" >Tenant</button>
     </a>
-    <a href="{{ base() }}account/signup">
+    <a href="{{ url('account/signup?role=owner') }}">
         <button class="btn btn-xlarge btn-dark owner" type="button" >Owner</button>
     </a>
     <h3 class="outro">Not your first time visiting? Log in directly using the button above!</h3>

@@ -28,20 +28,22 @@
     </a>
 
 
-    {% if 0 == 1 %}
+    {% if true %}
+        <!-- not logged in -->
         <div id="reg_log_buttons">
-            <a href="{{ base() }}account/login">
+            <a href="{{ url('account/login') }}">
                 <button type="button" class="btn btn-outline-light">Login</button>
             </a>
-            <a href="{{ base() }}account/signup">
+            <a href="{{ url('account/signup') }}">
                 <button type="button" class="btn btn-outline-light">Register</button>
             </a>
         </div>
     {% else %}
+        <!-- logged in -->
         <div id="account_menu">
-            <button id='account_button' type="button" class="btn btn-light">Welkom, Jannes <img style="margin-left: 2px;" src="{{ static('images/drop-down-arrow.png') }}"></button>
+            <button id='account_button' type="button" class="btn btn-light">Welkom, Jannes <img alt="v" style="margin-left: 2px;" src="{{ static('images/drop-down-arrow.png') }}"></button>
             <div id="account_options">
-                <a href="{{ base() }}account/">Account homepage</a>
+                <a href="{{ url('account') }}">Account homepage</a>
                 <a href="{{ base() }}">My Rooms</a>
                 <a href="{{ base() }}">Log out</a>
             </div>
