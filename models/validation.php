@@ -161,7 +161,7 @@ function validate_room($post, $table, $new=false) {
 		->add('zipcode', 'valid zipcode', [
 			//zipcode must have format of 0000AA
 			'rule' => function() use ($post) {
-				if (preg_match('/\d{4}[a-zA-Z]{2}/', $post['zipcode'])) {
+				if (preg_match('/^\d{4}[a-zA-Z]{2}$/', $post['zipcode'])) {
 					return true;
 				} else {
 					return 'You have entered a wrong zipcode format';
