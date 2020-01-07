@@ -1,7 +1,7 @@
 #content {
     text-align: center;
     padding-top: 50px;
-    min-height: 90vh;
+    min-height: 85vh;
 }
 
 form {
@@ -29,6 +29,11 @@ button {
     width: 50%;
 }
 
+button:hover {
+    border: 3px solid black;
+    background-color: #ffa31a;
+}
+
 .imgcontainer {
     text-align: center;
     margin: 24px 0 12px 0;
@@ -37,4 +42,13 @@ button {
 img.avatar {
     width: 40%;
     border-radius: 50%;
+}
+
+#pass {
+    padding-top: 20px;
+    font-size: 20px;
+}
+
+#user {
+    font-size: 20px;
 }
