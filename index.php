@@ -202,13 +202,18 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			return;
 		};
 
+		$phone_number = $_POST['phone_number'];
+        if (strpos($phone_number, '-') !== false){
+            $phone_number = str_replace('-', '', $phone_number);
+        }
+        
 		$user_data = [
 			'username'     => @$_POST['username'],
 			'password'     => password_hash($_POST['password'], PASSWORD_DEFAULT),
 			'first_name'   => @$_POST['first_name'],
 			'last_name'    => @$_POST['last_name'],
 			'email'        => @$_POST['email'],
-			'phone_number' => @$_POST['phone_number'],
+			'phone_number' => $phone_number,
 			'language'     => @$_POST['language'],
 			'birthdate'    => @$_POST['birthdate'],
 			'biography'    => @$_POST['biography'],
