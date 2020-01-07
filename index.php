@@ -85,11 +85,11 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for adding room */
 	$router->get('/new', function() use ($db, $twig) {
-        $owner_role = get_info($db->room, 'owner_id', $_SESSION['user_id'])['role'];
-        if($owner_role !== 'owner'){
-            $_SESSION['feedback'] = ['message' => 'You should be listed as owner to publish a room!'];
-            redirect('account/login');
-        }
+		$owner_role = get_info($db->room, 'owner_id', $_SESSION['user_id'])['role'];
+		if ($owner_role !== 'owner') {
+			$_SESSION['feedback'] = ['message' => 'You should be listed as owner to publish a room!'];
+			redirect('account/login');
+		}
 		echo $twig->render('room_new.twig', []);
 	});
 
@@ -185,7 +185,11 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* GET for adding account */
 	$router->get('/signup', function() use ($db, $twig) {
 		require_anonymous();
-		echo $twig->render('account_new.twig', ['role_default' => strtolower(@$_GET['role'] ?: '')]);
+		$ctx = [
+			'role_default' => strtolower(@$_GET['role'] ?: ''),
+			'account_info' => @$_SESSION['post'],
+		];
+		echo $twig->render('account_new.twig', $ctx);
 	});
 
 	/* GET for editing account */
@@ -205,9 +209,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	$router->get('/login', function() use ($db, $twig) {
 		require_anonymous();
 
-		$feedback = @$_SESSION['feedback'] ?: [];
-
-		echo $twig->render('login.twig', ['feedback' => $feedback]);
+		echo $twig->render('login.twig');
 	});
 
 	/* GET for logging out */
@@ -264,14 +266,15 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	$router->post('/signup', function() use ($db) {
 		require_anonymous();
 
-		$errors = validate_user($_POST, $db->user);
+		$_SESSION['post'] = $_POST;
+		$errors           = validate_user($_POST, $db->user);
 
 		if ($errors) {
 			// there are errors
-			echo 'not allowed -> redirect signup with errors';
-			pprint($errors);
-
-			return;
+			$_SESSION['feedback'] = [
+				'message' => $errors
+			];
+			redirect('account/signup');
 		};
 		// if there is a - in the phone numbers then remove that
 		$phone_number = $_POST['phone_number'];
@@ -317,5 +320,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 });
 
-/* Run the router */
-$router->run();
+/* Run the router and cleanup session (remove feedback, post data etc) */
+$router->run(function() {
+	unset($_SESSION['feedback']);
+	unset($_SESSION['post']);
+});

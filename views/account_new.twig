@@ -90,7 +90,7 @@
             </div>
             <div class="form-group">
                 <label for="inputRole">Role</label>
-                <select name="role" class="form-control" id="inputRole">
+                <select name="role" class="form-control" id="inputRole" required>
                     <option value="" {{ role_default == '' ? 'selected' : '' }} disabled>Choose one:</option>
                     <option value="tenant" {{ role_default == 'tenant' ? 'selected' : '' }}>Tenant</option>
                     <option value="owner" {{ role_default == 'owner' ? 'selected' : '' }}>Owner</option>
