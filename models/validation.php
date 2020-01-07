@@ -13,7 +13,7 @@ use Cake\Validation\Validator;
 function _validate_required_fields($validator, $schema) {
 	$required_fields = [];
 
-	foreach ($schema->columns() as $column_name) {
+	foreach($schema->columns() as $column_name) {
 		$column = $schema->getColumn($column_name);
 		if (!$column['null'] && !@$column['autoIncrement']) {
 			$required_fields[] = $column_name;
@@ -23,10 +23,27 @@ function _validate_required_fields($validator, $schema) {
 
 
 	if ($required_fields) {
-		foreach ($required_fields as $field) {
+		foreach($required_fields as $field) {
 			$validator->requirePresence($field)
 			          ->notEmptyString($field, "This field is required");
 		}
+	}
+}
+
+/**
+ * @param Table $table what table to look in
+ * @param string $field what field to look at
+ * @param string $value what value must be unique
+ *
+ * @return bool|string whether it is valid or not
+ */
+function unique($table, $field, $value) {
+	if ($table->find('all')->where([
+		$field => $value
+	])->count()) {
+		return "This $field is taken.";
+	} else {
+		return true;
 	}
 }
 
@@ -80,15 +97,24 @@ function validate_user($post, $table) {
 			// username must not exist!
 			'rule' => function() use ($post, $table) {
 
-				if ($table->find('all')->where([
-					'username' => $post['username']
-				])->count()) {
-					return 'This username is taken.';
-				} else {
-					return true;
-				}
+				return unique($table, 'username', $post['username']);
 
 			}
+		])
+
+		->add('email', 'custom', [
+			// email must not exist
+			'rule' => function() use ($post, $table) {
+				return unique($table, 'email', $post['email']);
+			}
+		])
+
+		->add('password', 'custom', [
+			// password must match validation
+			'rule'    => function() use ($post) {
+				return $post['password'] == $post['password2'];
+			},
+			'message' => 'The password does not match'
 		]);
 
 	return $validator->errors($post);
