@@ -9,7 +9,7 @@ use Bramus\Router\Router;
 
 /* include all models from the model folder here */
 
-foreach (glob("models/*.php") as $filename) {
+foreach(glob("models/*.php") as $filename) {
 	include $filename;
 }
 
@@ -55,13 +55,13 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		$rooms = $db->room->find('all');
 
-		echo $twig->render('rooms.twig', ['all_rooms'=>$rooms]);
+		echo $twig->render('rooms.twig', ['all_rooms' => $rooms]);
 	});
 
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
 		$room = $db->room->get($id);
-		echo $twig->render('room.twig', ['room'=>$room]);
+		echo $twig->render('room.twig', ['room' => $room]);
 
 
 	});
@@ -99,7 +99,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'street_name' => @$_POST['street_name'],
 			'number'      => @$_POST['number'],
 			//todo: Add owner id to the list.
-			'owner_id' => '1'
+			'owner_id'    => '1'
 		];
 
 		$errors = validate_room($room_data, $db->room);
@@ -123,7 +123,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		try {
 			$result = $db->room->save($new_room);
-		} catch (PDOException $e) {
+		} catch(PDOException $e) {
 			pprint($e);
 			$result = false;
 		}
@@ -161,7 +161,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET for adding account */
 	$router->get('/signup', function() use ($db, $twig) {
-		echo $twig->render('account_new.twig', []);
+		echo $twig->render('account_new.twig', ['role_default' => strtolower(@$_GET['role'] ?: '')]);
 	});
 
 	/* GET for editing account */
@@ -169,16 +169,28 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		echo $twig->render('account_edit.twig', []);
 	});
 
+	/* GET for login page */
+
+	$router->get('/login', function() use ($db, $twig) {
+		echo $twig->render('login.twig', []);
+	});
+
+	/* POST for logging in */
+	$router->post('/login', function() use ($db) {
+		echo 'todo';
+	});
+
+
+
 	/* PUT for editing account */
 	$router->post('/update/(\d+)', function($id) use ($db) {
 		$_PUT = array();
 		parse_str(file_get_contents('php://input'), $_PUT);
 	});
 
+
 	/* POST for adding account */
 	$router->post('/signup', function() use ($db) {
-		// todo: logic for validating and inserting
-		// https://book.cakephp.org/3/en/orm/saving-data.html
 
 		$user_data = [
 			'username'     => @$_POST['username'],
@@ -219,7 +231,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 		try {
 			$result = $db->user->save($new_user);
-		} catch (PDOException $e) {
+		} catch(PDOException $e) {
 			$result = false;
 			pprint($e);
 		}
