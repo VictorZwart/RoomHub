@@ -72,20 +72,20 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	});
 
 	/* GET for editing room */
-	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
+	$router->get('/edit/(\d+)', function($room_id) use ($db, $twig) {
 		require_login();
-		$room_info = get_info($db->room, 'room_id', $id);
+		$db_room_info = get_info($db->room, 'room_id', $room_id);
 
-		if (!$room_info) {
+		if (!$db_room_info) {
 			$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
 			redirect('rooms');
 		}
 
-		if ($room_info['owner_id'] !== $_SESSION['user_id']) {
+		if ($db_room_info['owner_id'] !== $_SESSION['user_id']) {
 			$_SESSION['feedback'] = ['message' => 'This room does not belong to you.'];
 			redirect('rooms');
 		}
-        $db_room_info = get_info($db->room, 'owner_id', $id);
+
 		if (@$_SESSION['post']){
 		    $room_info = $_SESSION['post'];
         }
