@@ -51,10 +51,18 @@ function load_templating($cache) {
 	return $twig;
 
 }
-function get_account_info($table, $id){
+
+/**
+ * gets the info from the given table for the give nid_name with the id given
+ * @param $table mixed the user table
+ * @param $id_name string name of the id in the table
+ * @param $id string id
+ * @return mixed array with all the account info
+ */
+function get_info($table, $id_name, $id){
     $info = $table
         ->find('all')
-        ->where(['user_id' => $id])
+        ->where([$id_name => $id])
         ->first();
 
     return $info;

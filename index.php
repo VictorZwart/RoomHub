@@ -73,10 +73,15 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for editing room */
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
+	    $room_id = $_GET['room_id'];
+        $room_info = get_info($db->room, 'room_id', $room_id);
+    //todo: check if the owner and the user are the same person
+        //        if ($room_info['owner_id'] !== $_SESSION['id']){
+//            //check if the owner and the session user are the same person
+//        }
 
-		$form_html = crud($twig, $db->room, ['id']);
 
-		echo $twig->render('room_edit.twig', ['form' => $form_html]);
+        echo $twig->render('room_new.twig', ['room_info' => $room_info]);
 	});
 
 	/* GET for adding room */
@@ -175,7 +180,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	$router->get('/edit/', function() use ($db, $twig) {
 		require_login();
 		$account_id   = $_SESSION['user_id'];
-		$account_info = get_account_info($db->user, $account_id);
+		$account_info = get_info($db->user, 'user_id', $account_id);
 		echo $twig->render('account_new.twig', ['account_info' => $account_info]);
 	});
 

@@ -6,40 +6,40 @@
         <div class="form-group">
             <label for="inputDescription">Description</label>
             <textarea name="description" class="form-control" id="inputDescription"
-                      placeholder="Tell sth about the room"> </textarea>
+                      placeholder="Tell sth about the room">{{ room_info.description }} </textarea>
         </div>
         <div class="form-group">
             <label for="inputPrice">Price per month</label>
-            <input type="text" class="form-control" name="price" id="inputPrice" placeholder="Enter your price per month" required>
+            <input type="text" class="form-control" name="price" id="inputPrice" placeholder="Enter your price per month" value="{{ room_info.price }}" required>
         </div>
         <div class="form-group">
             <label for="inputSize">How many m<sup>2</sup> is your room</label>
-            <input type="text" class="form-control" id="inputSize" placeholder="18" name="size" required>
+            <input type="text" class="form-control" id="inputSize" placeholder="18" name="size" value="{{ room_info.size }}" required>
         </div>
         <div class="form-group">
             <label for="inputType">Type of room</label>
-            <input type="text" class="form-control" id="inputType" placeholder="Appartment/Studio" name="type" required>
+            <input type="text" class="form-control" id="inputType" placeholder="Appartment/Studio" name="type" value="{{ room_info.type }}" required>
         </div>
 
         <div class="form-group">
             <label for="inputCity">City</label>
-            <input type="text" class="form-control" id="inputCity" placeholder="Assen/Sellinge" name="city"
+            <input type="text" class="form-control" id="inputCity" placeholder="Assen/Sellinge" name="city" value="{{ room_info.city }}"
                    required>
         </div>
 
         <div class="form-group">
             <label for="inputZipcode">ZipCode</label>
-            <input type="text" class="form-control" id="inputZipcode" placeholder="0000AA" name="zipcode"
+            <input type="text" class="form-control" id="inputZipcode" placeholder="0000AA" name="zipcode" value="{{ room_info.zipcode }}"
                    required>
         </div>
         <div class="form-group">
             <label for="inputStreetname">Streetname</label>
-            <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan 5" name="street_name"
+            <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan 5" name="street_name" value="{{ room_info.street_name }}"
                    required>
         </div>
         <div class="form-group">
             <label for="inputNumber">Street number</label>
-            <input type="text" class="form-control" id="inputNumber" placeholder="6" name="number"
+            <input type="text" class="form-control" id="inputNumber" placeholder="6" name="number" value="{{ room_info.number }}"
                    required>
         </div>
 
