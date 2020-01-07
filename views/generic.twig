@@ -28,7 +28,7 @@
     </a>
 
 
-    {% if true %}
+    {% if false %}
         <!-- not logged in -->
         <div id="reg_log_buttons">
             <a href="{{ url('account/login') }}">
@@ -41,10 +41,16 @@
     {% else %}
         <!-- logged in -->
         <div id="account_menu">
-            <button id='account_button' type="button" class="btn btn-light">Welkom, Jannes <img alt="v" style="margin-left: 2px;" src="{{ static('images/drop-down-arrow.png') }}"></button>
+            <button id='account_button'
+                    type="button"
+                    class="btn btn-light">
+                Welkom, Jannes <img alt="v"
+                                    style="margin-left: 2px;"
+                                    src="{{ static('images/drop-down-arrow.png') }}">
+            </button>
             <div id="account_options">
-                <a href="{{ url('account') }}">Account homepage</a>
-                <a href="{{ base() }}">My Rooms</a>
+                <a href="{{ url('account') }}">My Account</a>
+                <a href="{{ base('rooms') }}">My Rooms</a>
                 <a href="{{ base() }}">Log out</a>
             </div>
         </div>
@@ -53,7 +59,7 @@
 
 <div id="content">{% block content %}{% endblock %}</div>
 <div id="footer">
-    &copy; Copyright 2020 by RoomHub
+    &copy; Copyright {{ "now"|date("Y") }} by RoomHub
 </div>
 </body>
 </html>
