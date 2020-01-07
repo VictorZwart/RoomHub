@@ -6,6 +6,7 @@
 
 form {
     max-width: 50%;
+    max-height: 60%;
     margin: auto;
 }
 
@@ -22,8 +23,18 @@ button {
     background-color: black;
     color: white;
     padding: 14px 20px;
-    margin: auto;
+    margin-top: 20px;
     border: none;
     cursor: pointer;
     width: 50%;
+}
+
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+}
+
+img.avatar {
+    width: 40%;
+    border-radius: 50%;
 }
