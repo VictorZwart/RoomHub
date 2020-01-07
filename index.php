@@ -151,10 +151,54 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	});
 
 
-	/* PUT for editing room */
-	$router->put('/(\d+)', function($id) use ($db) {
-		$_PUT = array();
-		parse_str(file_get_contents('php://input'), $_PUT);
+	/* POST for editing room */
+	$router->post('/edit/(\d+)', function($id) use ($db) {
+
+	    $room_data = [
+	        'description' => $_POST['description'],
+            'price' => $_POST['price'],
+            'size' => $_POST['size'],
+            'type' => $_POST['type'],
+            'city' => $_POST['city'],
+            'zipcode' => $_POST['zipcode'],
+            'street_name' => $_POST['street_name'],
+            'number' => $_POST['number'],
+            'owner_id' => $id
+            ];
+        pprint($room_data);
+        $errors = validate_room($room_data, $db->room);
+
+        if ($errors) {
+            // there are errors
+            pprint($errors);
+            $_SESSION['feedback'] = [
+                'message' => $errors
+            ];
+            redirect("rooms/edit/$id");
+        };
+        $active_room = $db->room->get($id);
+        $db->room->patchEntity($active_room, $room_data);
+
+        $result = safe_save($active_room, $db->room);
+
+        if ($result) {
+            redirect("rooms/$id");
+        } else {
+            redirect("rooms/edit/$id");
+        }
+//        $updated_room = $db
+//            ->room
+//            ->patchEntities(['description' = $_PUT['description'],
+//                'price' = $_PUT['price'],
+//                'size' = $_PUT['size'],
+//                'type' = $_PUT['type'],
+//                'city' = $_PUT['city'],
+//                'zipcode' = $_PUT['zipcode'],
+//                'street_name' = $_PUT['street_name'],
+//                'number' = $_PUT['number']
+//
+//            ]);
+//        ->where(['room_id' = $_PUT['room_id']])
 	});
 
 });
