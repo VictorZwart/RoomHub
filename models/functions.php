@@ -3,7 +3,7 @@
 /* Enable error reporting */
 
 use Cake\ORM\Table;
-use Twig\{Environment, TwigFunction};
+use Twig\{Environment, Extension\DebugExtension, TwigFunction};
 use Twig\Loader\FilesystemLoader;
 
 ini_set('display_errors', 1);
@@ -13,12 +13,14 @@ error_reporting(E_ALL);
 /**
  * setup the templating engine
  *
- * @param array $cache settings about cache
+ * @param Config $config settings
  *
  * @return Environment: templating instance
  */
-function load_templating($cache) {
+function load_templating($config) {
 	// only use cache if enabled in config
+	$cache    = $config->get('cache', []);
+	$debug    = $config->get('debug', []);
 	$basepath = $_SERVER['basepath'];
 
 	$loader = new FilesystemLoader('views');
@@ -28,8 +30,20 @@ function load_templating($cache) {
 		$opts['cache'] = @$cache['path'] ?? '/tmp/twig/cache';
 	}
 
+	$debug_enabled = @$debug['enable'];
+
+	if ($debug_enabled) {
+		$opts['debug'] = true;
+	}
+
+
 	$twig = new Environment($loader, $opts);
-	$db   = $_SERVER['db'];
+
+	if ($debug_enabled) {
+		$twig->addExtension(new DebugExtension());
+	}
+
+	$db = $_SERVER['db'];
 
 
 	if (isset($_SESSION['user_id'])) {
@@ -112,6 +126,16 @@ class Config {
 		return $default;
 	}
 }
+
+function fix_phone($phone_number) {
+	$phone_number = $phone_number ?: '';
+	if (strpos($phone_number, '-') !== false) {
+		$phone_number = str_replace('-', '', $phone_number);
+	}
+
+	return $phone_number;
+}
+
 
 // debug
 function pprint($something) {
