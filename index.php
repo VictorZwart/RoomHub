@@ -153,9 +153,9 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		echo $twig->render('account.twig', ['name' => '(get from db)']);
 	});
 
-	/* GET to view specific account */
-	$router->get('/(\d+)', function($id) use ($db, $twig) {
-		echo $twig->render('account.twig', []);
+	/* GET to view specific account by username */
+	$router->get('/u/(\w+)', function($username) use ($db, $twig) {
+		echo $twig->render('account.twig', ['name' => $username]);
 	});
 
 
@@ -181,7 +181,6 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 
-
 	/* PUT for editing account */
 	$router->post('/update/(\d+)', function($id) use ($db) {
 		$_PUT = array();
@@ -191,20 +190,6 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* POST for adding account */
 	$router->post('/signup', function() use ($db) {
-
-		$user_data = [
-			'username'     => @$_POST['username'],
-			'password'     => @$_POST['password'],
-			'first_name'   => @$_POST['first_name'],
-			'last_name'    => @$_POST['last_name'],
-			'email'        => @$_POST['email'],
-			'phone_number' => @$_POST['phone_number'],
-			'language'     => @$_POST['language'],
-			'birthdate'    => @$_POST['birthdate'],
-			'biography'    => @$_POST['biography'],
-			'occupation'   => @$_POST['occupation'],
-			'role'         => @$_POST['role']
-		];
 
 
 		$errors = validate_user($_POST, $db->user);
@@ -216,6 +201,20 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 			return;
 		};
+
+		$user_data = [
+			'username'     => @$_POST['username'],
+			'password'     => password_hash($_POST['password'], PASSWORD_DEFAULT),
+			'first_name'   => @$_POST['first_name'],
+			'last_name'    => @$_POST['last_name'],
+			'email'        => @$_POST['email'],
+			'phone_number' => @$_POST['phone_number'],
+			'language'     => @$_POST['language'],
+			'birthdate'    => @$_POST['birthdate'],
+			'biography'    => @$_POST['biography'],
+			'occupation'   => @$_POST['occupation'],
+			'role'         => @$_POST['role']
+		];
 
 		$new_user = $db->user->newEntity($user_data);
 
