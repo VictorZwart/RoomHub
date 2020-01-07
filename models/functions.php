@@ -153,7 +153,6 @@ function redirect($to) {
 
 function require_login() {
 	if (!isset($_SESSION['user_id'])) {
-		echo 'reee';
 		redirect('account/login');
 	}
 }
