@@ -1,6 +1,6 @@
 header{
     background-color: black;
-    header: 100vw;
+    width: 100vw;
     height: 80px;
     display: flex;
     flex-direction: row;

@@ -5,13 +5,55 @@
     <link rel="stylesheet" href="{{ static('css/account.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
-
     <div id="account_homepage">
-        <img src="{{ static('images/placeholder_tenant.png') }}" alt="The profile picture of the account">
-        <h1>Welcome {{ user.first_name }}</h1>
-
-        {{ user }}
+        <div id="'sidebar">
+            <ul class="list-group">
+                <li class="list-group-item"> <a href="">Change Settings</a></li>
+                <li class="list-group-item"> <a href="">My Rooms</a></li>
+                <li class="list-group-item"> <a href="">Log out</a></li>
+            </ul>
+        </div>
+        {% autoescape %}
+            <div id="account_information">
+                <h1>Account Information</h1>
+                <img id='profile_picture' src="{{ static('images/placeholder_tenant.png') }}"
+                     alt="The profile picture of the account">
+                <h5><b>{{ firstname }} {{ lastname }}</b></h5>
+                <p><b>{{ role }}</b></p>
+                <p><b>Biography</b></p>
+                <p>{{ biography }}</p>
+                <table class="table table-borderd" id="account_info">
+                    <tr>
+                        <th>Username</th>
+                        <td> {{ username }}</td>
+                    </tr>
+                    <tr>
+                        <th>Password</th>
+                        <td> ******** </td>
+                    </tr>
+                    <tr>
+                        <th>Phone-number</th>
+                        <td> {{ phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <th>email-address</th>
+                        <td> {{ email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Language</th>
+                        <td> {{ language }}</td>
+                    </tr>
+                    <tr>
+                        <th>Birthdate</th>
+                        <td> {{ birthdate }}</td>
+                    </tr>
+                    <tr>
+                        <th>Occupation</th>
+                        <td> {{ occupation }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% endautoescape %}
     </div>
-
 {% endblock %}
 

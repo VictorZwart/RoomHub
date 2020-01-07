@@ -73,12 +73,11 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for editing room */
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
-		$room_id   = $_GET['room_id'];
-		$room_info = get_info($db->room, 'room_id', $room_id);
-		//todo: check if the owner and the user are the same person
-		//        if ($room_info['owner_id'] !== $_SESSION['id']){
-//            //check if the owner and the session user are the same person
-//        }
+        require_login();
+        $room_info = get_info($db->room, 'room_id', $id);
+        if ($room_info['owner_id'] !== $_SESSION['user_id']){
+            redirect('account/login');
+        }
 
 
 		echo $twig->render('room_new.twig', ['room_info' => $room_info]);
@@ -108,8 +107,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'zipcode'     => @$_POST['zipcode'],
 			'street_name' => @$_POST['street_name'],
 			'number'      => @$_POST['number'],
-			//todo: Add owner id to the list.
-			'owner_id'    => '1'
+			'owner_id'    => @$_SESSION['user_id']
 		];
 
 		$errors = validate_room($room_data, $db->room);
