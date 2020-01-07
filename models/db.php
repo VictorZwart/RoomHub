@@ -114,3 +114,26 @@ class DB {
 
 	}
 }
+
+// check if the model can be saved and do so.
+function safe_save($object, $table){
+	if ($object->getErrors()) {
+		// Entity failed validation.
+		$_SESSION['feedback'] = [
+			'message' => $object->getErrors()
+		];
+
+		return false;
+	}
+	// no errors (according to cake)
+
+	try {
+		return $table->save($object);
+	} catch(PDOException $e) {
+		$_SESSION['feedback'] = [
+			'message' => 'Something went wrong.'
+		];
+		return false;
+	}
+
+}
