@@ -75,8 +75,16 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
 		require_login();
 		$room_info = get_info($db->room, 'room_id', $id);
+
+
+		if (!$room_info) {
+			$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
+			redirect('rooms');
+		}
+
 		if ($room_info['owner_id'] !== $_SESSION['user_id']) {
-			redirect('account/login');
+			$_SESSION['feedback'] = ['message' => 'This room does not belong to you.'];
+			redirect('rooms');
 		}
 
 
@@ -90,7 +98,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			$_SESSION['feedback'] = ['message' => 'You should be listed as owner to publish a room!'];
 			redirect('account/login');
 		}
-		echo $twig->render('room_new.twig', []);
+		echo $twig->render('room_new.twig', ['room_info' => @$_SESSION['post']]);
 	});
 
 
@@ -102,6 +110,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* POST for adding room */
 	$router->post('/new', function() use ($db) {
+
+		$_SESSION['post'] = $_POST;
 
 		$room_data = [
 			'description' => @$_POST['description'],
@@ -118,35 +128,25 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		$errors = validate_room($room_data, $db->room);
 
 		if ($errors) {
-			// there are errors
-			echo 'not allowed -> redirect signup with errors';
-			pprint($errors);
 
-			return;
+			$_SESSION['feedback'] = ['message' => $errors];
+
+			// there are errors
+			redirect('rooms/new');
 		};
 
 		$new_room = $db->room->newEntity($room_data);
 
-		if ($new_room->getErrors()) {
-			echo 'nee er ging iets mis -> redirect signup with errors';
-			pprint($new_room->getErrors());
 
-			return;
-		}
-
-		try {
-			$result = $db->room->save($new_room);
-		} catch(PDOException $e) {
-			pprint($e);
-			$result = false;
-		}
+		$result = safe_save($new_room, $db->room);
 
 		if ($result) {
-			echo 'het ging goed -> redirect to room page';
-			echo $new_room->id;
+			$room_id             = $result->room_id;
+			redirect("rooms/$room_id");
 		} else {
-			echo 'iets ging mis D: -> redirect to edit page';
+			redirect('rooms/new');
 		}
+
 
 	});
 
@@ -335,7 +335,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$result = safe_save($new_user, $db->user);
 
 		if ($result) {
-			$_SESSION['user_id'] = $result;
+			$_SESSION['user_id'] = $result->user_id;
 			redirect('account');
 		} else {
 			redirect('account/signup');
