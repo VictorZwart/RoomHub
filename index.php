@@ -141,7 +141,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		$result = safe_save($new_room, $db->room);
 
 		if ($result) {
-			$room_id             = $result->room_id;
+			$room_id = $result->room_id;
 			redirect("rooms/$room_id");
 		} else {
 			redirect('rooms/new');
@@ -195,9 +195,19 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* GET for editing account */
 	$router->get('/edit/', function() use ($db, $twig) {
 		require_login();
-		$account_id   = $_SESSION['user_id'];
-		$account_info = get_info($db->user, 'user_id', $account_id);
-		$ctx          = [
+		$account_id      = $_SESSION['user_id'];
+		$db_account_info = get_info($db->user, 'user_id', $account_id);
+
+		// if the user has tried (but failed) to update
+		// then we use that info (+username from DB because that's missing from POST)
+		if (@$_SESSION['post']) {
+			$account_info = $_SESSION['post'];
+			$account_info['username'] = $db_account_info['username'];
+		} else {
+			$account_info = $db_account_info;
+		}
+
+		$ctx = [
 			'account_info' => $account_info,
 			'role_default' => $account_info['role']
 		];
