@@ -159,12 +159,24 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* GET to view your account */
 	$router->get('/', function() use ($db, $twig) {
 		require_login();
-		echo $twig->render('account.twig', []);
+	    $account_info = [
+	                        'firstname' => 'Henk',
+	                        'lastname' => 'Westerbroek',
+	                        'username' => 'henkie2',
+	                        'phone_number' => '0643544354',
+	                        'email' => 'nepemail@mail.com',
+	                        'language' => 'Dutch',
+	                        'birthdate' => 'test',
+	                        'occupation' => 'test',
+	                        'role' => 'Tenant',
+	                        'biography' => 'Lorem ipsum',
+	                    ];
+		echo $twig->render('account.twig', $account_info);
 	});
 
 	/* GET to view specific account by username */
 	$router->get('/u/(\w+)', function($username) use ($db, $twig) {
-		$user_info = get_user_from_username($username);
+		$user_info = get_info($db->user, 'username', $username);
 
 		if(!$user_info){
 			redirect('account');
