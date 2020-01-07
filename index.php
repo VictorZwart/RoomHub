@@ -199,8 +199,25 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET to view your account */
 	$router->get('/', function() use ($db, $twig) {
+<<<<<<< Updated upstream
 		require_login();
 		echo $twig->render('account.twig', []);
+=======
+		//require_login();
+	    $account_info = [
+	                        'firstname' => 'Henk',
+	                        'lastname' => 'Westerbroek',
+	                        'username' => 'henkie2',
+	                        'phone_number' => '0643544354',
+	                        'email' => 'nepemail@mail.com',
+	                        'language' => 'Dutch',
+	                        'birthdate' => 'test',
+	                        'occupation' => 'test',
+	                        'role' => 'Tenant',
+	                        'biography' => 'Lorem ipsum',
+	                    ];
+		echo $twig->render('account.twig', $account_info);
+>>>>>>> Stashed changes
 	});
 
 	/* GET to view specific account by username */

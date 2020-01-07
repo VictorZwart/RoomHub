@@ -30,6 +30,16 @@
     width: 100%;
 }
 
+.list-group{
+    border: none;
+}
+
+.list-group-item{
+    background: black;
+    color: white;
+    border: none;
+}
+
 @media(max-width: 800px){
     #account_homepage{
         flex-direction: column-reverse;
