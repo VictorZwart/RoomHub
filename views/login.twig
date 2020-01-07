@@ -1,14 +1,20 @@
 {% extends "generic.twig" %}
-
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/login.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ static('css/header.css') }}" type="text/css">
+{% endblock %}
 {% block title %}Log in{% endblock %}
 {% block content %}
     <form action="" method="POST">
-        <!-- front end pls fix -->
-        <label for="username">Username or email</label>
+        <!-- anonieme avatar -->
+        <div class="imgcontainer">
+            <img src="{{ static('images/placeholder_tenant.png') }}" alt="Avatar" class="avatar">
+        </div>
+        <label id="user" for="username">Username or email</label>
         <input type="text" name="username" id="username" value="{{ feedback.username }}"/>
 
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password"/>
-        <button>Go</button>
+        <label id="pass" for="password">Password</label>
+        <input class="inputpass" type="password" name="password" id="password"/>
+        <button>Log in</button>
     </form>
 {% endblock %}
