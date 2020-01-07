@@ -101,14 +101,19 @@ function validate_user($post, $table) {
 
 			}
 		])
-
+		->add('username', 'custom', [
+			// username can only have letters and numbers
+			'rule'    => function() use ($post) {
+				return (bool) preg_match('/^\w+$/', $post['username']);
+			},
+			'message' => 'Invalid username, please use only alphanumerical characters'
+		])
 		->add('email', 'custom', [
 			// email must not exist
 			'rule' => function() use ($post, $table) {
 				return unique($table, 'email', $post['email']);
 			}
 		])
-
 		->add('password', 'custom', [
 			// password must match validation
 			'rule'    => function() use ($post) {
