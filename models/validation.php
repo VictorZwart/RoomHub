@@ -11,7 +11,7 @@ use Cake\Validation\Validator;
  * @param TableSchema $schema
  * @param array $skip not-required fields (for edit)
  */
-function _validate_required_fields($validator, $schema, $skip=[]) {
+function _validate_required_fields($validator, $schema, $skip = []) {
 	$required_fields = [];
 
 	foreach($schema->columns() as $column_name) {
@@ -62,7 +62,7 @@ function validate_user($post, $table, $new = true) {
 	$validator = new Validator();
 
 	$skip = [];
-	if(!$new){
+	if (!$new) {
 		$skip = ['username', 'password'];
 	}
 
@@ -76,7 +76,7 @@ function validate_user($post, $table, $new = true) {
 			])
 		// add a validator for the phone number
 		->add('phone_number', 'phone number check', [
-			'rule' => function() use($post) {
+			'rule' => function() use ($post) {
 				$number = $post['phone_number'];
 				if (preg_match('/^\d{2}-?\d{8}$/', $number) or preg_match('/^\d{4}-?\d{6}$/', $number)) {
 					return true;
@@ -87,7 +87,7 @@ function validate_user($post, $table, $new = true) {
 
 		])
 		//add a validator for birthdate
-		->add('birthdate', 'custom', [
+		->add('birthdate', 'legal ages', [
 			'rule' => function() use ($post) {
 				$dateString = $post['birthdate'];
 				if ($dateString < '1920-01-01') {
@@ -102,7 +102,7 @@ function validate_user($post, $table, $new = true) {
 		]);
 
 	if ($new) {
-		$validator->add('username', 'custom', [
+		$validator->add('username', 'unique username', [
 			// username must not exist!
 			'rule' => function() use ($post, $table) {
 
@@ -110,20 +110,20 @@ function validate_user($post, $table, $new = true) {
 
 			}
 		])
-		          ->add('username', 'custom', [
+		          ->add('username', 'valid username', [
 			          // username can only have letters and numbers
 			          'rule'    => function() use ($post) {
 				          return (bool) preg_match('/^\w+$/', $post['username']);
 			          },
 			          'message' => 'Invalid username, please use only alphanumerical characters'
 		          ])
-		          ->add('email', 'custom', [
+		          ->add('email', 'unique email', [
 			          // email must not exist
 			          'rule' => function() use ($post, $table) {
 				          return unique($table, 'email', $post['email']);
 			          }
 		          ])
-		          ->add('password', 'custom', [
+		          ->add('password', 'matching password and validation', [
 			          // password must match validation
 			          'rule'    => function() use ($post) {
 				          return $post['password'] == $post['password2'];
@@ -141,71 +141,73 @@ function validate_user($post, $table, $new = true) {
  *
  * @param array $post
  * @param null|Table $table (room)
+ * @param bool $new
  *
  * @return array of errors
- *
  */
-function validate_room($post, $table) {
+function validate_room($post, $table, $new=false) {
 	$validator = new Validator();
 
-	_validate_required_fields($validator, $table->getSchema());
+	if(!$new){
+		$skip = ['owner_id'];
+	}
+	else {
+		$skip = [];
+	}
+
+	_validate_required_fields($validator, $table->getSchema(), $skip);
 
 	$validator
-        ->add('zipcode', 'custom', [
-	    //zipcode must have format of 0000AA
-            'rule' => function() use($post){
-                if (preg_match('/\d{4}[a-zA-Z]{2}/',$post['zipcode'])){
-                    return true;
-                }
-                else{
-                    return 'You have entered a wrong zipcode format';
-                }
-            }
-        ])
-	    ->add('number', 'custom', [
-	        //streetnumber must contain minimum of 1 number
-            'rule' => function() use($post){
-	            if (preg_match('/^\d\w*/', $post['number'])){
-	                return true;
-                }
-	            else{
-	                return 'Please enter a number starting with a digit.';
-                }
-            }
-        ])
-        ->add('size', 'custom', [
-            //streetnumber must contain minimum of 1 number
-            'rule' => function() use($post){
-                if ($post['size'] > 1){
-                    return true;
-                }
-                else{
-                    return 'Please enter a size which is larger than 1.';
-                }
-            }
-        ])
-        ->add('street_name', 'custom', [
-            //streetnumber must contain minimum of 1 number
-            'rule' => function() use($post){
-                if (preg_match('/^[a-zA-Z]+$/', $post['street_name'])){
-                    return true;
-                }
-                else{
-                    return 'Please enter a street name with only letters.';
-                }
-            }
-        ])
-        ->add('city', 'custom', [
-            //streetnumber must contain minimum of 1 number
-            'rule' => function() use($post){
-                if (preg_match('/^[a-zA-Z]+$/', $post['city'])){
-                    return true;
-                }
-                else{
-                    return 'Please enter a city name with only letters.';
-                }
-            }
-        ]);
+		->add('zipcode', 'valid zipcode', [
+			//zipcode must have format of 0000AA
+			'rule' => function() use ($post) {
+				if (preg_match('/\d{4}[a-zA-Z]{2}/', $post['zipcode'])) {
+					return true;
+				} else {
+					return 'You have entered a wrong zipcode format';
+				}
+			}
+		])
+		->add('number', 'valid housenumber', [
+			//streetnumber must contain minimum of 1 number
+			'rule' => function() use ($post) {
+				if (preg_match('/^\d\w*/', $post['number'])) {
+					return true;
+				} else {
+					return 'Please enter a number starting with a digit.';
+				}
+			}
+		])
+		->add('size', 'valid room area', [
+			//streetnumber must contain minimum of 1 number
+			'rule' => function() use ($post) {
+				if ($post['size'] > 1) {
+					return true;
+				} else {
+					return 'Please enter a size which is larger than 1.';
+				}
+			}
+		])
+		->add('street_name', 'valid street name', [
+			// street name can only be letters, apostrophe, dash and space
+			'rule' => function() use ($post) {
+				if (preg_match("/^[a-zA-Z\-' ]+$/", $post['street_name'])) {
+					return true;
+				} else {
+					return 'Please enter a street name with only letters.';
+				}
+			}
+		])
+		->add('city', 'valid city name', [
+			//streetnumber must contain minimum of 1 number
+			'rule' => function() use ($post) {
+				if (preg_match('/^[a-zA-Z]+$/', $post['city'])) {
+					return true;
+				} else {
+					return 'Please enter a city name with only letters.';
+				}
+			}
+		]);
 
 	return $validator->errors($post);
 }
