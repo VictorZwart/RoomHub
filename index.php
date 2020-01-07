@@ -43,7 +43,7 @@ $router->set404(function() {
 // GET for welcome page
 $router->get('/', function() use ($db, $twig) {
 	$name = $db->user->find()->first()->first_name;
-	echo $twig->render('index.twig', ['name' => $name]);
+	echo $twig->render('index.twig', ['name' => $name, 'availablerooms' => '(iets uit de db)']);
 
 });
 
@@ -150,7 +150,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET to view your account */
 	$router->get('/', function() use ($db, $twig) {
-		echo $twig->render('account.twig', []);
+		echo $twig->render('account.twig', ['name' => '(get from db)']);
 	});
 
 	/* GET to view specific account */
