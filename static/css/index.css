@@ -1,3 +1,33 @@
+#content {
+    text-align: center;
+    padding-top: 50px;
+    min-height: 90vh;
+}
+
+.intro {
+    padding-bottom: 50px;
+}
+
+.iam {
+    padding-bottom: 20px;
+}
+
+.btn-xlarge {
+    padding: 18px 28px;
+    font-size: 35px;
+    line-height: normal;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.outro {
+    padding-top: 50px;
+}
+
+.owner {
+    margin-left: 100px;
+}
 .rooms {
     padding-top: 80px;
     font-weight: bold;

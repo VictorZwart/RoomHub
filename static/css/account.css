@@ -1,7 +1,38 @@
-#account_homepage{
-    height: 80vh;
-    width: 50vw;
-    margin: auto;
+#account_homepage {
+    min-height: 50vh;
+    width: 800px;
+    margin: 0px auto 0px auto;
     background: white;
-    box-shadow: 10px 10px 10px rgb(0, 0, 0);
+    display: flex;
+    justify-content: space-between;
+}
+
+#sidebar{
+    display: flex;
+    justify-self: flex-end;
+}
+
+#account_information{
+    margin: 25px auto 50px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#profile_picture{
+    width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+}
+
+#account_info{
+    width: 100%;
+}
+
+@media(max-width: 800px){
+    #account_homepage{
+        flex-direction: column-reverse;
+        width: 100vw;
+    }
 }
