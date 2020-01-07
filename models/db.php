@@ -4,7 +4,8 @@
 /* define db models here */
 
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\{Table, TableRegistry};
+use Cake\Datasource\EntityInterface;
+use Cake\ORM\{Entity, Table, TableRegistry};
 
 
 /**
@@ -115,8 +116,15 @@ class DB {
 	}
 }
 
-// check if the model can be saved and do so.
-function safe_save($object, $table){
+/**
+ * check if the model can be saved and do so.
+ *
+ * @param EntityInterface $object
+ * @param Table $table
+ *
+ * @return bool|Entity
+ */
+function safe_save($object, $table) {
 	if ($object->getErrors()) {
 		// Entity failed validation.
 		$_SESSION['feedback'] = [
@@ -133,6 +141,7 @@ function safe_save($object, $table){
 		$_SESSION['feedback'] = [
 			'message' => 'Something went wrong.'
 		];
+
 		return false;
 	}
 
