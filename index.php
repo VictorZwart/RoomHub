@@ -29,7 +29,7 @@ $router = new Router();
 $_SERVER['basepath'] = $router->getBasePath();
 
 /* setup templating */
-$twig = load_templating($config->get('cache', []));
+$twig = load_templating($config);
 
 
 // Add routes here
@@ -256,9 +256,47 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* POST for editing account */
 	$router->post('/edit/', function() use ($db) {
 		require_login();
-		pprint($_POST);
-		echo 'hier ff saven';
-		// TODO
+
+
+		$current_user = $db->user->get($_SESSION['user_id']);
+
+		$user_data = [
+			'first_name'   => @$_POST['first_name'],
+			'last_name'    => @$_POST['last_name'],
+			'email'        => @$_POST['email'],
+			'phone_number' => fix_phone(@$_POST['phone_number']),
+			'language'     => @$_POST['language'],
+			'birthdate'    => @$_POST['birthdate'],
+			'biography'    => @$_POST['biography'],
+			'occupation'   => @$_POST['occupation'],
+			'role'         => @$_POST['role']
+		];
+
+
+		$_SESSION['post'] = $_POST;
+		$errors           = validate_user($user_data, $db->user, false);
+
+		if ($errors) {
+			// there are errors
+			$_SESSION['feedback'] = [
+				'message' => $errors
+			];
+			redirect('account/edit');
+		};
+
+		$db->user->patchEntity($current_user, $user_data);
+
+
+		$result = safe_save($current_user, $db->user);
+
+		if ($result) {
+			$_SESSION['user_id'] = $result->user_id;
+			redirect('account');
+		} else {
+			redirect('account/edit');
+		}
+
+
 	});
 
 
@@ -276,13 +314,6 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			];
 			redirect('account/signup');
 		};
-		// if there is a - in the phone numbers then remove that
-		$phone_number = $_POST['phone_number'];
-
-		$phone_number = @$_POST['phone_number'] ?: '';
-		if (strpos($phone_number, '-') !== false) {
-			$phone_number = str_replace('-', '', $phone_number);
-		}
 
 		$user_data = [
 			'username'     => @$_POST['username'],
@@ -290,7 +321,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			'first_name'   => @$_POST['first_name'],
 			'last_name'    => @$_POST['last_name'],
 			'email'        => @$_POST['email'],
-			'phone_number' => $phone_number,
+			'phone_number' => fix_phone(@$_POST['phonenumber']),
 			'language'     => @$_POST['language'],
 			'birthdate'    => @$_POST['birthdate'],
 			'biography'    => @$_POST['biography'],

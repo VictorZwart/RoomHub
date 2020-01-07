@@ -9,13 +9,14 @@ use Cake\Validation\Validator;
  *
  * @param Validator $validator
  * @param TableSchema $schema
+ * @param array $skip not-required fields (for edit)
  */
-function _validate_required_fields($validator, $schema) {
+function _validate_required_fields($validator, $schema, $skip=[]) {
 	$required_fields = [];
 
 	foreach($schema->columns() as $column_name) {
 		$column = $schema->getColumn($column_name);
-		if (!$column['null'] && !@$column['autoIncrement']) {
+		if (!$column['null'] && !@$column['autoIncrement'] && !in_array($column_name, $skip)) {
 			$required_fields[] = $column_name;
 		}
 
@@ -53,13 +54,19 @@ function unique($table, $field, $value) {
  * @param array $post
  * @param null|Table $table (user)
  *
- * @return array of errors
+ * @param bool $new
  *
+ * @return array of errors
  */
-function validate_user($post, $table) {
+function validate_user($post, $table, $new = true) {
 	$validator = new Validator();
 
-	_validate_required_fields($validator, $table->getSchema());
+	$skip = [];
+	if(!$new){
+		$skip = ['username', 'password'];
+	}
+
+	_validate_required_fields($validator, $table->getSchema(), $skip);
 
 	$validator
 		->add('email', 'validFormat',
@@ -92,8 +99,10 @@ function validate_user($post, $table) {
 					return true;
 				}
 			}
-		])
-		->add('username', 'custom', [
+		]);
+
+	if ($new) {
+		$validator->add('username', 'custom', [
 			// username must not exist!
 			'rule' => function() use ($post, $table) {
 
@@ -101,26 +110,28 @@ function validate_user($post, $table) {
 
 			}
 		])
-		->add('username', 'custom', [
-			// username can only have letters and numbers
-			'rule'    => function() use ($post) {
-				return (bool) preg_match('/^\w+$/', $post['username']);
-			},
-			'message' => 'Invalid username, please use only alphanumerical characters'
-		])
-		->add('email', 'custom', [
-			// email must not exist
-			'rule' => function() use ($post, $table) {
-				return unique($table, 'email', $post['email']);
-			}
-		])
-		->add('password', 'custom', [
-			// password must match validation
-			'rule'    => function() use ($post) {
-				return $post['password'] == $post['password2'];
-			},
-			'message' => 'The password does not match'
-		]);
+		          ->add('username', 'custom', [
+			          // username can only have letters and numbers
+			          'rule'    => function() use ($post) {
+				          return (bool) preg_match('/^\w+$/', $post['username']);
+			          },
+			          'message' => 'Invalid username, please use only alphanumerical characters'
+		          ])
+		          ->add('email', 'custom', [
+			          // email must not exist
+			          'rule' => function() use ($post, $table) {
+				          return unique($table, 'email', $post['email']);
+			          }
+		          ])
+		          ->add('password', 'custom', [
+			          // password must match validation
+			          'rule'    => function() use ($post) {
+				          return $post['password'] == $post['password2'];
+			          },
+			          'message' => 'The password does not match'
+		          ]);
+
+	}
 
 	return $validator->errors($post);
 }
