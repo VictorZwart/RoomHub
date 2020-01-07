@@ -19,7 +19,7 @@ input[type=text], input[type=password] {
     box-sizing: border-box;
 }
 
-button {
+.square_button {
     background-color: black;
     color: white;
     padding: 14px 20px;
@@ -29,7 +29,7 @@ button {
     width: 50%;
 }
 
-button:hover {
+.square_button:hover {
     border: 3px solid black;
     background-color: #ffa31a;
 }
