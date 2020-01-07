@@ -166,7 +166,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET to view specific account by username */
 	$router->get('/u/(\w+)', function($username) use ($db, $twig) {
-		$user_info = get_user_from_username($username);
+		$user_info = get_info($db->user, 'username', $username);
 
 		if(!$user_info){
 			redirect('account');

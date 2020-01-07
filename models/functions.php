@@ -2,6 +2,7 @@
 
 /* Enable error reporting */
 
+use Cake\ORM\Table;
 use Twig\{Environment, TwigFunction};
 use Twig\Loader\FilesystemLoader;
 
@@ -32,7 +33,7 @@ function load_templating($cache) {
 
 
 	if (isset($_SESSION['user_id'])) {
-		$current_user             = get_account_info($db->user, $_SESSION['user_id']);
+		$current_user             = get_info($db->user, 'user_id', $_SESSION['user_id']);
 		$current_user['loggedin'] = true;
 	} else {
 		$current_user = [];
@@ -62,21 +63,17 @@ function load_templating($cache) {
 
 /**
  * gets the info from the given table for the give nid_name with the id given
- * @param $table mixed the user table
- * @param $id_name string name of the id in the table
- * @param $id string id
+ *
+ * @param Table $table mixed the user table
+ * @param string $id_name name of the id in the table
+ * @param string $id id
+ *
  * @return mixed array with all the account info
  */
-function get_info($table, $id_name, $id){
-    $info = $table
-        ->find('all')
-        ->where([$id_name => $id])
-        ->first();
-
-function get_user_from_username($username) {
-	return $_SERVER['db']->user
-		->find()
-		->where(['username' => $username])
+function get_info($table, $id_name, $id) {
+	return $table
+		->find('all')
+		->where([$id_name => $id])
 		->first();
 }
 
