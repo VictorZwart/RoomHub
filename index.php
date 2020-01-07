@@ -165,8 +165,11 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 	/* GET for editing account */
-	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
-		echo $twig->render('account_edit.twig', []);
+	$router->get('/edit/(\d+)', function() use ($db, $twig) {
+	    $account_id = 2;
+	    pprint(get_account_info($db->user, $account_id));
+        $account_info = get_account_info($db->user, $account_id);
+		echo $twig->render('account_new.twig', ['account_info' => $account_info]);
 	});
 
 	/* GET for login page */
@@ -182,7 +185,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 
 	/* PUT for editing account */
-	$router->post('/update/(\d+)', function($id) use ($db) {
+	$router->post('/update/(\d+)', function() use ($db) {
 		$_PUT = array();
 		parse_str(file_get_contents('php://input'), $_PUT);
 	});
@@ -201,12 +204,12 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 			return;
 		};
-
+        // if there is a - in the phone numbers then remove that
 		$phone_number = $_POST['phone_number'];
         if (strpos($phone_number, '-') !== false){
             $phone_number = str_replace('-', '', $phone_number);
         }
-        
+
 		$user_data = [
 			'username'     => @$_POST['username'],
 			'password'     => password_hash($_POST['password'], PASSWORD_DEFAULT),

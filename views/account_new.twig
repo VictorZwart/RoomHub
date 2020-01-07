@@ -5,19 +5,18 @@
     <link rel="stylesheet" href="{{ static('css/account_new.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
-    <!-- todo: streepje wegslopen bij telefoonnummers -->
     <div id="new_account_form">
         <h1>Register</h1>
         <form action="" method="POST">
             <div class="form-group">
                 <label for="inputUsername">Username</label>
-                <input type="text" class="form-control" id="inputUsername" placeholder="j.jansen" name="username"
+                <input type="text" class="form-control" id="inputUsername" placeholder="{{account_info.username}}" disabled {{account_info.username}}
                        required>
             </div>
             <div class="form-group">
                 <label for="inputEmail">Email</label>
                 <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" name="email"
-                       required>
+                       value="{{account_info.email}}" required>
             </div>
             <div class="form-group">
                 <label for="inputPassword">Password</label>
@@ -31,12 +30,12 @@
             </div>
             <div class="form-group">
                 <label for="inputFirstname">First name</label>
-                <input type="text" class="form-control" id="inputFirstname" placeholder="Jan" name="first_name"
+                <input type="text" class="form-control" id="inputFirstname" placeholder="Jan" name="first_name" value="{{account_info.first_name}}"
                        required>
             </div>
             <div class="form-group">
                 <label for="inputLastname">Last name</label>
-                <input type="text" class="form-control" id="inputLastname" placeholder="Jansen" name="last_name"
+                <input type="text" class="form-control" id="inputLastname" placeholder="Jansen" name="last_name" value="{{account_info.last_name}}"
                        required>
             </div>
 
@@ -44,35 +43,36 @@
             <div class="form-group">
                 <label for="inputPhoneNumber">Phone number</label>
                 <input type="text" class="form-control" id="inputPhoneNumber" placeholder="0123456789"
-                       name="phone_number"
+                       name="phone_number" value="{{account_info.phone_number}}"
                        required>
             </div>
             <div class="form-group">
                 <label for="inputLanguage">Language</label>
-                <input type="text" class="form-control" id="inputLanguage" placeholder="Dutch/English" name="language"
+                <input type="text" class="form-control" id="inputLanguage" placeholder="Dutch/English" name="language" value="{{account_info.language}}"
                        required>
             </div>
             <div class="form-group">
                 <label for="inputBirthdate">Birthdate</label>
-                <input type="date" class="form-control" id="inputBirthdate" placeholder="DD/MM/YYYY" name="birthdate"
+
+                <input type="date" class="form-control" id="inputBirthdate" placeholder="DD/MM/YYYY" name="birthdate" value="{{account_info.birthdate.date|date('Y-m-d')}}"
                        required>
             </div>
             <div class="form-group">
                 <label for="inputBiography">Biography</label>
                 <textarea name="biography" class="form-control" id="inputBiography"
-                          placeholder="Enter Sth aboot yrslf"> </textarea>
+                          placeholder="Enter Sth aboot yrslf" >{{account_info.biography}} </textarea>
             </div>
             <div class="form-group">
                 <label for="inputOccupation">Occupation</label>
                 <input type="text" class="form-control" id="inputOccupation" placeholder="Student/Scientist/Glasswasher"
-                       name="occupation" required>
+                       name="occupation" value="{{account_info.occupation}}" required>
             </div>
             <div class="form-group">
                 <label for="inputRole">Role</label>
                 <select name="role" class="form-control" id="inputRole">
                     <option value="" {{ role_default == '' ? 'selected' : '' }} disabled>Choose one:</option>
-                    <option value="tennant" {{ role_default == 'tenant' ? 'selected' : '' }}>Tennant</option>
-                    <option value="owner" {{ role_default == 'owner' ? 'selected' : '' }}>Owner</option>
+                    <option value="tenant" {{ role_default == 'tenant' ? 'selected' : '' }} <!--todo: add autoselect if you edit your account -->{{ account_info.role == 'tenant' ? 'selected' : '' }}>Tenant</option>
+                    <option value="owner" {{ role_default == 'owner' ? 'selected' : '' }} {{ account_info.role == 'owner' ? 'selected' : '' }}>Owner</option>
                 </select>
 
             </div>
