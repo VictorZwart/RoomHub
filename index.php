@@ -73,15 +73,15 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for editing room */
 	$router->get('/edit/(\d+)', function($id) use ($db, $twig) {
-	    $room_id = $_GET['room_id'];
-        $room_info = get_info($db->room, 'room_id', $room_id);
-    //todo: check if the owner and the user are the same person
-        //        if ($room_info['owner_id'] !== $_SESSION['id']){
+		$room_id   = $_GET['room_id'];
+		$room_info = get_info($db->room, 'room_id', $room_id);
+		//todo: check if the owner and the user are the same person
+		//        if ($room_info['owner_id'] !== $_SESSION['id']){
 //            //check if the owner and the session user are the same person
 //        }
 
 
-        echo $twig->render('room_new.twig', ['room_info' => $room_info]);
+		echo $twig->render('room_new.twig', ['room_info' => $room_info]);
 	});
 
 	/* GET for adding room */
@@ -168,7 +168,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	$router->get('/u/(\w+)', function($username) use ($db, $twig) {
 		$user_info = get_info($db->user, 'username', $username);
 
-		if(!$user_info){
+		if (!$user_info) {
 			redirect('account');
 		}
 
@@ -190,7 +190,11 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		require_login();
 		$account_id   = $_SESSION['user_id'];
 		$account_info = get_info($db->user, 'user_id', $account_id);
-		echo $twig->render('account_new.twig', ['account_info' => $account_info]);
+		$ctx          = [
+			'account_info' => $account_info,
+			'role_default' => $account_info['role']
+		];
+		echo $twig->render('account_new.twig', $ctx);
 	});
 
 	/* GET for login page */
