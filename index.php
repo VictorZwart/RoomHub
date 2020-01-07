@@ -76,7 +76,6 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		require_login();
 		$room_info = get_info($db->room, 'room_id', $id);
 
-
 		if (!$room_info) {
 			$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
 			redirect('rooms');
@@ -86,6 +85,13 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			$_SESSION['feedback'] = ['message' => 'This room does not belong to you.'];
 			redirect('rooms');
 		}
+        $db_room_info = get_info($db->room, 'owner_id', $id);
+		if (@$_SESSION['post']){
+		    $room_info = $_SESSION['post'];
+        }
+		else {
+		    $room_info = $db_room_info;
+        }
 
 
 		echo $twig->render('room_new.twig', ['room_info' => $room_info]);
@@ -153,7 +159,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* POST for editing room */
 	$router->post('/edit/(\d+)', function($id) use ($db) {
-
+        $_SESSION['post'] = $_POST;
 	    $room_data = [
 	        'description' => $_POST['description'],
             'price' => $_POST['price'],
@@ -186,19 +192,6 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
         } else {
             redirect("rooms/edit/$id");
         }
-//        $updated_room = $db
-//            ->room
-//            ->patchEntities(['description' = $_PUT['description'],
-//                'price' = $_PUT['price'],
-//                'size' = $_PUT['size'],
-//                'type' = $_PUT['type'],
-//                'city' = $_PUT['city'],
-//                'zipcode' = $_PUT['zipcode'],
-//                'street_name' = $_PUT['street_name'],
-//                'number' = $_PUT['number']
-//
-//            ]);
-//        ->where(['room_id' = $_PUT['room_id']])
 	});
 
 });
