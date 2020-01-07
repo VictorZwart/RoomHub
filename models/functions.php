@@ -51,7 +51,14 @@ function load_templating($cache) {
 	return $twig;
 
 }
+function get_account_info($table, $id){
+    $info = $table
+        ->find('all')
+        ->where(['user_id' => $id])
+        ->first();
 
+    return $info;
+}
 
 class Config {
 	/**
