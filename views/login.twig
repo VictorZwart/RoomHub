@@ -2,10 +2,18 @@
 
 {% block title %}Log in{% endblock %}
 {% block content %}
-<form action="" method="POST">
-    <!-- front end pls fix -->
-    <input type="text" name="username"/>
-    <input type="password" name="password"/>
-    <button>Go</button>
-</form>
+    <div>
+        {% if feedback.message %}
+            message: {{ feedback.message }}
+        {% endif %}
+    </div>
+    <form action="" method="POST">
+        <!-- front end pls fix -->
+        <label for="username">Username or email</label>
+        <input type="text" name="username" id="username" value="{{ feedback.username }}"/>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password"/>
+        <button>Go</button>
+    </form>
 {% endblock %}

@@ -181,11 +181,14 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	$router->get('/login', function() use ($db, $twig) {
 		require_anonymous();
-		echo $twig->render('login.twig', []);
+
+		$feedback = @$_SESSION['feedback'] ?: [];
+
+		echo $twig->render('login.twig', ['feedback' => $feedback]);
 	});
 
 	/* GET for logging out */
-	$router->get('/logout', function(){
+	$router->get('/logout', function() {
 		session_destroy();
 		redirect('');
 	});
@@ -193,20 +196,29 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* POST for logging in */
 	$router->post('/login', function() use ($db) {
 		require_anonymous();
+
+		// look for username OR email
 		$user = $db->user->find()->where([
-			'username' => $_POST['username']
+			'OR' => [
+				['username' => $_POST['username']],
+				['email' => $_POST['username']]
+			]
 		])->first();
 
 		if (!$user) {
-			echo 'doe ff registreren ait doeiii';
+			$_SESSION['feedback'] = ['message' => 'This username is not known. Please sign up.'];
 
-			return;
+			redirect('account/login');
 		}
 
 		if (!password_verify($_POST['password'], $user->password)) {
-			echo 'je wachtwoord is fout idioot';
 
-			return;
+			$_SESSION['feedback'] = [
+				'message' => 'This password is not correct.',
+				'username' => $_POST['username'],
+			];
+
+			redirect('account/login');
 		} else {
 
 			$_SESSION['user_id'] = $user['user_id'];

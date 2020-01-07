@@ -9,13 +9,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
 /**
  * setup the templating engine
  *
  * @param array $cache settings about cache
- *
- * @param string $basepath home of the project (can be in a folder when developing)
  *
  * @return Environment: templating instance
  */
@@ -31,6 +28,8 @@ function load_templating($cache) {
 	}
 
 	$twig = new Environment($loader, $opts);
+
+	$twig->addGlobal('user', ['name' => 'WIP']);
 
 
 	$twig->addFunction(new TwigFunction('static',
@@ -95,22 +94,22 @@ function pprint($something) {
 	echo '</pre>';
 }
 
-function redirect($to){
+function redirect($to) {
 	$basepath = $_SERVER['basepath'];
 	header("Location: $basepath$to");
 	die();
 }
 
 
-function require_login(){
-	if(!isset($_SESSION['user_id'])){
+function require_login() {
+	if (!isset($_SESSION['user_id'])) {
 		echo 'reee';
 		redirect('account/login');
 	}
 }
 
-function require_anonymous($fallback='account'){
-	if(isset($_SESSION['user_id'])){
+function require_anonymous($fallback = 'account') {
+	if (isset($_SESSION['user_id'])) {
 		redirect($fallback);
 	}
 }
