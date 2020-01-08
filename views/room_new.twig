@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ static('css/header.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
-    <form action="" method="POST">
+    <form action="" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="inputDescription">Description</label>
             <textarea name="description" class="form-control" id="inputDescription"
@@ -46,7 +46,10 @@
             <input type="text" class="form-control" id="inputNumber" placeholder="6/20B" name="number" value="{{ room_info.number }}"
                    required>
         </div>
-
-        <button type="submit" class="btn btn-primary button">Publish your room!</button>
+        <div class="form-group">
+        <label for="images">Select image to upload:</label>
+            <input type="file" name="fileToUpload" id="fileToUpload" class="form-control-file">
+        </div>
+        <button type="submit" class="btn btn-primary">Publish your room!</button>
     </form>
 {% endblock %}
