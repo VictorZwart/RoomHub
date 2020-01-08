@@ -5,6 +5,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Bramus\Router\Router;
+use Cake\Datasource\Exception\RecordNotFoundException;
 
 session_start();
 
@@ -65,8 +66,13 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
-		$room = $db->room->get($id);
-		echo $twig->render('room.twig', ['room' => $room]);
+		try {
+			$room = $db->room->get($id);
+			echo $twig->render('room.twig', ['room' => $room]);
+		} catch (RecordNotFoundException $e) {
+			$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
+			redirect('rooms');
+		}
 
 
 	});
@@ -93,7 +99,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		}
 
 
-		echo $twig->render('room_new.twig', ['room_info' => $room_info]);
+		echo $twig->render('room_form.twig', ['room_info' => $room_info]);
 	});
 
 	/* GET for adding room */
@@ -103,7 +109,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			$_SESSION['feedback'] = ['message' => 'You should be listed as owner to publish a room!'];
 			redirect('account/login');
 		}
-		echo $twig->render('room_new.twig', ['room_info' => @$_SESSION['post']]);
+		echo $twig->render('room_form.twig', ['room_info' => @$_SESSION['post']]);
 	});
 
 

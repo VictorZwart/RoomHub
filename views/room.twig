@@ -2,9 +2,22 @@
 
 {% block title %}Room ...{% endblock %}
 {% block content %}
-Hier specifieke room info<br/>
-    <!--todo laat de foto zien van de kamer -->
+    Hier specifieke room info<br/>
+    <!--todo laat de foto zien van de kamer. TODO: get from DB -->
     <img id='room_picture' src="{{ uploads('rooms/room-1.jpg') }}"
-         alt="The profile picture of the account">
-    {{ room }}
+         alt="The picture of the room"><br/>
+    {{ room }}<br/>
+
+    {% if user.role == 'owner' and room.owner_id == user.user_id %}
+        <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
+            <button class="btn btn-xlarge btn-dark">
+                <i class="fad fa-edit colored-icon light-icon"></i> Edit my room</button>
+        </a>
+    {% elseif user.role == 'tenant' %}
+        <!-- todo: check if opted-in -->
+        <a href="{{ url('rooms/opt-in/' ~ room.room_id) }}">
+            <button class="btn btn-xlarge btn-dark">
+                <i class="fad fa-heart colored-icon-reverse"></i> I want this room!</button>
+        </a>
+    {% endif %}
 {% endblock %}

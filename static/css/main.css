@@ -19,3 +19,27 @@ body {
 	height: 50px;
 	text-align: center;
 }
+
+.colored-icon {
+	--fa-primary-color: var(--roomhub-orange);
+	--fa-secondary-color: black;
+}
+
+.colored-icon.light-icon {
+	--fa-secondary-color: white;
+}
+
+.colored-icon.fill {
+	--fa-primary-color: var(--roomhub-orange);
+	--fa-secondary-color: var(--roomhub-orange);
+
+}
+
+.colored-icon-reverse {
+	--fa-primary-color: black;
+	--fa-secondary-color: var(--roomhub-orange);
+}
+
+.colored-icon-reverse.light-icon {
+	--fa-primary-color: white;
+}

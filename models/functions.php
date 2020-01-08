@@ -210,7 +210,6 @@ function require_login() {
 
 function require_anonymous($fallback = 'account') {
 	if (isset($_SESSION['user_id'])) {
-		$_SESSION['feedback'] = ['message' => 'You are already logged in!'];
 		redirect($fallback);
 	}
 }

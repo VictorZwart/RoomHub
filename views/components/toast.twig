@@ -4,18 +4,10 @@
     <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
         <div class="toast-header">
             {% if feedback.state == 'success' %}
-                <i class="fad fa-thumbs-up"
-                   style="
-                   --fa-primary-color: black;
-                   --fa-secondary-color: var(--roomhub-orange);
-                    "></i>
+                <i class="fad fa-thumbs-up colored-icon-reverse"></i>
                 <strong class="mr-auto">&nbsp;Success!</strong>
             {% else %}
-                <i class="fad fa-exclamation-triangle"
-                   style="
-                   --fa-primary-color: black;
-                   --fa-secondary-color: var(--roomhub-orange);
-                    "></i>
+                <i class="fad fa-exclamation-triangle colored-icon-reverse"></i>
                 <strong class="mr-auto">&nbsp;Warning!</strong>
             {% endif %}
             <small class="text-muted">now</small>

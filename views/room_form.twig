@@ -2,7 +2,7 @@
 
 {% block title %}Add Room{% endblock %}
 {% block page_stylesheet %}
-    <link rel="stylesheet" href="{{ static('css/room_new.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ static('css/room_form.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ static('css/header.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
@@ -38,7 +38,7 @@
         </div>
         <div class="form-group">
             <label for="inputStreetname">Streetname</label>
-            <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan 5" name="street_name" value="{{ room_info.street_name }}"
+            <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan" name="street_name" value="{{ room_info.street_name }}"
                    required>
         </div>
         <div class="form-group">
