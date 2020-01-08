@@ -1,7 +1,7 @@
 #account_homepage {
     min-height: 50vh;
     width: 800px;
-    margin: 0px auto 0px auto;
+    margin: 0 auto 0 auto;
     background: white;
     display: flex;
     justify-content: space-between;
@@ -36,7 +36,7 @@
 
 .list-group-item{
     background: black;
-    color: white;
+    color: #ffa31a;
     border: none;
 }
 
