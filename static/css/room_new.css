@@ -1,0 +1,23 @@
+#content {
+    text-align: center;
+    padding-top: 30px;
+    max-width: 100%;
+}
+
+form {
+    display: inline-block;
+    min-width: 40%;
+}
+
+.button {
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 50%;
+}
+
+.button:hover {
+    border: 3px solid black;
+    background-color: #ffa31a;
+}

@@ -116,7 +116,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* POST for adding room */
 	$router->post('/new', function() use ($db) {
-	    
+
 		$_SESSION['post'] = $_POST;
 		$room_data = [
 			'description' => @$_POST['description'],
