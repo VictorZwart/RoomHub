@@ -1,0 +1,2 @@
+ALTER TABLE room
+    ADD picture VARCHAR(20) NULL;
