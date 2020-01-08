@@ -11,7 +11,7 @@ session_start();
 
 /* include all models from the model folder here */
 
-foreach(glob("models/*.php") as $filename) {
+foreach (glob("models/*.php") as $filename) {
 	include $filename;
 }
 
@@ -86,12 +86,11 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			redirect('rooms');
 		}
 
-		if (@$_SESSION['post']){
-		    $room_info = $_SESSION['post'];
-        }
-		else {
-		    $room_info = $db_room_info;
-        }
+		if (@$_SESSION['post']) {
+			$room_info = $_SESSION['post'];
+		} else {
+			$room_info = $db_room_info;
+		}
 
 
 		echo $twig->render('room_new.twig', ['room_info' => $room_info]);
@@ -118,7 +117,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->post('/new', function() use ($db) {
 
 		$_SESSION['post'] = $_POST;
-		$room_data = [
+		$room_data        = [
 			'description' => @$_POST['description'],
 			'price'       => @$_POST['price'],
 			'size'        => @$_POST['size'],
@@ -130,7 +129,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'owner_id'    => @$_SESSION['user_id']
 		];
 
-        $errors = validate_room($room_data, $db->room);
+		$errors = validate_room($room_data, $db->room);
 
 		if ($errors) {
 
@@ -147,48 +146,12 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		if ($result) {
 			$room_id = $result->room_id;
-
-			// todo: edit path so it works
-            $uploadDirectory = 'home/roomhub/public_html/uploads/images/roomuploads';
-
-            $errors = []; // Store all foreseen and unforseen errors here
-
-            $fileExtensions = ['jpeg','jpg','png']; // Get all the file extensions
-
-            $fileName = $_FILES['fileToUpload']['name'];
-            $fileSize = $_FILES['fileToUpload']['size'];
-            $fileTmpName  = $_FILES['fileToUpload']['tmp_name'];
-            $fileType = $_FILES['fileToUpload']['type'];
-            $fileExtension = strtolower(end(explode('.',$fileName)));
-            $newfileName = 'room' . $room_id . $fileExtension;
-            $uploadPath = $uploadDirectory . basename($newfileName);
-
-
-            if (! in_array($fileExtension,$fileExtensions)) {
-                $errors[] = "This file extension is not allowed. Please upload a JPEG or PNG file";
-            }
-
-            if ($fileSize > 2000000) {
-                $errors[] = "This file is more than 2MB. Sorry, it has to be less than or equal to 2MB";
-            }
-
-            if (empty($errors)) {
-                $didUpload = move_uploaded_file($fileTmpName, $uploadPath);
-
-                if ($didUpload) {
-                    echo "The file " . basename($fileName) . " has been uploaded";
-                } else {
-                    echo "An error occurred somewhere. Try again or contact the admin";
-                }
-            } else {
-                foreach ($errors as $error) {
-                    echo $error . "These are the errors" . "\n";
-                }
-            }
-
-
-			$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
-			redirect("rooms/$room_id");
+			if (handle_file_upload($room_id)) {
+				$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
+				redirect("rooms/$room_id");
+			} else {
+				redirect("rooms/edit/$room_id");
+			}
 		} else {
 			redirect('rooms/new');
 		}
@@ -199,37 +162,40 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* POST for editing room */
 	$router->post('/edit/(\d+)', function($room_id) use ($db) {
-        $_SESSION['post'] = $_POST;
-	    $room_data = [
-	        'description' => $_POST['description'],
-            'price' => $_POST['price'],
-            'size' => $_POST['size'],
-            'type' => $_POST['type'],
-            'city' => $_POST['city'],
-            'zipcode' => $_POST['zipcode'],
-            'street_name' => $_POST['street_name'],
-            'number' => $_POST['number']
-            ];
-        pprint($room_data);
-        $errors = validate_room($room_data, $db->room);
+		$_SESSION['post'] = $_POST;
+		$room_data        = [
+			'description' => @$_POST['description'],
+			'price'       => @$_POST['price'],
+			'size'        => @$_POST['size'],
+			'type'        => @$_POST['type'],
+			'city'        => @$_POST['city'],
+			'zipcode'     => @$_POST['zipcode'],
+			'street_name' => @$_POST['street_name'],
+			'number'      => @$_POST['number']
+		];
+		$errors           = validate_room($room_data, $db->room);
 
-        if ($errors) {
-            // there are errors
-	        $_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
+		if ($errors) {
+			// there are errors
+			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
 
-            redirect("rooms/edit/$room_id");
-        };
-        $active_room = $db->room->get($room_id);
-        $db->room->patchEntity($active_room, $room_data);
+			redirect("rooms/edit/$room_id");
+		};
+		$active_room = $db->room->get($room_id);
+		$db->room->patchEntity($active_room, $room_data);
 
-        $result = safe_save($active_room, $db->room);
+		$result = safe_save($active_room, $db->room);
 
-        if ($result) {
-	        $_SESSION['feedback'] = ['message' => 'Room successfully updated!', 'state' => 'success'];
-	        redirect("rooms/$room_id");
-        } else {
-            redirect("rooms/edit/$room_id");
-        }
+		if ($result) {
+			if (handle_file_upload($room_id)) {
+				$_SESSION['feedback'] = ['message' => 'Room successfully updated!', 'state' => 'success'];
+				redirect("rooms/$room_id");
+			} else {
+				redirect("rooms/edit/$room_id");
+			}
+		} else {
+			redirect("rooms/edit/$room_id");
+		}
 	});
 
 });
@@ -265,7 +231,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$ctx = [
 			'role_default' => @$_SESSION['post']['role'] ?: strtolower(@$_GET['role'] ?: ''),
 			'account_info' => @$_SESSION['post'],
-			'birthdate' => @$_SESSION['post']['birthdate']
+			'birthdate'    => @$_SESSION['post']['birthdate']
 		];
 		echo $twig->render('account_form.twig', $ctx);
 	});
@@ -279,19 +245,19 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		// if the user has tried (but failed) to update
 		// then we use that info (+username from DB because that's missing from POST)
 		if (@$_SESSION['post']) {
-			$account_info = $_SESSION['post'];
+			$account_info             = $_SESSION['post'];
 			$account_info['username'] = $db_account_info['username'];
-			$birthdate = $account_info['birthdate'];
+			$birthdate                = $account_info['birthdate'];
 		} else {
 			$account_info = $db_account_info;
-			$birthdate = $db_account_info['birthdate'];
+			$birthdate    = $db_account_info['birthdate'];
 		}
 
 		$ctx = [
 			'account_info' => $account_info,
 			'role_default' => $account_info['role'],
-			'birthdate' => $birthdate,
-			'is_edit' => !isset($_SESSION['post']),
+			'birthdate'    => $birthdate,
+			'is_edit'      => !isset($_SESSION['post']),
 		];
 		echo $twig->render('account_form.twig', $ctx);
 	});
@@ -340,7 +306,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			redirect('account/login');
 		} else {
 
-			$_SESSION['user_id'] = $user['user_id'];
+			$_SESSION['user_id']  = $user['user_id'];
 			$_SESSION['feedback'] = ['message' => 'Logged in successfully!', 'state' => 'success'];
 			redirect('account');
 		}
@@ -383,7 +349,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$result = safe_save($current_user, $db->user);
 
 		if ($result) {
-			$_SESSION['user_id'] = $result->user_id;
+			$_SESSION['user_id']  = $result->user_id;
 			$_SESSION['feedback'] = ['message' => 'Account successfully updated!', 'state' => 'success'];
 			redirect('account');
 		} else {
@@ -428,7 +394,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$result = safe_save($new_user, $db->user);
 
 		if ($result) {
-			$_SESSION['user_id'] = $result->user_id;
+			$_SESSION['user_id']  = $result->user_id;
 			$_SESSION['feedback'] = ['message' => 'Account successfully created!', 'state' => 'success'];
 			redirect('account');
 		} else {

@@ -63,6 +63,14 @@ function load_templating($config) {
 			return $basepath . 'static/' . $relative_path;
 		}));
 
+
+	// link to an uploaded file using for example {{ uploads('rooms/room-1.jpg') }}
+	$twig->addFunction(new TwigFunction('uploads',
+		function($relative_path) use ($basepath) {
+			// load static files from base path
+			return $basepath . 'uploads/' . $relative_path;
+		}));
+
 	$twig->addFunction(new TwigFunction('base',
 		function() use ($basepath) {
 			// load static files from base path
@@ -134,6 +142,43 @@ function fix_phone($phone_number) {
 	}
 
 	return $phone_number;
+}
+
+
+
+
+
+function handle_file_upload($room_id){
+	// todo: edit path so it works
+	$uploadDirectory = 'home/roomhub/public_html/uploads/images/roomuploads';
+	$errors = []; // Store all foreseen and unforseen errors here
+	$fileExtensions = ['jpeg','jpg','png']; // Get all the file extensions
+	$fileName = $_FILES['fileToUpload']['name'];
+	$fileSize = $_FILES['fileToUpload']['size'];
+	$fileTmpName  = $_FILES['fileToUpload']['tmp_name'];
+	$fileType = $_FILES['fileToUpload']['type'];
+	$fileExtension = strtolower(end(explode('.',$fileName)));
+	$newfileName = 'room' . $room_id . $fileExtension;
+	$uploadPath = $uploadDirectory . basename($newfileName);
+	if (! in_array($fileExtension,$fileExtensions)) {
+		$errors[] = "This file extension is not allowed. Please upload a JPEG or PNG file";
+	}
+	if ($fileSize > 2000000) {
+		$errors[] = "This file is more than 2MB. Sorry, it has to be less than or equal to 2MB";
+	}
+	if (empty($errors)) {
+		$didUpload = move_uploaded_file($fileTmpName, $uploadPath);
+		if ($didUpload) {
+			echo "The file " . basename($fileName) . " has been uploaded";
+			return true;
+		} else {
+			echo "An error occurred somewhere. Try again or contact the admin";
+		}
+	} else {
+		foreach ($errors as $error) {
+			echo $error . "These are the errors" . "\n";
+		}
+	}
 }
 
 
