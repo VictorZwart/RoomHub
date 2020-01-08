@@ -149,7 +149,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			$room_id = $result->room_id;
 
 			// todo: edit path so it works
-            $uploadDirectory = 'home/roomhub/public_html/static/images/roomuploads';
+            $uploadDirectory = 'home/roomhub/public_html/uploads/images/roomuploads';
 
             $errors = []; // Store all foreseen and unforseen errors here
 
