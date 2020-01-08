@@ -1,9 +1,34 @@
 {% extends "generic.twig" %}
 
 {% block title %}Room Overview{% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/rooms.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
-    Alle rooms hier
+{#    just for styling, needs tobe created with php#}
 
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <ul>
         {% for room in all_rooms %}
             <li><a href="{{ url('rooms/' ~ room.room_id) }}">GOTO ROOM</a> {{ room }}</li>
