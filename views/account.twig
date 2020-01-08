@@ -9,9 +9,13 @@
         <div id="sidebar">
             <ul class="list-group">
                 <li class="list-group-item"><a href="{{ url('account/edit') }}">Change Settings</a></li>
-                <li class="list-group-item"><a href="{{ url('rooms') }}">My Rooms</a></li>
-                <li class="list-group-item"><a href="{{ url('rooms/new') }}">Add Room</a></li>
-                <li class="list-group-item"><a href={{ url('acount/logout') }}"">Log out</a></li>
+                {% if user.role == 'owner' %}
+                    <li class="list-group-item"><a href="{{ url('rooms?filter=mine') }}">My Rooms</a></li>
+                    <li class="list-group-item"><a href="{{ url('rooms/new') }}">Add Room</a></li>
+                {% else %}
+                    <li class="list-group-item"><a href="{{ url('rooms?filter=opt-in') }}">My Opt-Ins</a></li>
+                {% endif %}
+                <li class="list-group-item"><a href="{{ url('account/logout') }}">Log out</a></li>
             </ul>
         </div>
         {% autoescape %}
@@ -35,7 +39,7 @@
                     </tr>
                     <tr>
                         <th>Password</th>
-                        <td> ******** </td>
+                        <td> ********</td>
                     </tr>
                     <tr>
                         <th>Phone-number</th>
