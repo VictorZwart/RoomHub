@@ -1,0 +1,2 @@
+ALTER TABLE user
+    ADD picture VARCHAR(20) NULL;

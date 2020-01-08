@@ -147,12 +147,11 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		$new_room = $db->room->newEntity($room_data);
 
-
 		$result = safe_save($new_room, $db->room);
 
 		if ($result) {
 			$room_id = $result->room_id;
-			if (handle_file_upload($room_id)) {
+			if (handle_file_upload($room_id, $db)) {
 				$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
 				redirect("rooms/$room_id");
 			} else {
@@ -193,7 +192,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		$result = safe_save($active_room, $db->room);
 
 		if ($result) {
-			if (handle_file_upload($room_id)) {
+			if (handle_file_upload($room_id, $db)) {
 				$_SESSION['feedback'] = ['message' => 'Room successfully updated!', 'state' => 'success'];
 				redirect("rooms/$room_id");
 			} else {

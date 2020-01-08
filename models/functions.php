@@ -149,19 +149,20 @@ function fix_phone($phone_number) {
 	return $phone_number;
 }
 
-
-function handle_file_upload($room_id) {
-	// todo: edit path so it works
-	$uploadDirectory = 'home/roomhub/public_html/uploads/images/roomuploads';
+/**This function saves an image on the server and adds the pictures name to the database
+ * @param $room_id int id of the room it is saved to
+ * @param $db mixed connection to the database
+ * @return bool
+ */
+function handle_file_upload($room_id, $db) {
 	$errors          = []; // Store all foreseen and unforseen errors here
 	$fileExtensions  = ['jpeg', 'jpg', 'png']; // Get all the file extensions
 	$fileName        = $_FILES['fileToUpload']['name'];
 	$fileSize        = $_FILES['fileToUpload']['size'];
 	$fileTmpName     = $_FILES['fileToUpload']['tmp_name'];
-	$fileType        = $_FILES['fileToUpload']['type'];
 	$fileExtension   = strtolower(end(explode('.', $fileName)));
-	$newfileName     = 'room' . $room_id . $fileExtension;
-	$uploadPath      = $uploadDirectory . basename($newfileName);
+	$newfileName     = 'room' . $room_id . '.' . $fileExtension;
+	$uploadPath      = realpath('uploads/rooms/') . '/' . basename($newfileName);
 	if (!in_array($fileExtension, $fileExtensions)) {
 		$errors[] = "This file extension is not allowed. Please upload a JPEG or PNG file";
 	}
@@ -171,6 +172,14 @@ function handle_file_upload($room_id) {
 	if (empty($errors)) {
 		$didUpload = move_uploaded_file($fileTmpName, $uploadPath);
 		if ($didUpload) {
+		    $dbpic = [
+		        'picture' => $newfileName
+            ];
+            $active_room = $db->room->get($room_id);
+            $db->room->patchEntity($active_room, $dbpic);
+
+            safe_save($active_room, $db->room);
+
 			echo "The file " . basename($fileName) . " has been uploaded";
 
 			return true;
