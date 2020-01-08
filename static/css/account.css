@@ -1,5 +1,5 @@
 #account_homepage {
-    min-height: 50vh;
+    min-height: calc(100vh - 80px);
     width: 800px;
     margin: 0px auto 0px auto;
     background: white;
@@ -8,8 +8,7 @@
 }
 
 #sidebar{
-    display: flex;
-    justify-self: flex-end;
+    background-color: black;
 }
 
 #account_information{
@@ -38,6 +37,7 @@
     background: black;
     color: white;
     border: none;
+    border-bottom: #ffa31a 2px solid;
 }
 
 a {
@@ -52,5 +52,10 @@ a:hover {
     #account_homepage{
         flex-direction: column-reverse;
         width: 100vw;
+    }
+
+    .list-group-item{
+        display: flex;
+        justify-content: center;
     }
 }
