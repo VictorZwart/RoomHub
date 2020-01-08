@@ -145,22 +145,19 @@ function fix_phone($phone_number) {
 }
 
 
-
-
-
-function handle_file_upload($room_id){
+function handle_file_upload($room_id) {
 	// todo: edit path so it works
 	$uploadDirectory = 'home/roomhub/public_html/uploads/images/roomuploads';
-	$errors = []; // Store all foreseen and unforseen errors here
-	$fileExtensions = ['jpeg','jpg','png']; // Get all the file extensions
-	$fileName = $_FILES['fileToUpload']['name'];
-	$fileSize = $_FILES['fileToUpload']['size'];
-	$fileTmpName  = $_FILES['fileToUpload']['tmp_name'];
-	$fileType = $_FILES['fileToUpload']['type'];
-	$fileExtension = strtolower(end(explode('.',$fileName)));
-	$newfileName = 'room' . $room_id . $fileExtension;
-	$uploadPath = $uploadDirectory . basename($newfileName);
-	if (! in_array($fileExtension,$fileExtensions)) {
+	$errors          = []; // Store all foreseen and unforseen errors here
+	$fileExtensions  = ['jpeg', 'jpg', 'png']; // Get all the file extensions
+	$fileName        = $_FILES['fileToUpload']['name'];
+	$fileSize        = $_FILES['fileToUpload']['size'];
+	$fileTmpName     = $_FILES['fileToUpload']['tmp_name'];
+	$fileType        = $_FILES['fileToUpload']['type'];
+	$fileExtension   = strtolower(end(explode('.', $fileName)));
+	$newfileName     = 'room' . $room_id . $fileExtension;
+	$uploadPath      = $uploadDirectory . basename($newfileName);
+	if (!in_array($fileExtension, $fileExtensions)) {
 		$errors[] = "This file extension is not allowed. Please upload a JPEG or PNG file";
 	}
 	if ($fileSize > 2000000) {
@@ -170,6 +167,7 @@ function handle_file_upload($room_id){
 		$didUpload = move_uploaded_file($fileTmpName, $uploadPath);
 		if ($didUpload) {
 			echo "The file " . basename($fileName) . " has been uploaded";
+
 			return true;
 		} else {
 			echo "An error occurred somewhere. Try again or contact the admin";
@@ -179,6 +177,8 @@ function handle_file_upload($room_id){
 			echo $error . "These are the errors" . "\n";
 		}
 	}
+
+	return false;
 }
 
 
