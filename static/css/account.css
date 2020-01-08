@@ -40,6 +40,14 @@
     border: none;
 }
 
+a {
+    color: white;
+}
+
+a:hover {
+    color: #ffa31a;
+}
+
 @media(max-width: 800px){
     #account_homepage{
         flex-direction: column-reverse;
