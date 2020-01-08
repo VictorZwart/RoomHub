@@ -1,0 +1,36 @@
+<!-- Position it -->
+<div style="position: absolute; top: 20px; right: 20px;">
+
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
+        <div class="toast-header">
+            {% if feedback.state == 'success' %}
+                <i class="fad fa-thumbs-up"
+                   style="
+                   --fa-primary-color: black;
+                   --fa-secondary-color: var(--roomhub-orange);
+                    "></i>
+                <strong class="mr-auto">&nbsp;Success!</strong>
+            {% else %}
+                <i class="fad fa-exclamation-triangle"
+                   style="
+                   --fa-primary-color: black;
+                   --fa-secondary-color: var(--roomhub-orange);
+                    "></i>
+                <strong class="mr-auto">&nbsp;Warning!</strong>
+            {% endif %}
+            <small class="text-muted">now</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            {{ feedback.message }}
+        </div>
+    </div>
+
+</div>
+<script>
+    $(function () {
+        $('.toast').toast('show')
+    })
+</script>

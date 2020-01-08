@@ -135,7 +135,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		if ($errors) {
 
-			$_SESSION['feedback'] = ['message' => $errors];
+			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
 
 			// there are errors
 			redirect('rooms/new');
@@ -148,6 +148,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		if ($result) {
 			$room_id = $result->room_id;
+			$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
 			redirect("rooms/$room_id");
 		} else {
 			redirect('rooms/new');
@@ -175,10 +176,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
         if ($errors) {
             // there are errors
-            pprint($errors);
-            $_SESSION['feedback'] = [
-                'message' => $errors
-            ];
+	        $_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
+
             redirect("rooms/edit/$room_id");
         };
         $active_room = $db->room->get($room_id);
@@ -187,7 +186,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
         $result = safe_save($active_room, $db->room);
 
         if ($result) {
-            redirect("rooms/$room_id");
+	        $_SESSION['feedback'] = ['message' => 'Room successfully updated!', 'state' => 'success'];
+	        redirect("rooms/$room_id");
         } else {
             redirect("rooms/edit/$room_id");
         }
@@ -208,6 +208,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$user_info = get_info($db->user, 'username', $username);
 
 		if (!$user_info) {
+			$_SESSION['feedback'] = ['message' => 'This user does not exist!'];
+
 			redirect('account');
 		}
 
@@ -222,10 +224,11 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	$router->get('/signup', function() use ($db, $twig) {
 		require_anonymous();
 		$ctx = [
-			'role_default' => strtolower(@$_GET['role'] ?: ''),
+			'role_default' => @$_SESSION['post']['role'] ?: strtolower(@$_GET['role'] ?: ''),
 			'account_info' => @$_SESSION['post'],
+			'birthdate' => @$_SESSION['post']['birthdate']
 		];
-		echo $twig->render('account_new.twig', $ctx);
+		echo $twig->render('account_form.twig', $ctx);
 	});
 
 	/* GET for editing account */
@@ -239,15 +242,19 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		if (@$_SESSION['post']) {
 			$account_info = $_SESSION['post'];
 			$account_info['username'] = $db_account_info['username'];
+			$birthdate = $account_info['birthdate'];
 		} else {
 			$account_info = $db_account_info;
+			$birthdate = $db_account_info['birthdate'];
 		}
 
 		$ctx = [
 			'account_info' => $account_info,
-			'role_default' => $account_info['role']
+			'role_default' => $account_info['role'],
+			'birthdate' => $birthdate,
+			'is_edit' => !isset($_SESSION['post']),
 		];
-		echo $twig->render('account_new.twig', $ctx);
+		echo $twig->render('account_form.twig', $ctx);
 	});
 
 	/* GET for login page */
@@ -261,6 +268,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* GET for logging out */
 	$router->get('/logout', function() {
 		session_destroy();
+		session_start();
+		$_SESSION['feedback'] = ['message' => 'Logged out successfully!!', 'state' => 'success'];
 		redirect('');
 	});
 
@@ -293,7 +302,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		} else {
 
 			$_SESSION['user_id'] = $user['user_id'];
-
+			$_SESSION['feedback'] = ['message' => 'Logged in successfully!', 'state' => 'success'];
 			redirect('account');
 		}
 	});
@@ -324,9 +333,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 		if ($errors) {
 			// there are errors
-			$_SESSION['feedback'] = [
-				'message' => $errors
-			];
+			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
+
 			redirect('account/edit');
 		};
 
@@ -337,6 +345,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 		if ($result) {
 			$_SESSION['user_id'] = $result->user_id;
+			$_SESSION['feedback'] = ['message' => 'Account successfully updated!', 'state' => 'success'];
 			redirect('account');
 		} else {
 			redirect('account/edit');
@@ -355,9 +364,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 		if ($errors) {
 			// there are errors
-			$_SESSION['feedback'] = [
-				'message' => $errors
-			];
+			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
+
 			redirect('account/signup');
 		};
 
@@ -367,7 +375,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 			'first_name'   => @$_POST['first_name'],
 			'last_name'    => @$_POST['last_name'],
 			'email'        => @$_POST['email'],
-			'phone_number' => fix_phone(@$_POST['phonenumber']),
+			'phone_number' => fix_phone(@$_POST['phone_number']),
 			'language'     => @$_POST['language'],
 			'birthdate'    => @$_POST['birthdate'],
 			'biography'    => @$_POST['biography'],
@@ -382,6 +390,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 		if ($result) {
 			$_SESSION['user_id'] = $result->user_id;
+			$_SESSION['feedback'] = ['message' => 'Account successfully created!', 'state' => 'success'];
 			redirect('account');
 		} else {
 			redirect('account/signup');

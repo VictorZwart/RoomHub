@@ -1,17 +1,21 @@
 {% extends "generic.twig" %}
 
-{% block title %}Sign Up{% endblock %}
+    {% if is_edit %}
+        {% set title = "Account" %}
+    {% else %}
+        {% set title = "Register" %}
+    {% endif %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
 {% block page_stylesheet %}
-    <link rel="stylesheet" href="{{ static('css/account_new.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ static('css/account_form.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
     <div id="new_account_form">
         <h1>
-            {% if not is_edit %}
-                Register
-            {% else %}
-                Edit Your Account
-            {% endif %}
+            {{ title }}
         </h1>
         <form action="" method="POST">
             <div class="form-group">
@@ -35,7 +39,7 @@
                 <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" name="email"
                        value="{{ account_info.email }}" required>
             </div>
-            {% if not is_edit %}
+            {% if not (is_edit or user.password) %}
 
                 <div class="form-group">
                     <label for="inputPassword">Password</label>

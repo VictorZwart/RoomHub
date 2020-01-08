@@ -127,9 +127,9 @@ class DB {
 function safe_save($object, $table) {
 	if ($object->getErrors()) {
 		// Entity failed validation.
-		$_SESSION['feedback'] = [
-			'message' => $object->getErrors()
-		];
+
+		$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $object->getErrors()];
+
 
 		return false;
 	}
