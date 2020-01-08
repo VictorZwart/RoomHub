@@ -14,7 +14,7 @@ use Cake\Validation\Validator;
 function _validate_required_fields($validator, $schema, $skip = []) {
 	$required_fields = [];
 
-	foreach($schema->columns() as $column_name) {
+	foreach ($schema->columns() as $column_name) {
 		$column = $schema->getColumn($column_name);
 		if (!$column['null'] && !@$column['autoIncrement'] && !in_array($column_name, $skip)) {
 			$required_fields[] = $column_name;
@@ -24,7 +24,7 @@ function _validate_required_fields($validator, $schema, $skip = []) {
 
 
 	if ($required_fields) {
-		foreach($required_fields as $field) {
+		foreach ($required_fields as $field) {
 			$validator->requirePresence($field)
 			          ->notEmptyString($field, "This field is required");
 		}
@@ -102,34 +102,37 @@ function validate_user($post, $table, $new = true) {
 		]);
 
 	if ($new) {
-		$validator->add('username', 'unique username', [
-			// username must not exist!
-			'rule' => function() use ($post, $table) {
+		$validator
+			->add('username', 'unique username', [
+				// username must not exist!
+				'rule' => function() use ($post, $table) {
 
-				return unique($table, 'username', $post['username']);
+					return unique($table, 'username', $post['username']);
 
-			}
-		])
-		          ->add('username', 'valid username', [
-			          // username can only have letters and numbers
-			          'rule'    => function() use ($post) {
-				          return (bool) preg_match('/^\w+$/', $post['username']);
-			          },
-			          'message' => 'Invalid username, please use only alphanumerical characters'
-		          ])
-		          ->add('email', 'unique email', [
-			          // email must not exist
-			          'rule' => function() use ($post, $table) {
-				          return unique($table, 'email', $post['email']);
-			          }
-		          ])
-		          ->add('password', 'matching password and validation', [
-			          // password must match validation
-			          'rule'    => function() use ($post) {
-				          return $post['password'] == $post['password2'];
-			          },
-			          'message' => 'The password does not match'
-		          ]);
+				}
+			])
+			->add('username', 'valid username', [
+				// username can only have letters and numbers
+				'rule'    => function() use ($post) {
+					return (bool) preg_match('/^\w+$/', $post['username']);
+				},
+				'message' => 'Invalid username, please use only alphanumerical characters'
+			])
+			->add('email', 'unique email', [
+				// email must not exist
+				'rule' => function() use ($post, $table) {
+					return unique($table, 'email', $post['email']);
+				}
+			])
+			->add('password', 'matching password and validation', [
+				// password must match validation
+				'rule'    => function() use ($post) {
+					return isset($post['password']) and
+					       isset($post['password2']) and
+					       $post['password'] == $post['password2'];
+				},
+				'message' => 'The password does not match'
+			]);
 
 	}
 
@@ -145,13 +148,12 @@ function validate_user($post, $table, $new = true) {
  *
  * @return array of errors
  */
-function validate_room($post, $table, $new=false) {
+function validate_room($post, $table, $new = false) {
 	$validator = new Validator();
 
-	if(!$new){
+	if (!$new) {
 		$skip = ['owner_id'];
-	}
-	else {
+	} else {
 		$skip = [];
 	}
 

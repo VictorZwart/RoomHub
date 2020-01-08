@@ -45,12 +45,17 @@ function load_templating($config) {
 
 	$db = $_SERVER['db'];
 
+	$current_user = [];
 
 	if (isset($_SESSION['user_id'])) {
-		$current_user             = get_info($db->user, 'user_id', $_SESSION['user_id']);
-		$current_user['loggedin'] = true;
-	} else {
-		$current_user = [];
+		$current_user = get_info($db->user, 'user_id', $_SESSION['user_id']);
+		if (!$current_user) {
+			// user was removed, give them a new session
+			session_destroy();
+			session_start();
+		} else {
+			$current_user['loggedin'] = true;
+		}
 	}
 
 	$twig->addGlobal('user', $current_user);

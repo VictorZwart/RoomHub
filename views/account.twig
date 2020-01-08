@@ -21,7 +21,7 @@
         {% autoescape %}
             <div id="account_information">
                 <h1>Account Information</h1>
-                {% if user.role == 'tennant' %}
+                {% if user.role == 'tenant' %}
                     {% set role_img_loc = 'images/placeholder_tenant.png' %}
                 {% else %}
                     {% set role_img_loc = 'images/placeholder_owner.png' %}

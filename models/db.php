@@ -139,7 +139,8 @@ function safe_save($object, $table) {
 		return $table->save($object);
 	} catch(PDOException $e) {
 		$_SESSION['feedback'] = [
-			'message' => 'Something went wrong.'
+			'message' => 'Something went wrong.',
+			'errors' => $e->getMessage(),
 		];
 
 		return false;

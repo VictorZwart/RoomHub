@@ -15,7 +15,7 @@ CREATE TABLE user
     occupation   varchar(255)       not null,
     role         varchar(10)        not null,
 
-    CHECK (role IN ('tennant', 'owner'))
+    CHECK (role IN ('tenant', 'owner'))
 );
 
 CREATE TABLE room
