@@ -17,7 +17,7 @@
         <h1>
             {{ title }}
         </h1>
-        <form action="" method="POST">
+        <form action="" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="inputUsername">Username</label>
                 <input type="text" class="form-control" id="inputUsername"
@@ -102,7 +102,10 @@
                     <option value="tenant" {{ role_default == 'tenant' ? 'selected' : '' }}>Tenant</option>
                     <option value="owner" {{ role_default == 'owner' ? 'selected' : '' }}>Owner</option>
                 </select>
-
+                <div class="form-group">
+                    <label for="images">Select image to upload:</label>
+                    <input type="file" name="fileToUpload" id="fileToUpload" class="form-control-file">
+                </div>
             </div>
             <button type="submit" class="btn btn-dark">
                 {% if not is_edit %}

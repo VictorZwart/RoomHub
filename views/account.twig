@@ -26,11 +26,18 @@
         {% autoescape %}
             <div id="account_information">
                 <h1>Account Information</h1>
-                {% if user.role == 'tenant' %}
-                    {% set role_img_loc = 'images/placeholder_tenant.png' %}
+
+                {% if user.picture %}
+                    <img id='user_picture' src="{{ uploads('user/' ~ user.picture) }}"
+                         alt="The picture of the user">
                 {% else %}
-                    {% set role_img_loc = 'images/placeholder_owner.png' %}
+                    {% if user.role == 'tenant' %}
+                        {% set role_img_loc = 'images/placeholder_tenant.png' %}
+                    {% else %}
+                        {% set role_img_loc = 'images/placeholder_owner.png' %}
+                    {% endif %}>
                 {% endif %}
+
                 <img id='profile_picture' src="{{ static(role_img_loc) }}"
                      alt="The profile picture of the account">
                 <h5><b>{{ user.first_name }} {{ user.last_name }}</b></h5>

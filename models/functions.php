@@ -150,19 +150,19 @@ function fix_phone($phone_number) {
 }
 
 /**This function saves an image on the server and adds the pictures name to the database
- * @param $room_id int id of the room it is saved to
+ * @param $id int id of the room it is saved to
  * @param $db mixed connection to the database
  * @return bool
  */
-function handle_file_upload($room_id, $db) {
+function handle_file_upload($id, $db, $dbname) {
 	$errors          = []; // Store all foreseen and unforseen errors here
 	$fileExtensions  = ['jpeg', 'jpg', 'png']; // Get all the file extensions
 	$fileName        = $_FILES['fileToUpload']['name'];
 	$fileSize        = $_FILES['fileToUpload']['size'];
 	$fileTmpName     = $_FILES['fileToUpload']['tmp_name'];
 	$fileExtension   = strtolower(end(explode('.', $fileName)));
-	$newfileName     = 'room' . $room_id . '.' . $fileExtension;
-	$uploadPath      = realpath('uploads/rooms/') . '/' . basename($newfileName);
+	$newfileName     = $dbname . $id . '.' . $fileExtension;
+	$uploadPath      = realpath('uploads/' . $dbname) . '/' . basename($newfileName);
 	if (!in_array($fileExtension, $fileExtensions)) {
 		$errors[] = "This file extension is not allowed. Please upload a JPEG or PNG file";
 	}
@@ -175,10 +175,10 @@ function handle_file_upload($room_id, $db) {
 		    $dbpic = [
 		        'picture' => $newfileName
             ];
-            $active_room = $db->room->get($room_id);
-            $db->room->patchEntity($active_room, $dbpic);
+            $active = $db->$dbname->get($id);
+            $db->room->patchEntity($active, $dbpic);
 
-            safe_save($active_room, $db->room);
+            safe_save($active, $db->$dbname);
 
 			echo "The file " . basename($fileName) . " has been uploaded";
 

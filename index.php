@@ -151,7 +151,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		if ($result) {
 			$room_id = $result->room_id;
-			if (handle_file_upload($room_id, $db)) {
+			if (handle_file_upload($room_id, $db, 'room')) {
 				$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
 				redirect("rooms/$room_id");
 			} else {
@@ -192,7 +192,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		$result = safe_save($active_room, $db->room);
 
 		if ($result) {
-			if (handle_file_upload($room_id, $db)) {
+			if (handle_file_upload($room_id, $db, 'room')) {
 				$_SESSION['feedback'] = ['message' => 'Room successfully updated!', 'state' => 'success'];
 				redirect("rooms/$room_id");
 			} else {
@@ -355,12 +355,16 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 		if ($result) {
 			$_SESSION['user_id']  = $result->user_id;
-			$_SESSION['feedback'] = ['message' => 'Account successfully updated!', 'state' => 'success'];
-			redirect('account');
+			if(handle_file_upload($_SESSION['user_id'], $db, 'user')) {
+                $_SESSION['feedback'] = ['message' => 'Account successfully updated!', 'state' => 'success'];
+                redirect('account');
+            }
+			else{
+                redirect('account/edit');
+            }
 		} else {
 			redirect('account/edit');
 		}
-
 
 	});
 
@@ -399,9 +403,14 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		$result = safe_save($new_user, $db->user);
 
 		if ($result) {
-			$_SESSION['user_id']  = $result->user_id;
-			$_SESSION['feedback'] = ['message' => 'Account successfully created!', 'state' => 'success'];
-			redirect('account');
+			$_SESSION['user_id']  = $result->user_id;$_SESSION['user_id']  = $result->user_id;
+            if(handle_file_upload($_SESSION['user_id'], $db, 'user')) {
+                $_SESSION['feedback'] = ['message' => 'Account successfully created!', 'state' => 'success'];
+                redirect('account');
+            }
+            else{
+                redirect('account/signup');
+            }
 		} else {
 			redirect('account/signup');
 		}
