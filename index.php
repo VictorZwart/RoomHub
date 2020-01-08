@@ -129,23 +129,40 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'number'      => @$_POST['number'],
 			'owner_id'    => @$_SESSION['user_id']
 		];
-		pprint($_FILES);
 
-        $uploadDirectory = '/roomuploads/';
+        $errors = validate_room($room_data, $db->room);
 
-        $errors = []; // Store all foreseen and unforseen errors here
+		if ($errors) {
 
-        $fileExtensions = ['jpeg','jpg','png']; // Get all the file extensions
+			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
 
-        $fileName = $_FILES['fileToUpload']['name'];
-        $fileSize = $_FILES['fileToUpload']['size'];
-        $fileTmpName  = $_FILES['fileToUpload']['tmp_name'];
-        $fileType = $_FILES['fileToUpload']['type'];
-        $fileExtension = strtolower(end(explode('.',$fileName)));
+			// there are errors
+			redirect('rooms/new');
+		};
 
-        $uploadPath = $uploadDirectory . basename($fileName);
+		$new_room = $db->room->newEntity($room_data);
 
-        if (isset($_POST['submit'])) {
+
+		$result = safe_save($new_room, $db->room);
+
+		if ($result) {
+			$room_id = $result->room_id;
+
+			// todo: edit path so it works
+            $uploadDirectory = 'home/roomhub/public_html/uploads/images/roomuploads';
+
+            $errors = []; // Store all foreseen and unforseen errors here
+
+            $fileExtensions = ['jpeg','jpg','png']; // Get all the file extensions
+
+            $fileName = $_FILES['fileToUpload']['name'];
+            $fileSize = $_FILES['fileToUpload']['size'];
+            $fileTmpName  = $_FILES['fileToUpload']['tmp_name'];
+            $fileType = $_FILES['fileToUpload']['type'];
+            $fileExtension = strtolower(end(explode('.',$fileName)));
+            $newfileName = 'room' . $room_id . $fileExtension;
+            $uploadPath = $uploadDirectory . basename($newfileName);
+
 
             if (! in_array($fileExtension,$fileExtensions)) {
                 $errors[] = "This file extension is not allowed. Please upload a JPEG or PNG file";
@@ -168,25 +185,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
                     echo $error . "These are the errors" . "\n";
                 }
             }
-        }
-
-        $errors = validate_room($room_data, $db->room);
-
-		if ($errors) {
-
-			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
-
-			// there are errors
-			redirect('rooms/new');
-		};
-
-		$new_room = $db->room->newEntity($room_data);
 
 
-		$result = safe_save($new_room, $db->room);
-
-		if ($result) {
-			$room_id = $result->room_id;
 			$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
 			redirect("rooms/$room_id");
 		} else {
