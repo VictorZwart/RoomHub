@@ -19,5 +19,9 @@
     </a>
     <h3 class="outro">Not your first time visiting? Log in directly using the button above!</h3>
     <h2 class="rooms">We currently have {{ availablerooms }} rooms available!</h2>
+    <a href="{{ url('rooms') }}">
+        <button class="btn btn-xlarge btn-dark owner" type="button" >See all available rooms!</button>
+    </a>
+
 {% endblock %}
 
