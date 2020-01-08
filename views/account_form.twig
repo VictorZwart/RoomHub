@@ -1,28 +1,35 @@
 {% extends "generic.twig" %}
 
-{% block title %}Sign Up{% endblock %}
+    {% if is_edit %}
+        {% set title = "Account" %}
+    {% else %}
+        {% set title = "Register" %}
+    {% endif %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
 {% block page_stylesheet %}
-    <link rel="stylesheet" href="{{ static('css/account_new.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ static('css/account_form.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
     <div id="new_account_form">
         <h1>
-            {% if not account_info %}
-                Register
-            {% else %}
-                Edit Your Account
-            {% endif %}
+            {{ title }}
         </h1>
         <form action="" method="POST">
             <div class="form-group">
                 <label for="inputUsername">Username</label>
                 <input type="text" class="form-control" id="inputUsername"
-                        {% if account_info %}
+                        {% if is_edit and account_info.username %}
                             placeholder="{{ account_info.username }}"
                             disabled
                         {% else %}
                             placeholder="janjansen3"
                             name="username"
+                        {% endif %}
+                        {% if not is_edit and account_info.username %}
+                            value="{{ account_info.username }}"
                         {% endif %}
                         {{ account_info.username }}
                        required>
@@ -32,7 +39,7 @@
                 <input type="text" class="form-control" id="inputEmail" placeholder="example@example.com" name="email"
                        value="{{ account_info.email }}" required>
             </div>
-            {% if not account_info %}
+            {% if not (is_edit or user.password) %}
 
                 <div class="form-group">
                     <label for="inputPassword">Password</label>
@@ -76,7 +83,7 @@
                 <label for="inputBirthdate">Birthdate</label>
 
                 <input type="date" class="form-control" id="inputBirthdate" placeholder="DD/MM/YYYY" name="birthdate"
-                       value="{{ account_info.birthdate.date|date('Y-m-d') }}"
+                       value="{{ birthdate|date('Y-m-d') }}"
                        required>
             </div>
             <div class="form-group">
@@ -99,7 +106,7 @@
 
             </div>
             <button type="submit" class="btn btn-dark">
-                {% if not account_info %}
+                {% if not is_edit %}
                     Register now
                 {% else %}
                     Save

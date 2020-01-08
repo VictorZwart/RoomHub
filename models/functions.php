@@ -153,12 +153,14 @@ function redirect($to) {
 
 function require_login() {
 	if (!isset($_SESSION['user_id'])) {
+		$_SESSION['feedback'] = ['message' => 'Please log-in first!'];
 		redirect('account/login');
 	}
 }
 
 function require_anonymous($fallback = 'account') {
 	if (isset($_SESSION['user_id'])) {
+		$_SESSION['feedback'] = ['message' => 'You are already logged in!'];
 		redirect($fallback);
 	}
 }

@@ -26,16 +26,9 @@
 }
 
 .owner {
-    margin-right: 20px;
+    margin-left: 100px;
 }
 .rooms {
     padding-top: 80px;
     font-weight: bold;
-}
-
-@media only screen and (max-width: 300px) {
-    .owner {
-        display: block;
-        margin: 0;
-    }
 }
