@@ -12,9 +12,9 @@
             <div class="card">
                 <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
                 <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <h5 class="card-title">Location</h5>
+                    <p class="card-text">More details provided in the room description by the tenant.</p>
+                    <a href="#"><button class="square_button">More details</button></a>
                 </div>
             </div>
         </div>
@@ -22,13 +22,15 @@
             <div class="card">
                 <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
                 <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <h5 class="card-title">Location</h5>
+                    <p class="card-text">More details provided in the room description by the tenant.</p>
+                    <a href="#"><button class="square_button">More details</button></a>
                 </div>
             </div>
         </div>
     </div>
+    {#    just for styling, needs tobe created with php#}
+
     <ul>
         {% for room in all_rooms %}
             <li><a href="{{ url('rooms/' ~ room.room_id) }}">GOTO ROOM</a> {{ room }}</li>
