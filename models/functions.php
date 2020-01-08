@@ -149,10 +149,12 @@ function fix_phone($phone_number) {
 	return $phone_number;
 }
 
-/**This function saves an image on the server and adds the pictures name to the database
- * @param $id int id of the room it is saved to
+/**Takes the db name and the db and the id and then saves the picture to the database
+ * with a name consisting of the dbname and the id
+ * @param $id int an id for either room or user
  * @param $db mixed connection to the database
- * @return bool
+ * @param $dbname string either 'user' or 'room'
+ * @return bool whether it succeeded
  */
 function handle_file_upload($id, $db, $dbname) {
 	$errors          = []; // Store all foreseen and unforseen errors here
