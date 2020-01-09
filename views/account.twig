@@ -35,11 +35,14 @@
                         {% set role_img_loc = 'images/placeholder_tenant.png' %}
                     {% else %}
                         {% set role_img_loc = 'images/placeholder_owner.png' %}
-                    {% endif %}>
+                    {% endif %}
+
+                    <img id='profile_picture' src="{{ static(role_img_loc) }}"
+                         alt="The profile picture of the account">
+
                 {% endif %}
 
-                <img id='profile_picture' src="{{ static(role_img_loc) }}"
-                     alt="The profile picture of the account">
+
                 <h5><b>{{ user.first_name }} {{ user.last_name }}</b></h5>
                 <p><b>{{ user.role }}</b></p>
                 <p><b>Biography</b></p>

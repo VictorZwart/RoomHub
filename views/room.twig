@@ -5,7 +5,7 @@
     Hier specifieke room info<br/>
     <!--todo laat de foto zien van de kamer. TODO: get from DB -->
     {% if room.picture %}
-        <img id='room_picture' src="{{ uploads('rooms/' ~ room.picture) }}"
+        <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
              alt="The picture of the room">
     {% else %}
         <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"

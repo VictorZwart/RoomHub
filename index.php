@@ -155,8 +155,6 @@ $router->mount('/rooms', function () use ($router, $db, $twig) {
                 $_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
                 redirect("rooms/$room_id");
             } else {
-                $_SESSION['feedback'] =
-                    ['message' => 'Your input was saved but you did not add a picture!', 'state' => 'warning'];
                 redirect("rooms/$room_id");
             }
         } else {
@@ -198,9 +196,7 @@ $router->mount('/rooms', function () use ($router, $db, $twig) {
                 $_SESSION['feedback'] = ['message' => 'Room successfully updated!', 'state' => 'success'];
                 redirect("rooms/$room_id");
             } else {
-                $_SESSION['feedback'] =
-                    ['message' => 'Room successfully updated but you have not uploaded a picture!', 'state' => 'warning'];
-                redirect("rooms/$room_id");
+                redirect("rooms/edit/$room_id");
             }
         } else {
             redirect("rooms/edit/$room_id");
@@ -363,10 +359,7 @@ $router->mount('/account', function () use ($router, $db, $twig) {
                 $_SESSION['feedback'] = ['message' => 'Account successfully updated!', 'state' => 'success'];
                 redirect('account');
             } else {
-                $_SESSION['feedback'] =
-                    ['message' => 'Account successfully updated but you did not upload a profile picture!',
-                        'state' => 'warning'];
-                redirect('account');
+                redirect('account/edit');
             }
         } else {
             redirect('account/edit');
@@ -415,10 +408,7 @@ $router->mount('/account', function () use ($router, $db, $twig) {
                 $_SESSION['feedback'] = ['message' => 'Account successfully created!', 'state' => 'success'];
                 redirect('account');
             } else {
-                $_SESSION['feedback'] =
-                    ['message' => 'Account successfully created but you did not add a profile picture!',
-                        'state' => 'warning'];
-                redirect('account');
+                redirect('account/edit');
             }
         } else {
             redirect('account/signup');

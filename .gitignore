@@ -3,3 +3,4 @@ vendor
 composer.phar
 config.ini
 config.prod.ini
+uploads

@@ -151,22 +151,38 @@ function fix_phone($phone_number) {
 
 /**Takes the db name and the db and the id and then saves the picture to the database
  * with a name consisting of the dbname and the id
+ *
  * @param $id int an id for either room or user
  * @param $db mixed connection to the database
  * @param $dbname string either 'user' or 'room'
+ *
  * @return bool whether it succeeded
  */
 function handle_file_upload($id, $db, $dbname) {
-	$errors          = []; // Store all foreseen and unforseen errors here
-	$fileExtensions  = ['jpeg', 'jpg', 'png']; // Get all the file extensions
-	$fileName        = $_FILES['fileToUpload']['name'];
-	$fileSize        = $_FILES['fileToUpload']['size'];
-	$fileTmpName     = $_FILES['fileToUpload']['tmp_name'];
-	$fileExtension   = strtolower(end(explode('.', $fileName)));
-	$newfileName     = $dbname . $id . '.' . $fileExtension;
-	$uploadPath      = realpath('uploads/' . $dbname) . '/' . basename($newfileName);
+	$errors         = []; // Store all foreseen and unforseen errors here
+	$fileExtensions = ['jpeg', 'jpg', 'png']; // Get all the file extensions
+	$fileName       = $_FILES['fileToUpload']['name'];
+	$fileSize       = $_FILES['fileToUpload']['size'];
+	$fileTmpName    = $_FILES['fileToUpload']['tmp_name'];
+
+	if (!$fileTmpName) {
+		// no file was uploaded
+		return true;
+	}
+
+
+	$fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+	$newfileName   = $dbname . $id . '.' . $fileExtension;
+	$uploadFolder  = 'uploads/' . $dbname;
+
+	if (!file_exists($uploadFolder)) {
+		mkdir($uploadFolder, 0777, true);
+	}
+
+	$uploadPath = realpath($uploadFolder) . '/' . basename($newfileName);
+
 	if (!in_array($fileExtension, $fileExtensions)) {
-		$errors[] = "This file extension is not allowed. Please upload a JPEG or PNG file";
+		$errors[] = "This file extension is not allowed. Please upload a JPG or PNG file";
 	}
 	if ($fileSize > 2000000) {
 		$errors[] = "This file is more than 2MB. Sorry, it has to be less than or equal to 2MB";
@@ -174,24 +190,23 @@ function handle_file_upload($id, $db, $dbname) {
 	if (empty($errors)) {
 		$didUpload = move_uploaded_file($fileTmpName, $uploadPath);
 		if ($didUpload) {
-		    $dbpic = [
-		        'picture' => $newfileName
-            ];
-            $active = $db->$dbname->get($id);
-            $db->room->patchEntity($active, $dbpic);
+			$dbpic  = [
+				'picture' => $newfileName
+			];
+			$active = $db->$dbname->get($id);
+			$db->$dbname->patchEntity($active, $dbpic);
 
-            safe_save($active, $db->$dbname);
-
-			echo "The file " . basename($fileName) . " has been uploaded";
+			safe_save($active, $db->$dbname);
 
 			return true;
 		} else {
-			echo "An error occurred somewhere. Try again or contact the admin";
+			$_SESSION['feedback'] = ['message' => "Something went wrong uploading your picture."];
 		}
 	} else {
-		foreach ($errors as $error) {
-			echo $error . "These are the errors" . "\n";
-		}
+		$_SESSION['feedback'] = [
+			'message' => "Something went wrong uploading your picture.",
+			'errors'  => $errors
+		];
 	}
 
 	return false;
