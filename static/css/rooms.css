@@ -1,21 +1,45 @@
-#content {
+#rooms_overview {
     max-width: 80%;
     text-align: center;
     margin: 0 auto;
     padding-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.card{
+    margin: 10px;
+    flex: 0 1 23%;
 }
 
 .square_button {
+    border: 3px solid black;
     background-color: black;
     color: white;
     padding: 14px 20px;
     margin-top: 20px;
-    border: none;
     cursor: pointer;
     width: 50%;
 }
 
 .square_button:hover {
-    border: 3px solid black;
+    font-weight: bold;
+    color: black;
     background-color: var(--roomhub-orange);
+}
+
+@media(max-width: 1600px){
+    .card{
+        flex: 0 1 calc(33% - 1.5em);
+    }
+}
+@media(max-width: 1200px){
+    .card{
+        flex: 0 1 45%;
+    }
+}
+@media(max-width: 800px){
+    .card{
+        flex: 0 1 100%;
+    }
 }

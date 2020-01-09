@@ -28,7 +28,7 @@
                 <h1>Account Information</h1>
 
                 {% if user.picture %}
-                    <img id='user_picture' src="{{ uploads('user/' ~ user.picture) }}"
+                    <img id='profile_picture' src="{{ uploads('user/' ~ user.picture) }}"
                          alt="The picture of the user">
                 {% else %}
                     {% if user.role == 'tenant' %}

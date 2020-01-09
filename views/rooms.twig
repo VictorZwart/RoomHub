@@ -7,27 +7,24 @@
 {% block content %}
 {#    just for styling, needs to be created with php#}
 
-    <div class="row">
-        <div class="col-sm-6">
+    <div id="rooms_overview">
+        {% for room in all_rooms %}
+            {%  autoescape %}
             <div class="card">
-                <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
+                {% if room.picture is null %}
+                    <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
+                {% else %}
+                    <img src="" class="card-img-top" alt=" {{ room.description }}">
+                {% endif %}
                 <div class="card-body">
-                    <h5 class="card-title">Location</h5>
-                    <p class="card-text">More details provided in the room description by the tenant.</p>
-                    <a href="#"><button class="square_button">More details</button></a>
+                    <h5 class="card-title">Title</h5>
+                    <p class="card-text"><b>{{ room.street_name ~ ' ' ~ room.number }}</b></p>
+                    <p class="card-text">{{ room.description }}</p>
+                    <a href="{{ url('rooms/' ~ room.room_id) }}"><button class="square_button">More details</button></a>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="card">
-                <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
-                <div class="card-body">
-                    <h5 class="card-title">Location</h5>
-                    <p class="card-text">More details provided in the room description by the tenant.</p>
-                    <a href="#"><button class="square_button">More details</button></a>
-                </div>
-            </div>
-        </div>
+            {% endautoescape %}
+        {% endfor %}
     </div>
     {#    just for styling, needs tobe created with php#}
 
