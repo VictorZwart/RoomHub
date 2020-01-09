@@ -49,7 +49,7 @@
             </button>
             <div id="account_options">
                 <a class="account_option" href="{{ url('account') }}">My Account</a>
-                {% if account.role == 'owner' %}
+                {% if user.role == 'owner' %}
                 <a class="account_option" href="{{ url('rooms/new') }}">Add Room</a>
                 <a class="account_option" href="{{ url('rooms?filter=mine') }}">My Rooms</a>
                 {% else %}

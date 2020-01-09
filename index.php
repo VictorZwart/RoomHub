@@ -55,8 +55,14 @@ $router->get('/', function() use ($db, $twig) {
 
 $router->mount('/rooms', function() use ($router, $db, $twig) {
 
+
+
 	/* GET for getting an overview of all rooms */
 	$router->get('/', function() use ($db, $twig) {
+
+		echo $twig->render('rooms.twig', ['all_rooms' => $db->room->find()]);
+		return
+		// WIP:
 
 		$me = $db->user->get($_SESSION['user_id']);
 
