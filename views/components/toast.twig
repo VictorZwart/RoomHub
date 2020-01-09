@@ -6,9 +6,12 @@
             {% if feedback.state == 'success' %}
                 <i class="fad fa-thumbs-up colored-icon-reverse"></i>
                 <strong class="mr-auto">&nbsp;Success!</strong>
-            {% else %}
+            {% elseif feedback.state == 'warning' %}
                 <i class="fad fa-exclamation-triangle colored-icon-reverse"></i>
                 <strong class="mr-auto">&nbsp;Warning!</strong>
+            {% else %}
+                <i class="fad fa-bomb colored-icon"></i>
+                <strong class="mr-auto">&nbsp;Error!</strong>
             {% endif %}
             <small class="text-muted">now</small>
             <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
