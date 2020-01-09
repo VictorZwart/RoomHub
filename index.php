@@ -58,11 +58,18 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	/* GET for getting an overview of all rooms */
 	$router->get('/', function() use ($db, $twig) {
 
+		$where = ['status' => 'active'];
 
+		if (@$_GET['filter'] == 'mine') {
+			$me = $db->user->get($_SESSION['user_id']);
+			if ($me['role'] == 'owner') {
+				$where['owner_id'] = $me['user_id'];
+			}
+		}
 
-
+		// TODO: add opt-ins
 		$listings = $db->listing->find('all', ['contain' => 'room'])
-		                        ->where(['status' => 'active']);
+		                        ->where($where);
 
 		echo $twig->render('rooms.twig', ['all_rooms' => $listings]);
 	});

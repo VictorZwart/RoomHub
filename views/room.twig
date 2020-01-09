@@ -19,7 +19,17 @@
             <button class="btn btn-xlarge btn-dark">
                 <i class="fad fa-edit colored-icon light-icon"></i> Edit my room
             </button>
+
         </a>
+        <br/>
+        TODO (front-end): make this page look nice<br/>
+        TODO's (backend):
+        <ul>
+            <li> ... show interested people here ...</li>
+            <li>
+                ... change listing info (close, accept person, edit date - kan in gewone 'edit') ...
+            </li>
+        </ul>
     {% elseif user.role == 'tenant' %}
         <!-- todo: check if opted-in -->
         <a href="{{ url('rooms/opt-in/' ~ room.room_id) }}">

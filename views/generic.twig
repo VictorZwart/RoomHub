@@ -49,8 +49,12 @@
             </button>
             <div id="account_options">
                 <a class="account_option" href="{{ url('account') }}">My Account</a>
-                <a class="account_option" href="{{ url('rooms') }}">Add Room</a>
-                <a class="account_option" href="{{ url('rooms') }}">My Rooms</a>
+                {% if account.role == 'owner' %}
+                <a class="account_option" href="{{ url('rooms/new') }}">Add Room</a>
+                <a class="account_option" href="{{ url('rooms?filter=mine') }}">My Rooms</a>
+                {% else %}
+                    <a class="account_option" href="{{ url('rooms?filter=mine') }}">My Opt-Ins</a>
+                {% endif %}
                 <a class="account_option" href="{{ url('account/logout') }}">Log out</a>
             </div>
         </div>
