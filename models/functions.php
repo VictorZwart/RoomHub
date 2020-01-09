@@ -188,6 +188,11 @@ function handle_file_upload($id, $db, $dbname) {
 		$errors[] = "This file is more than 2MB. Sorry, it has to be less than or equal to 2MB";
 	}
 	if (empty($errors)) {
+		if(file_exists($uploadPath)){
+			// enable 'overwrite'
+			unlink($uploadPath);
+		}
+
 		$didUpload = move_uploaded_file($fileTmpName, $uploadPath);
 		if ($didUpload) {
 			$dbpic  = [
