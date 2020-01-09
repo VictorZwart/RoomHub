@@ -11,10 +11,10 @@
         {% for room in all_rooms %}
             {%  autoescape %}
             <div class="card">
-                {% if room.picture is null %}
+                {% if not room.picture %}
                     <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
                 {% else %}
-                    <img src="" class="card-img-top" alt=" {{ room.description }}">
+                    <img src="{{ uploads('room/' ~ room.picture) }}" class="card-img-top" alt="{{ room.description }}">
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">Title</h5>
