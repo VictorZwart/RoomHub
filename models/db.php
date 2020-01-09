@@ -14,14 +14,16 @@ use PDOException;
 class ListingTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
-		$this->belongsTo('room');
+		$this->belongsTo('Room');
 	}
 }
 
 class RoomTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
-		$this->hasMany('listing');
+		$this->hasMany('Listing')
+		     // ->setConditions(['status' => 'active'])
+		     ->setForeignKey('room_id');
 	}
 }
 

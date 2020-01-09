@@ -15,6 +15,7 @@
             {% else %}
                 {# the page is viewed as rooms #}
                 {% set room = listing %}
+                {% set listing = room.listing.0 %}
             {% endif %}
             {% autoescape %}
                 <div class="card">

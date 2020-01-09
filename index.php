@@ -56,12 +56,12 @@ $router->get('/', function() use ($db, $twig) {
 $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 
-
 	/* GET for getting an overview of all rooms */
 	$router->get('/', function() use ($db, $twig) {
 
 		echo $twig->render('rooms.twig', ['all_rooms' => $db->room->find()]);
-		return
+		return;
+
 		// WIP:
 
 		$me = $db->user->get($_SESSION['user_id']);
@@ -71,19 +71,19 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 				$user_id = $me['user_id'];
 			} else {
 				$owner = get_info($db->user, 'username', $_GET['filter']);
-				if(!$owner){
+				if (!$owner) {
 					redirect('rooms');
 				}
 				$user_id = $owner->user_id;
 			}
 
 			// if you want to see your rooms or those of a user, you should just see rooms
-			$listings = $db->room->find('all')
+			$listings = $db->room->find('all', ['contain' => 'Listing'])
 			                     ->where(['owner_id' => $user_id]);
 
 		} else {
 			// else you should see listings
-			$listings = $db->listing->find('all', ['contain' => 'room'])
+			$listings = $db->listing->find('all', ['contain' => 'Room'])
 			                        ->where(['status' => 'active']);
 		}
 		// TODO: add opt-ins
