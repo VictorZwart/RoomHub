@@ -1,4 +1,6 @@
-<?php
+<?php namespace RoomHub;
+
+session_start();
 
 /* Require composer autoloader */
 
@@ -7,15 +9,12 @@ require __DIR__ . '/vendor/autoload.php';
 use Bramus\Router\Router;
 use Cake\Datasource\Exception\RecordNotFoundException;
 
-session_start();
-
 
 /* include all models from the model folder here */
 
 foreach (glob("models/*.php") as $filename) {
 	include $filename;
 }
-
 
 /* load config from config.ini or config.example.ini */
 $config = new Config();
@@ -59,9 +58,13 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	/* GET for getting an overview of all rooms */
 	$router->get('/', function() use ($db, $twig) {
 
-		$rooms = $db->room->find('all');
 
-		echo $twig->render('rooms.twig', ['all_rooms' => $rooms]);
+
+
+		$listings = $db->listing->find('all', ['contain' => 'room'])
+		                        ->where(['status' => 'active']);
+
+		echo $twig->render('rooms.twig', ['all_rooms' => $listings]);
 	});
 
 	/* GET for reading specific rooms */
@@ -99,7 +102,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		}
 
 
-		echo $twig->render('room_form.twig', ['room_info' => $room_info]);
+		echo $twig->render('room_form.twig', ['room_info' => $room_info, 'is_edit' => true]);
 	});
 
 	/* GET for adding room */
@@ -135,6 +138,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'owner_id'    => @$_SESSION['user_id']
 		];
 
+
 		$errors = validate_room($room_data, $db->room);
 
 		if ($errors) {
@@ -151,7 +155,37 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 		if ($result) {
 			$room_id = $result->room_id;
+
+
 			if (handle_file_upload($room_id, $db, 'room')) {
+
+				// validate listing
+				$listing_result = false;
+
+				if (@$_POST['disable_listing'] == 'on') {
+					// don't do anything with listing
+				} else {
+					// check listing
+					$listing_data = [
+						'status'         => 'active',
+						'room_id'        => $room_id,
+						'available_from' => @$_POST['available_from']
+					];
+					if (!@$_POST['is_indefinite'] == 'on') {
+						// do something with available_to
+						$listing_data['available_to'] = @$_POST['available_to'];
+					}
+
+					$errors = validate_listing($listing_data, $db->listing);
+					if ($errors) {
+						$_SESSION['feedback'] = ['message' => 'The room could not be listed.', 'errors' => $errors];
+						redirect('rooms/new');
+					}
+					$new_listing    = $db->listing->newEntity($listing_data);
+					$listing_result = safe_save($new_listing, $db->listing);
+
+				}
+
 				if ($db->room->get($room_id)->picture) {
 					$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
 				} else {
@@ -160,6 +194,14 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 						'state'   => 'warning'
 					];
 				}
+
+				if ($listing_result) {
+					$_SESSION['feedback']['message'] .= ' Room successfully listed.';
+				} else {
+					$_SESSION['feedback']['message'] .= ' However, the room was not listed!';
+					$_SESSION['feedback']['state']   = 'warning';
+				}
+
 				redirect("rooms/$room_id");
 			} else {
 				redirect("rooms/edit/$room_id");

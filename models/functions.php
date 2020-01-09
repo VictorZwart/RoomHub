@@ -1,4 +1,4 @@
-<?php
+<?php namespace RoomHub;
 
 /* Enable error reporting */
 

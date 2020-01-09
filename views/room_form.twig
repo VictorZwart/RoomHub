@@ -10,46 +10,116 @@
         <div class="form-group">
             <label for="inputDescription">Description</label>
             <textarea name="description" class="form-control" id="inputDescription"
-                      placeholder="Tell sth about the room">{{ room_info.description }}</textarea>
+                      placeholder="Tell sth about the room" required>{{ room_info.description }}</textarea>
         </div>
         <div class="form-group">
             <label for="inputPrice">Price per month (in euro's)</label>
-            <input type="text" class="form-control" name="price" id="inputPrice" placeholder="350" value="{{ room_info.price }}" required>
+            <input type="text" class="form-control" name="price" id="inputPrice" placeholder="350"
+                   value="{{ room_info.price }}" required>
         </div>
         <div class="form-group">
             <label for="inputSize">How many m<sup>2</sup> is your room</label>
-            <input type="text" class="form-control" id="inputSize" placeholder="18" name="size" value="{{ room_info.size }}" required>
+            <input type="text" class="form-control" id="inputSize" placeholder="18" name="size"
+                   value="{{ room_info.size }}" required>
         </div>
         <div class="form-group">
             <label for="inputType">Type of room</label>
-            <input type="text" class="form-control" id="inputType" placeholder="Appartment/Studio" name="type" value="{{ room_info.type }}" required>
+            <input type="text" class="form-control" id="inputType" placeholder="Appartment/Studio" name="type"
+                   value="{{ room_info.type }}" required>
         </div>
 
         <div class="form-group">
             <label for="inputCity">City</label>
-            <input type="text" class="form-control" id="inputCity" placeholder="Groningen" name="city" value="{{ room_info.city }}"
+            <input type="text" class="form-control" id="inputCity" placeholder="Groningen" name="city"
+                   value="{{ room_info.city }}"
                    required>
         </div>
 
         <div class="form-group">
-            <label for="inputZipcode">ZipCode</label>
-            <input type="text" class="form-control" id="inputZipcode" placeholder="0000AA" name="zipcode" value="{{ room_info.zipcode }}"
+            <label for="inputZipcode">Zip Code</label>
+            <input type="text" class="form-control" id="inputZipcode" placeholder="0000AA" name="zipcode"
+                   value="{{ room_info.zipcode }}"
                    required>
         </div>
         <div class="form-group">
-            <label for="inputStreetname">Streetname</label>
-            <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan" name="street_name" value="{{ room_info.street_name }}"
+            <label for="inputStreetname">Street name</label>
+            <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan" name="street_name"
+                   value="{{ room_info.street_name }}"
                    required>
         </div>
         <div class="form-group">
-            <label for="inputNumber">Street number</label>
-            <input type="text" class="form-control" id="inputNumber" placeholder="6/20B" name="number" value="{{ room_info.number }}"
+            <label for="inputNumber">House number</label>
+            <input type="text" class="form-control" id="inputNumber" placeholder="6/20B" name="number"
+                   value="{{ room_info.number }}"
                    required>
         </div>
         <div class="form-group">
-        <label for="images">Select image to upload:</label>
+            <label for="images">Select image to upload:</label>
             <input type="file" accept="image/*" name="fileToUpload" id="fileToUpload" class="form-control-file">
         </div>
+        {% if not is_edit %}
+            <!-- only show for new rooms -->
+            <div class="form-group">
+                <label for="hideListing">Hide this room from listing (save as draft)</label>
+                <input type="checkbox" name="disable_listing" id="hideListing" class="form-control-checkbox"
+                        {% if room_info.disable_listing %} checked {% endif %}>
+            </div>
+            <div id="listing-toggle">
+                <!-- hide if checked -->
+
+                <div class="form-group">
+                    <label for="inputFrom">Available From</label>
+
+                    <input type="date" class="form-control" id="inputFrom" placeholder="DD/MM/YYYY"
+                           name="available_from"
+                           value="{{ room_info.available_from|date('Y-m-d') }}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="isIndefinite">indefinite duration</label>
+                    <input type="checkbox" name="is_indefinite" id="isIndefinite" class="form-control-checkbox"
+                            {% if room_info.is_indefinite or not room_info.available_to %}
+                                checked
+                            {% endif %}
+                    >
+                </div>
+
+
+                <div class="form-group" id="availableTo">
+                    <label for="inputTo">Available To</label>
+
+                    <input type="date" class="form-control" id="inputTo" placeholder="DD/MM/YYYY"
+                           name="available_to"
+                           value="{{ room_info.available_to|date('Y-m-d') }}"
+                           required>
+                </div>
+
+            </div>
+        {% endif %}
         <button type="submit" class="btn btn-primary">Publish your room!</button>
     </form>
+
+    {% if not is_edit %}
+        <script>
+            function _hide_element_on_check(hide_trigger, hide_item) {
+                // actually hide
+                $(hide_item).toggle(!$(hide_trigger).is(':checked'));
+            }
+
+            function hide_element_on_check(hide_trigger, hide_item) {
+                // check once and setup onclick to trigger
+                _hide_element_on_check(hide_trigger, hide_item);
+                $(hide_trigger).on('click', e => _hide_element_on_check(e.target, hide_item))
+            }
+
+            $(function () {
+                // on jquery ready
+
+                hide_element_on_check('#hideListing', '#listing-toggle');
+                hide_element_on_check('#isIndefinite', '#availableTo');
+
+            })
+        </script>
+    {% endif %}
 {% endblock %}

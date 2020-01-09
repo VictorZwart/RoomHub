@@ -1,6 +1,7 @@
-<?php
+<?php namespace RoomHub;
 
 use Cake\Database\Schema\TableSchema;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -48,6 +49,20 @@ function unique($table, $field, $value) {
 	}
 }
 
+function valid_dates($dateString, $allow_future = false) {
+	// re-used validator
+	if ($dateString < '1920-01-01') {
+		return "Please fill in a date later than 1920";
+	}
+	if (!$allow_future && $dateString > date("Y-m-d")) {
+		return "Please fill in a date that is not in the future";
+	} elseif ($allow_future && $dateString > '2050-01-01') {
+		return "Please fill in a date that is not that far in the future";
+	} else {
+		return true;
+	}
+}
+
 /**
  * Validate input for the user table
  *
@@ -76,28 +91,17 @@ function validate_user($post, $table, $new = true) {
 			])
 		// add a validator for the phone number
 		->add('phone_number', 'phone number check', [
-			'rule' => function() use ($post) {
-				$number = $post['phone_number'];
-				if (preg_match('/^\d{2}-?\d{8}$/', $number) or preg_match('/^\d{4}-?\d{6}$/', $number)) {
-					return true;
-				} else {
-					return 'You have not entered a good number';
-				}
-			}
+			'rule'    => function($number) {
+				return (preg_match('/^\d{2}-?\d{8}$/', $number) or preg_match('/^\d{4}-?\d{6}$/', $number));
+			},
+			'message' => 'You have not entered a good number'
 
 		])
 		//add a validator for birthdate
 		->add('birthdate', 'legal ages', [
-			'rule' => function() use ($post) {
-				$dateString = $post['birthdate'];
-				if ($dateString < '1920-01-01') {
-					return "Please fill in a date later than 1920";
-				}
-				if ($dateString > date("Y-m-d")) {
-					return "Please fill in a date that is not in the future";
-				} else {
-					return true;
-				}
+			'rule' => function($dateString) {
+
+				return valid_dates($dateString);
 			}
 		]);
 
@@ -105,23 +109,23 @@ function validate_user($post, $table, $new = true) {
 		$validator
 			->add('username', 'unique username', [
 				// username must not exist!
-				'rule' => function() use ($post, $table) {
+				'rule' => function($username) use ($table) {
 
-					return unique($table, 'username', $post['username']);
+					return unique($table, 'username', $username);
 
 				}
 			])
 			->add('username', 'valid username', [
 				// username can only have letters and numbers
-				'rule'    => function() use ($post) {
-					return (bool) preg_match('/^\w+$/', $post['username']);
+				'rule'    => function($username) {
+					return (bool) preg_match('/^\w+$/', $username);
 				},
 				'message' => 'Invalid username, please use only alphanumerical characters'
 			])
 			->add('email', 'unique email', [
 				// email must not exist
-				'rule' => function() use ($post, $table) {
-					return unique($table, 'email', $post['email']);
+				'rule' => function($email) use ($table) {
+					return unique($table, 'email', $email);
 				}
 			])
 			->add('password', 'matching password and validation', [
@@ -162,28 +166,22 @@ function validate_room($post, $table, $new = false) {
 	$validator
 		->add('zipcode', 'valid zipcode', [
 			//zipcode must have format of 0000AA
-			'rule' => function() use ($post) {
-				if (preg_match('/^\d{4}[a-zA-Z]{2}$/', $post['zipcode'])) {
-					return true;
-				} else {
-					return 'You have entered a wrong zipcode format';
-				}
-			}
+			'rule'    => function($zipcode) {
+				return (bool) preg_match('/^\d{4}[a-zA-Z]{2}$/', $zipcode);
+			},
+			'message' => 'You have entered a wrong zipcode format'
 		])
 		->add('number', 'valid housenumber', [
 			//streetnumber must contain minimum of 1 number
-			'rule' => function() use ($post) {
-				if (preg_match('/^\d\w*/', $post['number'])) {
-					return true;
-				} else {
-					return 'Please enter a number starting with a digit.';
-				}
-			}
+			'rule'    => function($number) {
+				return (bool) preg_match('/^\d\w*/', $number);
+			},
+			'message' => 'Please enter a number starting with a digit.'
 		])
 		->add('size', 'valid room area', [
 			//streetnumber must contain minimum of 1 number
-			'rule' => function() use ($post) {
-				if ($post['size'] > 1) {
+			'rule' => function($size) {
+				if ($size > 1) {
 					return true;
 				} else {
 					return 'Please enter a size which is larger than 1.';
@@ -192,22 +190,60 @@ function validate_room($post, $table, $new = false) {
 		])
 		->add('street_name', 'valid street name', [
 			// street name can only be letters, apostrophe, dash and space
-			'rule' => function() use ($post) {
-				if (preg_match("/^[a-zA-Z\-' ]+$/", $post['street_name'])) {
-					return true;
-				} else {
-					return 'Please enter a street name with only letters.';
-				}
-			}
+			'rule'    => function($street_name) {
+				return (bool) preg_match("/^[a-zA-Z\-' ]+$/", $street_name);
+			},
+			'message' => 'Please enter a street name with only letters.'
 		])
 		->add('city', 'valid city name', [
 			//streetnumber must contain minimum of 1 number
-			'rule' => function() use ($post) {
-				if (preg_match('/^[a-zA-Z]+$/', $post['city'])) {
+			'rule'    => function($city) {
+				return (bool) preg_match('/^[a-zA-Z]+$/', $city);
+			},
+			'message' => 'Please enter a city name with only letters.'
+		]);
+
+	return $validator->errors($post);
+}
+
+/**
+ * Validator for the 'listing' table
+ *
+ * @param array $post
+ * @param Table $table
+ *
+ * @return array of errors
+ */
+function validate_listing($post, $table) {
+	$validator = new Validator();
+	_validate_required_fields($validator, $table->getSchema());
+
+	$validator
+		->add('room_id', 'existing room', [
+			'rule'    => function($room_id) {
+				try {
+					$_SERVER['db']->room->get($room_id);
+
 					return true;
-				} else {
-					return 'Please enter a city name with only letters.';
+				} catch (RecordNotFoundException $e) {
+					return false;
 				}
+			},
+			'message' => 'This room does not exist.'
+		])
+		->add('room_id', 'no active listings', [
+			'rule'    => function($room_id) use ($table) {
+				return $table->find()->where(['room_id' => $room_id])->count() == 0;
+			},
+			'message' => 'This room is already listed!'
+		])
+		->add('available_from', 'valid date', [
+			'rule' => function($date) {
+				return valid_dates($date, true);
+			}
+		])->add('available_to', 'valid date', [
+			'rule' => function($date) {
+				return valid_dates($date, true);
 			}
 		]);
 

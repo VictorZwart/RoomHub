@@ -1,4 +1,4 @@
-<?php
+<?php namespace RoomHub;
 /* connect here */
 
 /* define db models here */
@@ -6,7 +6,17 @@
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\{Entity, Table, TableRegistry};
+use Exception;
+use PDOException;
 
+
+// models
+class ListingTable extends Table {
+	public function initialize(array $config) {
+		// 1 room can have many listings
+		$this->belongsTo('room');
+	}
+}
 
 /**
  * DB is a wrapper for database related functions
@@ -17,6 +27,7 @@ use Cake\ORM\{Entity, Table, TableRegistry};
  * @property Table $user database table for users
  * @property Table $room database table for rooms
  * @property Table $migration database table for migrations (internal use)
+ * @property ListingTable $listing database table for listings
  */
 class DB {
 	public $conn;
@@ -28,12 +39,14 @@ class DB {
 		$config = $cnf->get('db', []);
 		$schema = @$config['schema'] ?? 'mysql';
 
+		// connect models
+
 		try {
 			$dsn = "$schema://${config['user']}:${config['pass']}@${config['host']}/${config['db']}";
 			ConnectionManager::setConfig('default', ['url' => $dsn]);
 
 			$this->conn = ConnectionManager::get('default');
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			echo 'something went wrong connecting to the database.';
 			die();
 		}
@@ -52,6 +65,12 @@ class DB {
 	 * @return Table
 	 */
 	function __get($name) {
+		$ucname = 'Roomhub\\' . ucfirst($name) . 'Table';
+		if (class_exists($ucname)) {
+			// custom table class exists, use that
+			return TableRegistry::getTableLocator()->get('listing', ['className' => $ucname]);
+		}
+		// use default generated (cake) table class
 		return TableRegistry::getTableLocator()->get($name);
 	}
 
@@ -80,14 +99,14 @@ class DB {
 			# get last migration (if not given):
 			$last_migration_file = $last_migration_file ??
 			                       $migrations->find()->order(['migration_id' => 'DESC'])->first()->migration_file;
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			try {
 				// commit initial migration
 				$this->_migrate('0.sql');
 
 				// check if migration succeeded
 				$last_migration_file = $migrations->find()->order(['migration_id' => 'DESC'])->first()->migration_file;
-			} catch(Exception $e) {
+			} catch (Exception $e) {
 				// initial migration failed, give up now
 				http_response_code(500);
 				echo 'the database could not be set-up. Please check your initial migration';
@@ -116,6 +135,7 @@ class DB {
 	}
 }
 
+
 /**
  * check if the model can be saved and do so.
  *
@@ -128,7 +148,10 @@ function safe_save($object, $table) {
 	if ($object->getErrors()) {
 		// Entity failed validation.
 
-		$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $object->getErrors()];
+		$_SESSION['feedback'] = [
+			'message' => 'Some fields were not filled in correctly!',
+			'errors'  => $object->getErrors()
+		];
 
 
 		return false;
@@ -137,10 +160,10 @@ function safe_save($object, $table) {
 
 	try {
 		return $table->save($object);
-	} catch(PDOException $e) {
+	} catch (PDOException $e) {
 		$_SESSION['feedback'] = [
 			'message' => 'Something went wrong.',
-			'errors' => $e->getMessage(),
+			'errors'  => $e->getMessage(),
 		];
 
 		return false;
