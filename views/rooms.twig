@@ -5,25 +5,37 @@
     <link rel="stylesheet" href="{{ static('css/rooms.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
-{#    just for styling, needs to be created with php#}
+    {#    just for styling, needs to be created with php#}
 
     <div id="rooms_overview">
         {% for listing in all_rooms %}
-            {% set room = listing.room %}
-            {%  autoescape %}
-            <div class="card">
-                {% if not room.picture %}
-                    <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
-                {% else %}
-                    <img src="{{ uploads('room/' ~ room.picture) }}" class="card-img-top" alt="{{ room.description }}">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">Title</h5>
-                    <p class="card-text"><b>{{ room.street_name ~ ' ' ~ room.number }}</b></p>
-                    <p class="card-text">{{ room.description }}</p>
-                    <a href="{{ url('rooms/' ~ room.room_id) }}"><button class="square_button">More details</button></a>
+            {% if listing.room %}
+                {# the page is viewed as listings #}
+                {% set room = listing.room %}
+            {% else %}
+                {# the page is viewed as rooms #}
+                {% set room = listing %}
+            {% endif %}
+            {% autoescape %}
+                <div class="card">
+                    {% if not room.picture %}
+                        <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
+                    {% else %}
+                        <img src="{{ uploads('room/' ~ room.picture) }}" class="card-img-top"
+                             alt="{{ room.description }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">Title</h5>
+                        <p class="card-text"><b>{{ room.street_name ~ ' ' ~ room.number }}</b></p>
+                        <p class="card-text">{{ room.description }}</p>
+                        {% if listing.available_from %}
+                            <p class="card-text">{{ listing.available_from|date }}</p>
+                        {% endif %}
+                        <a href="{{ url('rooms/' ~ room.room_id) }}">
+                            <button class="square_button">More details</button>
+                        </a>
+                    </div>
                 </div>
-            </div>
             {% endautoescape %}
         {% endfor %}
     </div>

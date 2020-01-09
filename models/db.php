@@ -18,6 +18,13 @@ class ListingTable extends Table {
 	}
 }
 
+class RoomTable extends Table {
+	public function initialize(array $config) {
+		// 1 room can have many listings
+		$this->hasMany('listing');
+	}
+}
+
 /**
  * DB is a wrapper for database related functions
  *
@@ -25,7 +32,7 @@ class ListingTable extends Table {
  *
  * automatic properties based on the schema:
  * @property Table $user database table for users
- * @property Table $room database table for rooms
+ * @property RoomTable $room database table for rooms
  * @property Table $migration database table for migrations (internal use)
  * @property ListingTable $listing database table for listings
  */
@@ -70,6 +77,7 @@ class DB {
 			// custom table class exists, use that
 			return TableRegistry::getTableLocator()->get('listing', ['className' => $ucname]);
 		}
+
 		// use default generated (cake) table class
 		return TableRegistry::getTableLocator()->get($name);
 	}
