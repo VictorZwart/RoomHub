@@ -36,7 +36,7 @@
         {% else %}
             <button type="submit" class="btn btn-primary">Update your listing!</button>
             <a href="{{ url('rooms/list/cancel/' ~ listing.listing_id) }}" onclick="return confirm('are you sure?')">
-                <button type="button" class="btn btn-danger">Cancel listing!</button>
+                <button type="button" class="btn btn-danger">Cancel listing</button>
             </a>
         {% endif %}
 

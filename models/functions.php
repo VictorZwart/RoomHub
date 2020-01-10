@@ -96,12 +96,13 @@ function load_templating($config) {
  * @param Table $table mixed the user table
  * @param string $id_name name of the id in the table
  * @param string $id id
+ * @param array $options list of cake options (like contain)
  *
  * @return mixed array with all the account info
  */
-function get_info($table, $id_name, $id) {
+function get_info($table, $id_name, $id, $options=[]) {
 	return $table
-		->find('all')
+		->find('all', $options)
 		->where([$id_name => $id])
 		->first();
 }
@@ -242,5 +243,22 @@ function require_login() {
 function require_anonymous($fallback = 'account') {
 	if (isset($_SESSION['user_id'])) {
 		redirect($fallback);
+	}
+
+}
+
+function require_exists($item){
+	if (!$item) {
+		$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
+		redirect('rooms');
+	}
+}
+
+function require_mine($item){
+	require_exists($item);
+
+	if ($item['owner_id'] !== $_SESSION['user_id']) {
+		$_SESSION['feedback'] = ['message' => 'This room does not belong to you.'];
+		redirect('rooms');
 	}
 }
