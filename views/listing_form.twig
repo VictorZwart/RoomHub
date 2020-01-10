@@ -1,0 +1,52 @@
+{% extends "generic.twig" %}
+
+{% block content %}
+
+    <form action="" method="POST" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label for="inputFrom">Available From</label>
+
+            <input type="date" class="form-control" id="inputFrom" placeholder="DD/MM/YYYY"
+                   name="available_from"
+                   value="{{ listing.available_from|date('Y-m-d') }}"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="isIndefinite">indefinite duration</label>
+            <input type="checkbox" name="is_indefinite" id="isIndefinite" class="form-control-checkbox"
+                    {% if listing.is_indefinite or not listing.available_to %}
+                        checked
+                    {% endif %}
+            >
+        </div>
+
+
+        <div class="form-group" id="availableTo">
+            <label for="inputTo">Available To</label>
+
+            <input type="date" class="form-control" id="inputTo" placeholder="DD/MM/YYYY"
+                   name="available_to"
+                   value="{{ listing.available_to|date('Y-m-d') }}"
+                   required>
+        </div>
+        {% if not is_edit %}
+            <button type="submit" class="btn btn-primary">List your room!</button>
+        {% else %}
+            <button type="submit" class="btn btn-primary">Update your listing!</button>
+            <a href="{{ url('rooms/list/cancel/' ~ listing.listing_id) }}" onclick="return confirm('are you sure?')">
+                <button type="button" class="btn btn-danger">Cancel listing!</button>
+            </a>
+        {% endif %}
+
+    </form>
+
+
+    <script src="{{ static('js/listing.js') }}"></script>
+    <script>
+        $(function () {
+            hide_element_on_check('#isIndefinite', '#availableTo');
+        })
+    </script>
+{% endblock %}
