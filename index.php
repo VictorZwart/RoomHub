@@ -104,7 +104,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
 		try {
 			$room     = $db->room->get($id);
-			$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->first();
+			$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->toList();
 
 			echo $twig->render('room.twig', ['room' => $room, 'listings' => $listings]);
 		} catch(RecordNotFoundException $e) {
