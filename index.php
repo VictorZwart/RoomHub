@@ -92,6 +92,11 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		echo $twig->render('rooms.twig', ['all_rooms' => $listings]);
 	});
 
+    /* GET for getting the opt_in form */
+    $router->get('/optin', function() use ($db, $twig) {
+        echo $twig->render('optinform.twig', []);
+
+    });
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
 		try {

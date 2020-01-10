@@ -1,0 +1,32 @@
+{% extends "generic.twig" %}
+
+{% block title %}Opt in formpjee huehh{% endblock %}
+{% block content %}
+
+    <div id="new_optin_form">
+        <h1>
+            {{ title }}
+        </h1>
+        <h3>Hello  'name' ! send a message to react on room: </h3>
+        <form action="" method="POST">
+            <div class="form-group">
+                <label for="inputMessage">Message</label>
+                <textarea name="biography" class="form-control" id="inputMessage"
+                          placeholder="Enter your message here!"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="dateTime">Date of sending:</label>
+
+                <input type="date" class="form-control" id="dateTime" placeholder="DD/MM/YYYY" name="date"
+                       value=""
+                       required>
+            </div>
+
+            <button type="submit" class="btn btn-dark">
+                Send your message!
+            </button>
+        </form>
+    </div>
+
+{% endblock %}
