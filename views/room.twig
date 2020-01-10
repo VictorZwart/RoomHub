@@ -3,7 +3,6 @@
 {% block title %}Room ...{% endblock %}
 {% block content %}
     Hier specifieke room info<br/>
-    <!--todo laat de foto zien van de kamer. TODO: get from DB -->
     {% if room.picture %}
         <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
              alt="The picture of the room">
@@ -52,6 +51,7 @@
 
     {% elseif user.role == 'tenant' %}
         <!-- todo: check if opted-in -->
+
         <a href="{{ url('rooms/opt-in/' ~ listings.listing_id) }}">
             <button class="btn btn-xlarge btn-dark">
                 <i class="fad fa-heart colored-icon-reverse"></i> I want this room!

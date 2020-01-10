@@ -85,7 +85,6 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			$listings = $db->listing->find('all', ['contain' => 'Room'])
 			                        ->where(['status' => 'open']);
 		}
-		// TODO: add opt-ins
 
 
 		echo $twig->render('rooms.twig', ['all_rooms' => $listings]);
@@ -388,6 +387,40 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		require_login();
 		echo $twig->render('account.twig', []);
 	});
+
+	/* GET to view optins */
+    $router->get('/opt-in/(\w +)', function($username) use($db, $twig){
+        $me = $db->user->get($_SESSION['user_id']);
+        
+
+        echo $twig->render('listing_and_optins.twig', []);
+
+//        $me = $db->user->get($_SESSION['user_id']);
+//
+//		if (@$_GET['filter']) {
+//            if ($_GET['filter'] == 'mine' && $me['role'] == 'owner') {
+//                $user_id = $me['user_id'];
+//            } else {
+//                $owner = get_info($db->user, 'username', $_GET['filter']);
+//                if (!$owner) {
+//                    redirect('rooms');
+//                }
+//                $user_id = $owner->user_id;
+//            }
+//
+//            // if you want to see your rooms or those of a user, you should just see rooms
+//            $listings = $db->room->find('all', ['contain' => 'Listing'])
+//                ->where(['owner_id' => $user_id]);
+//
+//        } else {
+//            // else you should see listings
+//            $listings = $db->listing->find('all', ['contain' => 'Room'])
+//                ->where(['status' => 'open']);
+//        }
+//
+//
+//		echo $twig->render('rooms.twig', ['all_rooms' => $listings]);
+    });
 
 	/* GET to view specific account by username */
 	$router->get('/u/(\w +)', function($username) use ($db, $twig) {
