@@ -7,7 +7,15 @@
         <h1>
             {{ title }}
         </h1>
-        <h3>Hello  'name' ! send a message to react on room: </h3>
+        <h3>Hello  {{ user.first_name }} ! send a message to react on room: </h3>
+        {% if room.room.picture %}
+            <img id='room_picture' src="{{ uploads('room/' ~ room.room.picture) }}"
+                 alt="The picture of the room">
+        {% else %}
+            <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
+                 alt="A placeholder (because no picture was uploaded)">
+        {% endif %}
+
         <form action="" method="POST">
             <div class="form-group">
                 <label for="inputMessage">Message</label>

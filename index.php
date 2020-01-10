@@ -92,16 +92,19 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	});
 
     /* GET for getting the opt_in form */
-    $router->get('/optin/(\d+)', function($listing_id) use ($db, $twig) {
+    $router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
+        $roomdata = $db->listing->get($listing_id, ['contain' => 'Room']);
+        $userdata = $db->user->get($_SESSION['user_id']);
+        pprint($roomdata);
+        pprint($userdata);
 
-
-        echo $twig->render('optinform.twig', []);
+        echo $twig->render('optinform.twig', ['room' => $roomdata, 'user' => $userdata]);
     });
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
 		try {
 			$room     = $db->room->get($id);
-			$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->toList();
+			$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->first();
 
 			echo $twig->render('room.twig', ['room' => $room, 'listings' => $listings]);
 		} catch(RecordNotFoundException $e) {
@@ -234,13 +237,13 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 
 	/* POST for adding opt in */
-    $router->post('/optin/(\d+)', function($listing_id) use($db) {
+    $router->post('/opt-in/(\d+)', function($listing_id) use($db) {
 
         $optin_data = [
             'listing_id' => $listing_id,
             'user_id' => @$_SESSION['user_id'],
             'message' => @$_POST['message'],
-            'date' => date('Y-m-d')
+            'date' => date('Y-m-d h:i:s')
         ];
         $new_message = $db->opt_in->newEntity($optin_data);
         pprint($new_message);

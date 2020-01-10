@@ -52,7 +52,7 @@
 
     {% elseif user.role == 'tenant' %}
         <!-- todo: check if opted-in -->
-        <a href="{{ url('rooms/opt-in/' ~ room.room_id) }}">
+        <a href="{{ url('rooms/opt-in/' ~ listings.listing_id) }}">
             <button class="btn btn-xlarge btn-dark">
                 <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
             </button>
