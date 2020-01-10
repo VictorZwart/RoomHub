@@ -7,7 +7,7 @@
         <h1>
             {{ title }}
         </h1>
-        <h3>Hello  {{ user.first_name }} ! send a message to react on room: </h3>
+        <h3>Hello  {{ user.first_name }}! Do you want to send a message to react on the following room: </h3>
         {% if room.room.picture %}
             <img id='room_picture' src="{{ uploads('room/' ~ room.room.picture) }}"
                  alt="The picture of the room">

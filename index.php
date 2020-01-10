@@ -93,10 +93,13 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
     /* GET for getting the opt_in form */
     $router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
-        $roomdata = $db->listing->get($listing_id, ['contain' => 'Room']);
+        require_login();
         $userdata = $db->user->get($_SESSION['user_id']);
-        pprint($roomdata);
-        pprint($userdata);
+        if($userdata['role'] !== 'tenant'){
+            $_SESSION['feedback'] = ['message' => 'only tenants can react on a room!', 'state' => 'warning'];
+            redirect("rooms");
+        }
+        $roomdata = $db->listing->get($listing_id, ['contain' => 'Room']);
 
         echo $twig->render('optinform.twig', ['room' => $roomdata, 'user' => $userdata]);
     });
