@@ -93,9 +93,10 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	});
 
     /* GET for getting the opt_in form */
-    $router->get('/optin', function() use ($db, $twig) {
-        echo $twig->render('optinform.twig', []);
+    $router->get('/optin/(\d+)', function($listing_id) use ($db, $twig) {
 
+
+        echo $twig->render('optinform.twig', []);
     });
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
@@ -150,6 +151,34 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->delete('/(\d+)', function($id) use ($db) {
 
 	});
+
+
+	/* POST for adding opt in */
+    $router->post('/optin/(\d+)', function($listing_id) use($db) {
+
+        $optin_data = [
+            'listing_id' => $listing_id,
+            'user_id' => @$_SESSION['user_id'],
+            'message' => @$_POST['message'],
+            'date' => date('Y-m-d')
+        ];
+        $new_message = $db->opt_in->newEntity($optin_data);
+        pprint($new_message);
+        $result = safe_save($new_message, $db->opt_in);
+        pprint($result);
+        if ($result) {
+            $opt_in_id = $result->opt_in_id;
+            if ($db->opt_in->get($opt_in_id)) {
+                $_SESSION['feedback'] = ['message' => 'Message successfully sent!', 'state' => 'success'];
+            } else {
+                $_SESSION['feedback'] = [
+                    'message' => 'Your message was not sent succesfully!',
+                    'state' => 'alert'
+                ];
+            }
+            redirect("rooms");
+        }
+    });
 
 
 	/* POST for adding room */
