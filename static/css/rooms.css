@@ -12,6 +12,10 @@
     flex: 0 1 23%;
 }
 
+.card-img-top{
+    object-fit: cover;
+}
+
 .square_button {
     border: 3px solid black;
     background-color: black;
