@@ -21,15 +21,35 @@
             </button>
 
         </a>
-        <br/>
-        TODO (front-end): make this page look nice<br/>
-        TODO's (backend):
-        <ul>
-            <li> ... show interested people here ...</li>
-            <li>
-                ... change listing info (close, accept person, edit date - kan in gewone 'edit') ...
-            </li>
-        </ul>
+        {% if listings %}
+            {% for listing in listings %}
+                {{ listing }}
+
+                {% if listing.status == 'open' %}
+                    <li> ... show interested people here + accept-button ...</li>
+
+                    <a href="{{ url('rooms/list/edit/' ~ listing.listing_id) }}">
+                        <button class="btn btn-xlarge btn-dark">
+                            <i class="fad fa-pencil colored-icon light-icon"></i> Edit active listing
+                        </button>
+                    </a>
+
+                {% endif %}
+
+            {% endfor %}
+
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                This room is not listed yet!
+            </div>
+            <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
+                <button class="btn btn-xlarge btn-dark">
+                    <i class="fad fa-list colored-icon light-icon"></i> List this room
+                </button>
+
+            </a>
+        {% endif %}
+
     {% elseif user.role == 'tenant' %}
         <!-- todo: check if opted-in -->
         <a href="{{ url('rooms/opt-in/' ~ room.room_id) }}">

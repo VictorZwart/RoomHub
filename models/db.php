@@ -5,6 +5,8 @@
 
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Validation\Validator;
 use Cake\ORM\{Entity, Table, TableRegistry};
 use Exception;
 use PDOException;
@@ -18,6 +20,74 @@ class ListingTable extends Table {
 		// 1 room can have many listings
 		$this->belongsTo('Room');
 	}
+
+	/**
+	 * Wrapper for default validate for listings
+	 *
+	 * @param Validator $validator
+	 * @param null|array $skip
+	 *
+	 * @return Validator
+	 */
+	private function _validate($validator, $skip = null) {
+
+		_validate_required_fields($validator, $this->getSchema(), $skip);
+
+		$validator
+			->add('room_id', 'existing room', [
+				'rule'    => function($room_id) {
+					try {
+						$_SERVER['db']->room->get($room_id);
+
+						return true;
+					} catch(RecordNotFoundException $e) {
+						return false;
+					}
+				},
+				'message' => 'This room does not exist.'
+			])
+			->add('room_id', 'no active listings', [
+				'rule'    => function($room_id) {
+					return $this->find()->where(['room_id' => $room_id])->count() == 0;
+				},
+				'message' => 'This room is already listed!'
+			])
+			->add('available_from', 'valid date', [
+				'rule' => function($date) {
+					return valid_dates($date, true);
+				}
+			])->add('available_to', 'valid date', [
+				'rule' => function($date) {
+					return valid_dates($date, true);
+				}
+			]);
+
+		return $validator;
+	}
+
+	/**
+	 * Validator to use when adding entry
+	 *
+	 * @param Validator $validator
+	 *
+	 * @return Validator
+	 */
+	public function validationDefault($validator) {
+		return $this->_validate($validator);
+	}
+
+	/**
+	 * Validator to use when updating entry
+	 * Use as $db->listing->patchEntity($listing, $listing_data, ['validate' => 'update']);
+	 *
+	 * @param Validator $validator
+	 *
+	 * @return Validator
+	 */
+	public function validationUpdate($validator) {
+		return $this->_validate($validator, ['status', 'room_id']);
+	}
+
 }
 
 // table for room that allows linking listing
@@ -212,6 +282,7 @@ function handle_add_listing($room_id, $post, $table) {
 		$errors = validate_listing($listing_data, $table);
 		if ($errors) {
 			$_SESSION['feedback'] = ['message' => 'The room could not be listed.', 'errors' => $errors];
+
 			return false;
 		}
 		$new_listing = $table->newEntity($listing_data);

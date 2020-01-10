@@ -12,7 +12,7 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 
 /* include all models from the model folder here */
 
-foreach (glob("models/*.php") as $filename) {
+foreach(glob("models/*.php") as $filename) {
 	include $filename;
 }
 
@@ -47,7 +47,6 @@ $router->set404(function() {
 // GET for welcome page
 $router->get('/', function() use ($db, $twig) {
 	require_anonymous('rooms');
-	$name = $db->user->find()->first()->first_name;
 	echo $twig->render('index.twig', ['availablerooms' => '(iets uit de db)']);
 
 });
@@ -59,8 +58,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	/* GET for getting an overview of all rooms */
 	$router->get('/', function() use ($db, $twig) {
 
-		echo $twig->render('rooms.twig', ['all_rooms' => $db->room->find()]);
-		return;
+//		echo $twig->render('rooms.twig', ['all_rooms' => $db->room->find()]);
+//		return;
 
 		// WIP:
 
@@ -84,7 +83,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		} else {
 			// else you should see listings
 			$listings = $db->listing->find('all', ['contain' => 'Room'])
-			                        ->where(['status' => 'active']);
+			                        ->where(['status' => 'open']);
 		}
 		// TODO: add opt-ins
 
@@ -101,11 +100,90 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
 		try {
-			$room = $db->room->get($id);
-			echo $twig->render('room.twig', ['room' => $room]);
-		} catch (RecordNotFoundException $e) {
+			$room     = $db->room->get($id);
+			$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->toList();
+
+			echo $twig->render('room.twig', ['room' => $room, 'listings' => $listings]);
+		} catch(RecordNotFoundException $e) {
 			$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
 			redirect('rooms');
+		}
+
+
+	});
+
+	/* GET for adding listing */
+	$router->get('/list/add/(\d+)', function($room_id) use ($twig) {
+		require_login();
+		echo $twig->render('listing_form.twig', ['room_id' => $room_id]);
+	});
+
+	/* POST for adding listing */
+	$router->post('/list/add/(\d+)', function($room_id) use ($db) {
+		require_login();
+		$listing_result = handle_add_listing($room_id, $_POST, $db->listing);
+		if ($listing_result) {
+			$_SESSION['feedback'] = ['message' => 'Room successfully listed!', 'state' => 'success'];
+			redirect("rooms/$room_id");
+		} else {
+			redirect("rooms/list/add/$room_id");
+		}
+	});
+
+	/* GET for editing listing */
+	$router->get('/list/edit/(\d+)', function($listing_id) use ($twig, $db) {
+		require_login();
+
+		try {
+			$listing_info = $db->listing->get($listing_id);
+
+		} catch(RecordNotFoundException $e) {
+			$_SESSION['feedback'] = ['message' => 'This listing does not exist.'];
+			redirect("rooms");
+
+			return;
+		}
+		if ($listing_info['status'] != 'open') {
+			$_SESSION['feedback'] = ['message' => 'This listing is not active.'];
+			redirect('rooms');
+		}
+
+		echo $twig->render('listing_form.twig', ['listing' => $listing_info, 'is_edit' => true]);
+	});
+
+
+	/* GET for canceling listing */
+	$router->get('/list/cancel/(\d+)', function() {
+		require_login();
+		echo 'weg yeeten jwz';
+	});
+
+	/* POST for editing listing */
+	$router->post('/list/edit/(\d+)', function($listing_id) use ($db) {
+		require_login();
+
+		$listing_info = $db->listing->get($listing_id);
+
+		$room_id = $listing_info['room_id'];
+
+
+		$listing_data = [
+			'available_from' => @$_POST['available_from']
+		];
+		if (!@$_POST['is_indefinite'] == 'on') {
+			// do something with available_to
+			$listing_data['available_to'] = @$_POST['available_to'];
+		}
+
+
+		$db->listing->patchEntity($listing_info, $listing_data, ['validate' => 'update']);
+
+
+		if (safe_save($listing_info, $db->listing)) {
+			$_SESSION['feedback'] = ['message' => 'Listing successfully updated', 'status' => 'success'];
+			redirect("rooms/$room_id");
+		} else {
+			redirect("rooms/list/edit/$listing_id");
 		}
 
 
@@ -138,6 +216,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for adding room */
 	$router->get('/new', function() use ($db, $twig) {
+		require_login();
 		$owner_role = get_info($db->user, 'user_id', $_SESSION['user_id'])['role'];
 		if ($owner_role !== 'owner') {
 			$_SESSION['feedback'] = ['message' => 'You should be listed as owner to publish a room!'];
@@ -149,7 +228,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* DELETE for removing your own room */
 	$router->delete('/(\d+)', function($id) use ($db) {
-
+		require_login();
+		echo 'TODO' . $id;
 	});
 
 
@@ -183,6 +263,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* POST for adding room */
 	$router->post('/new', function() use ($db) {
+		require_login();
 
 		$_SESSION['post'] = $_POST;
 		$room_data        = [
@@ -219,31 +300,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			if (handle_file_upload($room_id, $db, 'room')) {
 
 				// validate listing
-				$listing_result = false;
 
-				if (@$_POST['disable_listing'] == 'on') {
-					// don't do anything with listing
-				} else {
-					// check listing
-					$listing_data = [
-						'status'         => 'active',
-						'room_id'        => $room_id,
-						'available_from' => @$_POST['available_from']
-					];
-					if (!@$_POST['is_indefinite'] == 'on') {
-						// do something with available_to
-						$listing_data['available_to'] = @$_POST['available_to'];
-					}
-
-					$errors = validate_listing($listing_data, $db->listing);
-					if ($errors) {
-						$_SESSION['feedback'] = ['message' => 'The room could not be listed.', 'errors' => $errors];
-						redirect('rooms/new');
-					}
-					$new_listing    = $db->listing->newEntity($listing_data);
-					$listing_result = safe_save($new_listing, $db->listing);
-
-				}
+				$listing_result = handle_add_listing($room_id, $_POST, $db->listing);
 
 				if ($db->room->get($room_id)->picture) {
 					$_SESSION['feedback'] = ['message' => 'Room successfully created!', 'state' => 'success'];
@@ -329,7 +387,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 	/* GET to view specific account by username */
-	$router->get('/u/(\w+)', function($username) use ($db, $twig) {
+	$router->get('/u/(\w +)', function($username) use ($db, $twig) {
 		$user_info = get_info($db->user, 'username', $username);
 
 		if (!$user_info) {
@@ -547,7 +605,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	/* DELETE for removing your account */
 	$router->post('/delete/(\d+)', function($id) use ($db) {
 		require_login();
-
+		echo 'TODO' . $id;
 	});
 
 });

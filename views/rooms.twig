@@ -26,8 +26,8 @@
                              alt="{{ room.description }}">
                     {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">Title</h5>
-                        <p class="card-text"><b>{{ room.street_name ~ ' ' ~ room.number }}</b></p>
+                        <h5 class="card-title">{{ room.type|title }} At {{ room.street_name|title }}</h5>
+                        <p class="card-text"><b>{{ room.street_name|title ~ ' ' ~ room.number }}</b></p>
                         <p class="card-text">{{ room.description }}</p>
                         {% if listing.available_from %}
                             <p class="card-text">{{ listing.available_from|date }}</p>
@@ -40,12 +40,6 @@
             {% endautoescape %}
         {% endfor %}
     </div>
-    {#    just for styling, needs tobe created with php#}
 
-    <ul>
-        {% for room in all_rooms %}
-            <li><a href="{{ url('rooms/' ~ room.room_id) }}">GOTO ROOM</a> {{ room }}</li>
-        {% endfor %}
-    </ul>
 {% endblock %}
 
