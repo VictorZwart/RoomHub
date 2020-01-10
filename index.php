@@ -93,22 +93,19 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
-		try {
-			$room     = $db->room->get($id);
-			$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->toList();
+		$room = get_info($db->room, 'room_id', $id);
+		require_exists($room);
+		$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->toList();
 
-			echo $twig->render('room.twig', ['room' => $room, 'listings' => $listings]);
-		} catch(RecordNotFoundException $e) {
-			$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
-			redirect('rooms');
-		}
+		echo $twig->render('room.twig', ['room' => $room, 'listings' => $listings]);
 
 
 	});
 
 	/* GET for adding listing */
-	$router->get('/list/add/(\d+)', function($room_id) use ($twig) {
+	$router->get('/list/add/(\d+)', function($room_id) use ($twig, $db) {
 		require_login();
+		require_mine(get_info($db->room, 'room_id', $room_id));
 		echo $twig->render('listing_form.twig', ['room_id' => $room_id]);
 	});
 
@@ -129,7 +126,12 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		require_login();
 
 		try {
-			$listing_info = $db->listing->get($listing_id);
+
+			$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
+
+			require_exists($listing_info);
+
+			require_mine($listing_info['room']);
 
 		} catch(RecordNotFoundException $e) {
 			$_SESSION['feedback'] = ['message' => 'This listing does not exist.'];
@@ -188,15 +190,8 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		require_login();
 		$db_room_info = get_info($db->room, 'room_id', $room_id);
 
-		if (!$db_room_info) {
-			$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
-			redirect('rooms');
-		}
 
-		if ($db_room_info['owner_id'] !== $_SESSION['user_id']) {
-			$_SESSION['feedback'] = ['message' => 'This room does not belong to you.'];
-			redirect('rooms');
-		}
+		require_mine($db_room_info);
 
 		if (@$_SESSION['post']) {
 			$room_info = $_SESSION['post'];
@@ -299,6 +294,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 	/* POST for editing room */
 	$router->post('/edit/(\d+)', function($room_id) use ($db) {
+		require_login();
 		$_SESSION['post'] = $_POST;
 		$room_data        = [
 			'description' => @$_POST['description'],
@@ -319,6 +315,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			redirect("rooms/edit/$room_id");
 		};
 		$active_room = $db->room->get($room_id);
+		require_mine($active_room);
 		$db->room->patchEntity($active_room, $room_data);
 
 		$result = safe_save($active_room, $db->room);
