@@ -19,6 +19,9 @@ class ListingTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
 		$this->belongsTo('Room', ['className' => 'Roomhub\RoomTable']);
+		// 1 listing can have many opt_ins
+        $this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
+                ->setForeignKey('listing_id');
 		// probeer zoiets: 'className' => 'Publishing.Authors' ; https://book.cakephp.org/3.next/en/orm/associations.html
 	}
 
@@ -96,10 +99,20 @@ class Opt_inTable extends Table {
 		// Many opt-ins belong to a listing
 		$this->belongsTo('Listing', ['className' => 'Roomhub\ListingTable'])
 		     ->setForeignKey('listing_id');
-
+		//Many opt-ins belong to a user
+		$this->belongsTo('User', ['className' => 'Roomhub\UserTable'])
+            ->setForeignKey('user_id');
 	}
 }
 
+class UserTable extends Table {
+    public function initialize(array $config)
+    {
+        //1 user can have many opt_ins
+        $this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
+            ->setForeignKey('user_id');
+    }
+}
 
 // table for room that allows linking 'listing's
 class RoomTable extends Table {

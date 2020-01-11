@@ -394,7 +394,8 @@ $router->mount('/account', function() use ($router, $db, $twig) {
         $me = $db->user->get($_SESSION['user_id']);
         //check to see if the user is a tenant
         if($me['role'] == 'owner'){
-            redirect('/reactions/(\w+)');
+            $_SESSION['feedback'] = ['message' => 'An owner cannot view opt-ins!', 'state' => 'alert'];
+            redirect('account');
         }
 
         $all_info = $db->opt_in->find('all', ['contain' => 'Listing.room'])
@@ -409,11 +410,14 @@ $router->mount('/account', function() use ($router, $db, $twig) {
         $me = $db->user->get($_SESSION['user_id']);
         //check to see if the user is an owner
         if($me['role'] == 'tenant'){
-            redirect('/opt-in/(\w+)');
+            $_SESSION['feedback'] = ['message' => 'A tenant cannot view reactions!', 'state' => 'alert'];
+            redirect('account');
         }
 
+        $all_info = $db->room->find('all', ['contain' => 'Listing.Opt_in.User'])
+            ->where(['owner_id' => $me['user_id']])->toList();
 
-        echo $twig->render('reactions.twig', []);
+        echo $twig->render('reactions.twig', ['all_info' => $all_info]);
     });
 
 	/* GET to view specific account by username */

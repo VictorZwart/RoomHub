@@ -3,40 +3,76 @@
 {% block title %}Reactions{% endblock %}
 {% block content %}
 
-    <style type="text/css">
-        .tg  {border-collapse:collapse;border-spacing:0;}
-        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-        .tg .tg-0lax{text-align:left;vertical-align:top}
-    </style>
-    <table class="tg">
-        <tr>
-            <th class="tg-0lax" colspan="3">View all your reactions below!<br></th>
-        </tr>
-        <tr>
-            <td class="tg-0lax">Room:</td>
-            <td class="tg-0lax">The message:</td>
-            <td class="tg-0lax">Profile:</td>
-        </tr>
-        <tr>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-        </tr>
-        <tr>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-        </tr>
-        <tr>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-        </tr>
-        <tr>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-        </tr>
-    </table>
+    {% for room in all_info %}
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th class="tg-cly1" colspan="2">
+                    <h1>
+                        {{ room.street_name }} {{ room.number }}
+                    </h1>
+                    {% if opt_in.Room.picture %}
+                        <img id='room_picture' src="{{ uploads('room/' ~ opt_in.Room.picture) }}"
+                             alt="The picture of the room">
+                    {% else %}
+                        <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
+                             alt="A placeholder (because no picture was uploaded)">
+                    {% endif %}
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row"><h3>Message</h3></th>
+                <th scope="row"><h3>Profile</h3></th>
+            </tr>
+            {% for listing in room['listing'] %}
+                {% for reaction in listing['opt_in'] %}
+                    <tr>
+                        <td > {{ reaction.message }} </td>
+                        <td>
+                            {% if reaction.user.picture %}
+                                <img id='profile_picture' src="{{ uploads('user/' ~ reaction.user.picture) }}"
+                                     alt="The picture of the user">
+                            {% else %}
+                                {% if reaction.user.role == 'tenant' %}
+                                    {% set role_img_loc = 'images/placeholder_tenant.png' %}
+                                {% else %}
+                                    {% set role_img_loc = 'images/placeholder_owner.png' %}
+                                {% endif %}
+                                <img id='profile_picture' src="{{ static(role_img_loc) }}"
+                                     alt="The profile picture of the account">
+
+                            {% endif %}
+                            <ul>
+                                <li>
+                                    <p>
+                                        Name: {{ reaction.user.first_name }} {{ reaction.user.last_name }}
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        His/her biography: {{ reaction.user.biography }}
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        Occupation: {{ reaction.user.occupation }}
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        Language: {{ reaction.user.language }}
+                                    </p>
+                                </li>
+                            </ul>
+                            {#                            todo: Add a button which gives the room away!#}
+                        </td>
+                    </tr>
+            </tbody>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    {% endfor %}
+
 {% endblock %}
