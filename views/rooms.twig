@@ -35,11 +35,13 @@
                         <a href="{{ url('rooms/' ~ room.room_id) }}">
                             <button class="square_button">More details</button>
                         </a>
-                        <a href="{{ url('rooms/opt-in/' ~ room.room_id) }}">
+                        {% if role == 'tenant' %}
+                        <a href="{{ url('rooms/opt-in/' ~ listing.listing_id) }}">
                             <button class="square_button">
                                 <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
                             </button>
                         </a>
+                        {% endif %}
                     </div>
                 </div>
             {% endautoescape %}

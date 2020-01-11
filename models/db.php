@@ -19,7 +19,11 @@ class ListingTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
 		$this->belongsTo('Room');
+		// probeer zoiets: 'className' => 'Publishing.Authors' ; https://book.cakephp.org/3.next/en/orm/associations.html
 	}
+
+	// table for opt-ins and listings that allows linking an opt-in with a room
+
 
 	/**
 	 * Wrapper for default validate for listings
@@ -90,7 +94,20 @@ class ListingTable extends Table {
 
 }
 
-// table for room that allows linking listing
+// table for opt-ins that allows linking 'listing's
+class Opt_inTable extends Table
+{
+    public function initialize(array $config)
+    {
+        // Many opt-ins belong to a listing
+        $this->belongsTo('Listing')
+            ->setForeignKey('listing_id');
+
+    }
+}
+
+
+// table for room that allows linking 'listing's
 class RoomTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
@@ -110,6 +127,7 @@ class RoomTable extends Table {
  * @property RoomTable $room database table for rooms
  * @property Table $migration database table for migrations (internal use)
  * @property ListingTable $listing database table for listings
+ * @property OptinTable $optin database table for optins
  */
 class DB {
 	public $conn;
