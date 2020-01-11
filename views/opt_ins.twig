@@ -18,22 +18,23 @@
             <th class="tg-0lax">Room:</th>
             <th class="tg-0lax">Your message:</th>
         </tr>
-        <tr>
-            <td class="tg-0lax">1</td>
-            <td class="tg-0lax">2</td>
-        </tr>
-        <tr>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-        </tr>
-        <tr>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-        </tr>
-        <tr>
-            <td class="tg-0lax"></td>
-            <td class="tg-0lax"></td>
-        </tr>
+        {% for opt_in in all_info %}
+            <tr>
+                <td>
+                    <h1>{{ opt_in.Room.street_name }} {{ opt_in.Room.number }}</h1>
+                    {% if opt_in.Room.picture %}
+                        <img id='room_picture' src="{{ uploads('room/' ~ opt_in.Room.picture) }}"
+                             alt="The picture of the room">
+                    {% else %}
+                        <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
+                             alt="A placeholder (because no picture was uploaded)">
+                    {% endif %}
+
+                </td>
+                <td>{{  opt_in.message }}</td>
+            </tr>
+        {% endfor %}
+
     </table>
 
 {% endblock %}

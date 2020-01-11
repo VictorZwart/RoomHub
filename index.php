@@ -397,15 +397,10 @@ $router->mount('/account', function() use ($router, $db, $twig) {
             redirect('/reactions/(\w+)');
         }
 
-		$opt_in_info = $db->opt_in->find('all')->where(['user_id' => $me['user_id']])->toList();
-		// $listing_info = $db->listing->find('all')->where(['listing_id' => ])->toList();
-		// $room_info = array();
-		foreach($opt_in_info as $opt_in) {
-			$listing_info[$opt_in['opt_in_id']] = get_info($db->listing, 'listing_id', $opt_in['listing_id']);
+        $all_info = $db->opt_in->find('all', ['contain' => 'Listing.room'])
+            ->where(['user_id' => $me['user_id']])->toList();
 
-		}
-
-		echo $twig->render('opt_ins.twig', ['listing_info' => $listing_info, 'opt_info' => $opt_in_info]);
+		echo $twig->render('opt_ins.twig', ['all_info' => $all_info]);
 	});
 
     /* GET to view all your reactions */
