@@ -31,9 +31,6 @@ $_SERVER['basepath'] = $router->getBasePath();
 /* setup templating */
 $twig = load_templating($config);
 
-
-// Add routes here
-
 // regular 404
 $router->set404(function() {
 	header('HTTP/1.1 404 Not Found');
@@ -87,7 +84,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		}
 
 
-		echo $twig->render('rooms.twig', ['all_rooms' => $listings]);
+		echo $twig->render('rooms.twig', ['all_rooms' => $listings, 'role' =>$me['role']]);
 	});
 
     /* GET for getting the opt_in form */
@@ -106,7 +103,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
 		$room = get_info($db->room, 'room_id', $id);
 		require_exists($room);
-		$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->toList();
+		$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->First();
 
 		echo $twig->render('room.twig', ['room' => $room, 'listings' => $listings]);
 
@@ -389,37 +386,18 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 	/* GET to view optins */
-    $router->get('/opt-in/(\w +)', function($username) use($db, $twig){
+    $router->get('/opt-in/(\w+)', function($username) use($db, $twig){
         $me = $db->user->get($_SESSION['user_id']);
-        
 
-        echo $twig->render('listing_and_optins.twig', []);
+        $opt_in_info = $db->opt_in->find('all')->where(['user_id' => $me['user_id']])->toList();
+       // $listing_info = $db->listing->find('all')->where(['listing_id' => ])->toList();
+       // $room_info = array();
+        foreach ($opt_in_info as $opt_in){
+            $listing_info[$opt_in['opt_in_id']] = get_info($db->listing, 'listing_id',$opt_in['listing_id'] );
 
-//        $me = $db->user->get($_SESSION['user_id']);
-//
-//		if (@$_GET['filter']) {
-//            if ($_GET['filter'] == 'mine' && $me['role'] == 'owner') {
-//                $user_id = $me['user_id'];
-//            } else {
-//                $owner = get_info($db->user, 'username', $_GET['filter']);
-//                if (!$owner) {
-//                    redirect('rooms');
-//                }
-//                $user_id = $owner->user_id;
-//            }
-//
-//            // if you want to see your rooms or those of a user, you should just see rooms
-//            $listings = $db->room->find('all', ['contain' => 'Listing'])
-//                ->where(['owner_id' => $user_id]);
-//
-//        } else {
-//            // else you should see listings
-//            $listings = $db->listing->find('all', ['contain' => 'Room'])
-//                ->where(['status' => 'open']);
-//        }
-//
-//
-//		echo $twig->render('rooms.twig', ['all_rooms' => $listings]);
+        }
+
+        echo $twig->render('opt_ins.twig', ['listing_info' => $listing_info, 'opt_info' => $opt_in_info]);
     });
 
 	/* GET to view specific account by username */
