@@ -33,18 +33,12 @@ class ListingTable extends Table {
 
 		_validate_required_fields($validator, $this->getSchema(), $skip);
 
-		// TODO: room should be yours
-
 		$validator
-			->add('room_id', 'existing room', [
+			->add('room_id', 'existing room that you own', [
 				'rule'    => function($room_id) {
-					try {
-						$_SERVER['db']->room->get($room_id);
+					$room_info = get_info($_SERVER['db']->room, 'room_id', $room_id);
 
-						return true;
-					} catch(RecordNotFoundException $e) {
-						return false;
-					}
+					return $room_info && $room_info['owner_id'] == $_SESSION['user_id'];
 				},
 				'message' => 'This room does not exist.'
 			])
@@ -177,7 +171,17 @@ class RoomTable extends Table {
 	 * @return Validator
 	 */
 	public function validationUpdate($validator) {
-		return $this->_validate($validator, ['owner_id']);
+		$validator = $this->_validate($validator, ['owner_id']);
+
+		// room should be yours when updating
+		$validator->add('owner_id', 'right owner', [
+			'rule'    => function($owner_id) {
+				return $owner_id == $_SESSION['user_id'];
+			},
+			'message' => 'You dont\'t own this room'
+		]);
+
+		return $validator;
 	}
 
 
