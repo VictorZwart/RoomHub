@@ -18,7 +18,7 @@ use PDOException;
 class ListingTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
-		$this->belongsTo('Room');
+		$this->belongsTo('Room', ['className' => 'Roomhub\RoomTable']);
 		// probeer zoiets: 'className' => 'Publishing.Authors' ; https://book.cakephp.org/3.next/en/orm/associations.html
 	}
 
@@ -91,15 +91,13 @@ class ListingTable extends Table {
 }
 
 // table for opt-ins that allows linking 'listing's
-class Opt_inTable extends Table
-{
-    public function initialize(array $config)
-    {
-        // Many opt-ins belong to a listing
-        $this->belongsTo('Listing')
-            ->setForeignKey('listing_id');
+class Opt_inTable extends Table {
+	public function initialize(array $config) {
+		// Many opt-ins belong to a listing
+		$this->belongsTo('Listing', ['className' => 'Roomhub\ListingTable'])
+		     ->setForeignKey('listing_id');
 
-    }
+	}
 }
 
 
@@ -107,7 +105,7 @@ class Opt_inTable extends Table
 class RoomTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
-		$this->hasMany('Listing')
+		$this->hasMany('Listing', ['className' => 'RoomHub\ListingTable'])
 			// ->setConditions(['status' => 'active'])
 			 ->setForeignKey('room_id');
 	}
