@@ -19,6 +19,11 @@
             {% endif %}
             {% autoescape %}
                 <div class="card">
+                    {% if not listing %}
+                        <div class="alert alert-warning" role="alert">
+                            This room is currently not listed.
+                        </div>
+                    {% endif %}
                     {% if not room.picture %}
                         <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
                     {% else %}
