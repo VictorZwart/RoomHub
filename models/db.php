@@ -20,8 +20,8 @@ class ListingTable extends Table {
 		// 1 room can have many listings
 		$this->belongsTo('Room', ['className' => 'Roomhub\RoomTable']);
 		// 1 listing can have many opt_ins
-        $this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
-                ->setForeignKey('listing_id');
+		$this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
+		     ->setForeignKey('listing_id');
 		// probeer zoiets: 'className' => 'Publishing.Authors' ; https://book.cakephp.org/3.next/en/orm/associations.html
 	}
 
@@ -101,17 +101,16 @@ class Opt_inTable extends Table {
 		     ->setForeignKey('listing_id');
 		//Many opt-ins belong to a user
 		$this->belongsTo('User', ['className' => 'Roomhub\UserTable'])
-            ->setForeignKey('user_id');
+		     ->setForeignKey('user_id');
 	}
 }
 
 class UserTable extends Table {
-    public function initialize(array $config)
-    {
-        //1 user can have many opt_ins
-        $this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
-            ->setForeignKey('user_id');
-    }
+	public function initialize(array $config) {
+		//1 user can have many opt_ins
+		$this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
+		     ->setForeignKey('user_id');
+	}
 }
 
 // table for room that allows linking 'listing's
@@ -244,7 +243,7 @@ class DB {
 			ConnectionManager::setConfig('default', ['url' => $dsn]);
 
 			$this->conn = ConnectionManager::get('default');
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			echo 'something went wrong connecting to the database.';
 			die();
 		}
@@ -300,14 +299,14 @@ class DB {
 			# get last migration (if not given):
 			$last_migration_file = $last_migration_file ??
 			                       $migrations->find()->order(['migration_id' => 'DESC'])->first()->migration_file;
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			try {
 				// commit initial migration
 				$this->_migrate('0.sql');
 
 				// check if migration succeeded
 				$last_migration_file = $migrations->find()->order(['migration_id' => 'DESC'])->first()->migration_file;
-			} catch(Exception $e) {
+			} catch (Exception $e) {
 				// initial migration failed, give up now
 				http_response_code(500);
 				echo 'the database could not be set-up. Please check your initial migration';
@@ -361,7 +360,7 @@ function safe_save($object, $table) {
 
 	try {
 		return $table->save($object);
-	} catch(PDOException $e) {
+	} catch (PDOException $e) {
 		$_SESSION['feedback'] = [
 			'message' => 'Something went wrong.',
 			'errors'  => $e->getMessage(),

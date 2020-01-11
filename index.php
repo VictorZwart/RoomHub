@@ -11,9 +11,13 @@ use Bramus\Router\Router;
 
 /* include all models from the model folder here */
 
-foreach(glob("models/*.php") as $filename) {
+foreach (glob("models/*.php") as $filename) {
 	include $filename;
 }
+
+include 'controller/room.php';
+include 'controller/account.php';
+
 
 /* load config from config.ini or config.example.ini */
 $config = new Config();
@@ -30,8 +34,6 @@ $_SERVER['basepath'] = $router->getBasePath();
 /* setup templating */
 $twig = load_templating($config);
 
-require_once('controller/room.php');
-require_once('controller/account.php');
 
 // regular 404
 $router->set404(function() {
@@ -51,33 +53,15 @@ $router->get('/', function() use ($db, $twig) {
 });
 
 
-// class-based controller Test
 
-//class TestController {
-//	private $my_config;
-//
-//	function __construct($cfg) {
-//		$this->my_config = $cfg;
-//	}
-//
-//	function test_function(){
-//		pprint($this->my_config);
-//	}
-//}
-//
-//$test_controller = new TestController(123);
-//
-//
-//$router->get('/test', 'TestController@test_function');
-
-    /*mount for the room page*/
+/*mount for the room page*/
 $router->mount('/rooms', function() use ($router, $db, $twig) {
-    new RoomController($router, $db, $twig);
+	new RoomController($router, $db, $twig);
 });
 
-    /*mount for the account page*/
+/*mount for the account page*/
 $router->mount('/account', function() use ($router, $db, $twig) {
-    new AccountController($router, $db, $twig);
+	new AccountController($router, $db, $twig);
 });
 
 /* Run the router and cleanup session (remove feedback, post data etc) */
