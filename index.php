@@ -389,7 +389,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
 	/* GET to view optins */
-    $router->get('/opt-in/(\w+)', function($username) use($db, $twig){
+    $router->get('/opt-in', function() use($db, $twig){
         require_login();
         $me = $db->user->get($_SESSION['user_id']);
         //check to see if the user is a tenant
@@ -405,7 +405,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 	});
 
     /* GET to view all your reactions */
-    $router->get('/reactions/(\w+)', function($username) use($db, $twig){
+    $router->get('/reactions', function() use($db, $twig){
         require_login();
         $me = $db->user->get($_SESSION['user_id']);
         //check to see if the user is an owner
