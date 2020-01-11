@@ -392,6 +392,9 @@ $router->mount('/account', function() use ($router, $db, $twig) {
     $router->get('/opt-in/(\w+)', function($username) use($db, $twig){
         require_login();
         $me = $db->user->get($_SESSION['user_id']);
+//        if($me['role'] == 'owner'){
+//            redirect('/reactions/(\w+)');
+//        }
 
         $opt_in_info = $db->opt_in->find('all')->where(['user_id' => $me['user_id']])->toList();
        // $listing_info = $db->listing->find('all')->where(['listing_id' => ])->toList();
@@ -402,6 +405,18 @@ $router->mount('/account', function() use ($router, $db, $twig) {
         }
 
         echo $twig->render('opt_ins.twig', ['listing_info' => $listing_info, 'opt_info' => $opt_in_info]);
+    });
+
+    /* GET to view all your reactions */
+    $router->get('/reactions/(\w+)', function($username) use($db, $twig){
+        require_login();
+        $me = $db->user->get($_SESSION['user_id']);
+//        if($me['role'] == 'tenant'){
+//            redirect('/opt-in/(\w+)');
+//        }
+
+
+        echo $twig->render('reactions.twig', []);
     });
 
 	/* GET to view specific account by username */
