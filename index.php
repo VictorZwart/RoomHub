@@ -105,7 +105,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		}
 
 
-		echo $twig->render('rooms.twig', ['all_rooms' => $listings, 'role' =>$me['role']]);
+		echo $twig->render('rooms.twig', ['all_rooms' => $listings, 'role' => $me['role']]);
 	});
 
 	/* GET for getting the opt_in form */
@@ -392,28 +392,30 @@ $router->mount('/account', function() use ($router, $db, $twig) {
     $router->get('/opt-in/(\w+)', function($username) use($db, $twig){
         require_login();
         $me = $db->user->get($_SESSION['user_id']);
-//        if($me['role'] == 'owner'){
-//            redirect('/reactions/(\w+)');
-//        }
-
-        $opt_in_info = $db->opt_in->find('all')->where(['user_id' => $me['user_id']])->toList();
-       // $listing_info = $db->listing->find('all')->where(['listing_id' => ])->toList();
-       // $room_info = array();
-        foreach ($opt_in_info as $opt_in){
-            $listing_info[$opt_in['opt_in_id']] = get_info($db->listing, 'listing_id',$opt_in['listing_id'] );
-
+        //check to see if the user is a tenant
+        if($me['role'] == 'owner'){
+            redirect('/reactions/(\w+)');
         }
 
-        echo $twig->render('opt_ins.twig', ['listing_info' => $listing_info, 'opt_info' => $opt_in_info]);
-    });
+		$opt_in_info = $db->opt_in->find('all')->where(['user_id' => $me['user_id']])->toList();
+		// $listing_info = $db->listing->find('all')->where(['listing_id' => ])->toList();
+		// $room_info = array();
+		foreach($opt_in_info as $opt_in) {
+			$listing_info[$opt_in['opt_in_id']] = get_info($db->listing, 'listing_id', $opt_in['listing_id']);
+
+		}
+
+		echo $twig->render('opt_ins.twig', ['listing_info' => $listing_info, 'opt_info' => $opt_in_info]);
+	});
 
     /* GET to view all your reactions */
     $router->get('/reactions/(\w+)', function($username) use($db, $twig){
         require_login();
         $me = $db->user->get($_SESSION['user_id']);
-//        if($me['role'] == 'tenant'){
-//            redirect('/opt-in/(\w+)');
-//        }
+        //check to see if the user is an owner
+        if($me['role'] == 'tenant'){
+            redirect('/opt-in/(\w+)');
+        }
 
 
         echo $twig->render('reactions.twig', []);

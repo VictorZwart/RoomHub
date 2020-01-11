@@ -10,12 +10,12 @@ foreach(glob("models/*.php") as $filename) {
 
 use Cake\ORM\{Table, TableRegistry};
 
-$conf = new Config();
+$conf = new RoomHub\Config();
 
 if (@$conf->get('db')['migrate'] == 'manual') {
 	// only allow manual migrations when this mode is selected!
 
-	$db = new DB($conf);
+	$db = new RoomHub\DB($conf);
 
 	$db->auto_migrate();
 	echo 'done!';
