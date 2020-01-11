@@ -7,7 +7,6 @@ session_start();
 require __DIR__ . '/vendor/autoload.php';
 
 use Bramus\Router\Router;
-use Cake\Datasource\Exception\RecordNotFoundException;
 
 
 /* include all models from the model folder here */
@@ -49,25 +48,47 @@ $router->get('/', function() use ($db, $twig) {
 });
 
 
+// class-based controller Test
+
+//class TestController {
+//	private $my_config;
+//
+//	function __construct($cfg) {
+//		$this->my_config = $cfg;
+//	}
+//
+//	function test_function(){
+//		pprint($this->my_config);
+//	}
+//}
+//
+//$test_controller = new TestController(123);
+//
+//
+//$router->get('/test', 'TestController@test_function');
+
+
 $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 
 	/* GET for getting an overview of all rooms */
 	$router->get('/', function() use ($db, $twig) {
 
-//		echo $twig->render('rooms.twig', ['all_rooms' => $db->room->find()]);
-//		return;
+		// You can use the overview in three different ways:
+		// = /rooms/: show all listings
+		// = /rooms/?filter=mine: show all rooms that you own (if you're an owner)
+		// = /rooms/?filter=username: show all rooms that 'username' owns
 
-		// WIP:
 
-		$me = $db->user->get($_SESSION['user_id']);
+		$me = get_info($db->user, 'user_id', @$_SESSION['user_id']);
 
 		if (@$_GET['filter']) {
-			if ($_GET['filter'] == 'mine' && $me['role'] == 'owner') {
+			if ($me && $_GET['filter'] == 'mine' && $me['role'] == 'owner') {
 				$user_id = $me['user_id'];
 			} else {
 				$owner = get_info($db->user, 'username', $_GET['filter']);
 				if (!$owner) {
+					// no such owner
 					redirect('rooms');
 				}
 				$user_id = $owner->user_id;
@@ -87,25 +108,29 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 		echo $twig->render('rooms.twig', ['all_rooms' => $listings, 'role' =>$me['role']]);
 	});
 
-    /* GET for getting the opt_in form */
-    $router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
-        require_login();
-        $userdata = $db->user->get($_SESSION['user_id']);
-        if($userdata['role'] !== 'tenant'){
-            $_SESSION['feedback'] = ['message' => 'only tenants can react on a room!', 'state' => 'warning'];
-            redirect("rooms");
-        }
-        $roomdata = $db->listing->get($listing_id, ['contain' => 'Room']);
+	/* GET for getting the opt_in form */
+	$router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
+		require_login();
 
-        echo $twig->render('optinform.twig', ['room' => $roomdata, 'user' => $userdata]);
-    });
+		$userdata = get_info($db->user, 'user_id', @$_SESSION['user_id']);
+
+		if ($userdata && $userdata['role'] !== 'tenant') {
+			$_SESSION['feedback'] = ['message' => 'Only tenants can react on a room!'];
+			redirect("rooms");
+		}
+
+		$roomdata = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
+
+
+		echo $twig->render('optinform.twig', ['room' => $roomdata, 'user' => $userdata]);
+	});
+
 	/* GET for reading specific rooms */
 	$router->get('/(\d+)', function($id) use ($db, $twig) {
-		$room = get_info($db->room, 'room_id', $id);
+		$room = get_info($db->room, 'room_id', $id, ['contain' => 'Listing']);
 		require_exists($room);
-		$listings = $db->listing->find()->where(['room_id' => $room['room_id']])->First();
 
-		echo $twig->render('room.twig', ['room' => $room, 'listings' => $listings]);
+		echo $twig->render('room.twig', ['room' => $room]);
 
 
 	});
@@ -133,20 +158,12 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->get('/list/edit/(\d+)', function($listing_id) use ($twig, $db) {
 		require_login();
 
-		try {
 
-			$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
+		$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
 
-			require_exists($listing_info);
+		require_exists($listing_info);
+		require_mine($listing_info['room']);
 
-			require_mine($listing_info['room']);
-
-		} catch(RecordNotFoundException $e) {
-			$_SESSION['feedback'] = ['message' => 'This listing does not exist.'];
-			redirect("rooms");
-
-			return;
-		}
 		if ($listing_info['status'] != 'open') {
 			$_SESSION['feedback'] = ['message' => 'This listing is not active.'];
 			redirect('rooms');
@@ -166,7 +183,10 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->post('/list/edit/(\d+)', function($listing_id) use ($db) {
 		require_login();
 
-		$listing_info = $db->listing->get($listing_id);
+		$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
+
+		require_exists($listing_info);
+		require_mine($listing_info['room']);
 
 		$room_id = $listing_info['room_id'];
 
@@ -184,7 +204,7 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 
 		if (safe_save($listing_info, $db->listing)) {
-			$_SESSION['feedback'] = ['message' => 'Listing successfully updated', 'status' => 'success'];
+			$_SESSION['feedback'] = ['message' => 'Listing successfully updated', 'state' => 'success'];
 			redirect("rooms/$room_id");
 		} else {
 			redirect("rooms/list/edit/$listing_id");
@@ -197,7 +217,6 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 	$router->get('/edit/(\d+)', function($room_id) use ($db, $twig) {
 		require_login();
 		$db_room_info = get_info($db->room, 'room_id', $room_id);
-
 
 		require_mine($db_room_info);
 
@@ -231,31 +250,31 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 
 
 	/* POST for adding opt in */
-    $router->post('/opt-in/(\d+)', function($listing_id) use($db) {
-
-        $optin_data = [
-            'listing_id' => $listing_id,
-            'user_id' => @$_SESSION['user_id'],
-            'message' => @$_POST['message'],
-            'date' => date('Y-m-d h:i:s')
-        ];
-        $new_message = $db->opt_in->newEntity($optin_data);
-        pprint($new_message);
-        $result = safe_save($new_message, $db->opt_in);
-        pprint($result);
-        if ($result) {
-            $opt_in_id = $result->opt_in_id;
-            if ($db->opt_in->get($opt_in_id)) {
-                $_SESSION['feedback'] = ['message' => 'Message successfully sent!', 'state' => 'success'];
-            } else {
-                $_SESSION['feedback'] = [
-                    'message' => 'Your message was not sent succesfully!',
-                    'state' => 'alert'
-                ];
-            }
-            redirect("rooms");
-        }
-    });
+	$router->post('/opt-in/(\d+)', function($listing_id) use ($db) {
+		require_login();
+		$optin_data  = [
+			'listing_id' => $listing_id,
+			'user_id'    => @$_SESSION['user_id'],
+			'message'    => @$_POST['message'],
+			'date'       => date('Y-m-d h:i:s')
+		];
+		$new_message = $db->opt_in->newEntity($optin_data);
+		pprint($new_message);
+		$result = safe_save($new_message, $db->opt_in);
+		pprint($result);
+		if ($result) {
+			$opt_in_id = $result->opt_in_id;
+			if ($db->opt_in->get($opt_in_id)) {
+				$_SESSION['feedback'] = ['message' => 'Message successfully sent!', 'state' => 'success'];
+			} else {
+				$_SESSION['feedback'] = [
+					'message' => 'Your message was not sent succesfully!',
+					'state'   => 'alert'
+				];
+			}
+			redirect("rooms");
+		}
+	});
 
 
 	/* POST for adding room */
@@ -275,16 +294,6 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'owner_id'    => @$_SESSION['user_id']
 		];
 
-
-		$errors = validate_room($room_data, $db->room);
-
-		if ($errors) {
-
-			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
-
-			// there are errors
-			redirect('rooms/new');
-		};
 
 		$new_room = $db->room->newEntity($room_data);
 
@@ -342,17 +351,11 @@ $router->mount('/rooms', function() use ($router, $db, $twig) {
 			'street_name' => @$_POST['street_name'],
 			'number'      => @$_POST['number']
 		];
-		$errors           = validate_room($room_data, $db->room);
 
-		if ($errors) {
-			// there are errors
-			$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
+		$active_room = get_info($db->room, 'room_id', $room_id);
 
-			redirect("rooms/edit/$room_id");
-		};
-		$active_room = $db->room->get($room_id);
 		require_mine($active_room);
-		$db->room->patchEntity($active_room, $room_data);
+		$db->room->patchEntity($active_room, $room_data, ['validate' => 'update']);
 
 		$result = safe_save($active_room, $db->room);
 
@@ -387,6 +390,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET to view optins */
     $router->get('/opt-in/(\w+)', function($username) use($db, $twig){
+        require_login();
         $me = $db->user->get($_SESSION['user_id']);
 
         $opt_in_info = $db->opt_in->find('all')->where(['user_id' => $me['user_id']])->toList();
@@ -464,6 +468,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 
 	/* GET for logging out */
 	$router->get('/logout', function() {
+		require_login();  // you should log in to log out
 		session_destroy();
 		session_start();
 		$_SESSION['feedback'] = ['message' => 'Logged out successfully!!', 'state' => 'success'];
@@ -510,7 +515,7 @@ $router->mount('/account', function() use ($router, $db, $twig) {
 		require_login();
 
 
-		$current_user = $db->user->get($_SESSION['user_id']);
+		$current_user = get_info($db->user, 'user_id', @$_SESSION['user_id']);
 
 		$user_data = [
 			'first_name'   => @$_POST['first_name'],

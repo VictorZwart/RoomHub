@@ -38,15 +38,11 @@ class ListingTable extends Table {
 		_validate_required_fields($validator, $this->getSchema(), $skip);
 
 		$validator
-			->add('room_id', 'existing room', [
+			->add('room_id', 'existing room that you own', [
 				'rule'    => function($room_id) {
-					try {
-						$_SERVER['db']->room->get($room_id);
+					$room_info = get_info($_SERVER['db']->room, 'room_id', $room_id);
 
-						return true;
-					} catch(RecordNotFoundException $e) {
-						return false;
-					}
+					return $room_info && $room_info['owner_id'] == $_SESSION['user_id'];
 				},
 				'message' => 'This room does not exist.'
 			])
@@ -115,6 +111,97 @@ class RoomTable extends Table {
 			// ->setConditions(['status' => 'active'])
 			 ->setForeignKey('room_id');
 	}
+
+	/**
+	 * Wrapper for default validate for rooms
+	 *
+	 * @param Validator $validator
+	 * @param null|array $skip
+	 *
+	 * @return Validator
+	 */
+	function _validate($validator, $skip = null) {
+
+		_validate_required_fields($validator, $this->getSchema(), $skip);
+
+		$validator
+			->add('zipcode', 'valid zipcode', [
+				//zipcode must have format of 0000AA
+				'rule'    => function($zipcode) {
+					return (bool) preg_match('/^\d{4}[a-zA-Z]{2}$/', $zipcode);
+				},
+				'message' => 'You have entered a wrong zipcode format'
+			])
+			->add('number', 'valid housenumber', [
+				//streetnumber must contain minimum of 1 number
+				'rule'    => function($number) {
+					return (bool) preg_match('/^\d\w*/', $number);
+				},
+				'message' => 'Please enter a number starting with a digit.'
+			])
+			->add('size', 'valid room area', [
+				//streetnumber must contain minimum of 1 number
+				'rule' => function($size) {
+					if ($size > 1) {
+						return true;
+					} else {
+						return 'Please enter a size which is larger than 1.';
+					}
+				}
+			])
+			->add('street_name', 'valid street name', [
+				// street name can only be letters, apostrophe, dash and space
+				'rule'    => function($street_name) {
+					return (bool) preg_match("/^[a-zA-Z\-' ]+$/", $street_name);
+				},
+				'message' => 'Please enter a street name with only letters.'
+			])
+			->add('city', 'valid city name', [
+				//streetnumber must contain minimum of 1 number
+				'rule'    => function($city) {
+					return (bool) preg_match('/^[a-zA-Z]+$/', $city);
+				},
+				'message' => 'Please enter a city name with only letters.'
+			]);
+
+		return $validator;
+	}
+
+
+	/**
+	 * Validator to use when adding entry
+	 *
+	 * @param Validator $validator
+	 *
+	 * @return Validator
+	 */
+	public function validationDefault($validator) {
+		return $this->_validate($validator);
+	}
+
+	/**
+	 * Validator to use when updating entry
+	 * Use as $db->listing->patchEntity($listing, $listing_data, ['validate' => 'update']);
+	 *
+	 * @param Validator $validator
+	 *
+	 * @return Validator
+	 */
+	public function validationUpdate($validator) {
+		$validator = $this->_validate($validator, ['owner_id']);
+
+		// room should be yours when updating
+		$validator->add('owner_id', 'right owner', [
+			'rule'    => function($owner_id) {
+				return $owner_id == $_SESSION['user_id'];
+			},
+			'message' => 'You dont\'t own this room'
+		]);
+
+		return $validator;
+	}
+
+
 }
 
 /**
@@ -127,7 +214,7 @@ class RoomTable extends Table {
  * @property RoomTable $room database table for rooms
  * @property Table $migration database table for migrations (internal use)
  * @property ListingTable $listing database table for listings
- * @property OptinTable $optin database table for optins
+ * @property Table $opt_in database table for opt_ins
  */
 class DB {
 	public $conn;
@@ -297,12 +384,6 @@ function handle_add_listing($room_id, $post, $table) {
 			$listing_data['available_to'] = @$post['available_to'];
 		}
 
-		$errors = validate_listing($listing_data, $table);
-		if ($errors) {
-			$_SESSION['feedback'] = ['message' => 'The room could not be listed.', 'errors' => $errors];
-
-			return false;
-		}
 		$new_listing = $table->newEntity($listing_data);
 
 		return safe_save($new_listing, $table);

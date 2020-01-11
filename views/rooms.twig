@@ -19,6 +19,11 @@
             {% endif %}
             {% autoescape %}
                 <div class="card">
+                    {% if not listing %}
+                        <div class="alert alert-warning" role="alert">
+                            This room is currently not listed.
+                        </div>
+                    {% endif %}
                     {% if not room.picture %}
                         <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
                     {% else %}
@@ -35,12 +40,12 @@
                         <a href="{{ url('rooms/' ~ room.room_id) }}">
                             <button class="square_button">More details</button>
                         </a>
-                        {% if role == 'tenant' %}
-                        <a href="{{ url('rooms/opt-in/' ~ listing.listing_id) }}">
-                            <button class="square_button">
-                                <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
-                            </button>
-                        </a>
+                        {% if user.role == 'tenant' %}
+                            <a href="{{ url('rooms/opt-in/' ~ listing.listing_id) }}">
+                                <button class="square_button">
+                                    <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
+                                </button>
+                            </a>
                         {% endif %}
                     </div>
                 </div>
