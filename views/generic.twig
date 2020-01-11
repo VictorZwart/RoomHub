@@ -52,7 +52,7 @@
                 {% if user.role == 'owner' %}
                 <a class="account_option" href="{{ url('rooms/new') }}">Add Room</a>
                 <a class="account_option" href="{{ url('rooms?filter=mine') }}">My Rooms</a>
-                <a class="account_option" href="{{ url('account/reactions') }}">My reactions</a>
+                <a class="account_option" href="{{ url('account/reactions') }}">My Reactions</a>
                 {% else %}
                     <a class="account_option" href="{{ url('account/opt-in') }}">My Opt-Ins</a>
                 {% endif %}
