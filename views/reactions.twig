@@ -3,16 +3,19 @@
 {% block title %}Reactions{% endblock %}
 {% block content %}
 
-    {% for room in all_info %}
+    {% for listing in all_info %}
+        {% set room = listing.room %}
+
         <table class="table table-bordered">
             <thead>
             <tr>
                 <th class="tg-cly1" colspan="2">
                     <h1>
-                        {{ room.street_name }} {{ room.number }}
+                        [{{ listing.status }}] {{ room.street_name }} {{ room.number }} From {{ listing.available_from|date('d-m-Y') }}
                     </h1>
-                    {% if opt_in.Room.picture %}
-                        <img id='room_picture' src="{{ uploads('room/' ~ opt_in.Room.picture) }}"
+
+                    {% if room.picture %}
+                        <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
                              alt="The picture of the room">
                     {% else %}
                         <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
@@ -26,57 +29,63 @@
                 <th scope="row"><h3>Message</h3></th>
                 <th scope="row"><h3>Profile</h3></th>
             </tr>
-            {% for listing in room['listing'] %}
-                {% for reaction in listing['opt_in'] %}
-                    <tr>
-                        <td > {{ reaction.message }} </td>
-                        <td>
-                            {% if reaction.user.picture %}
-                                <img id='profile_picture' src="{{ uploads('user/' ~ reaction.user.picture) }}"
-                                     alt="The picture of the user">
-                            {% else %}
-                                {% if reaction.user.role == 'tenant' %}
-                                    {% set role_img_loc = 'images/placeholder_tenant.png' %}
-                                {% else %}
-                                    {% set role_img_loc = 'images/placeholder_owner.png' %}
-                                {% endif %}
-                                <img id='profile_picture' src="{{ static(role_img_loc) }}"
-                                     alt="The profile picture of the account">
 
-                            {% endif %}
-                            <ul>
-                                <li>
-                                    <p>
-                                        Name: {{ reaction.user.first_name }} {{ reaction.user.last_name }}
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        Their biography: {{ reaction.user.biography }}
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        Occupation: {{ reaction.user.occupation }}
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        Language: {{ reaction.user.language }}
-                                    </p>
-                                </li>
-                                <li>
-                                    <a href="{{ url('account/u/' ~ reaction.user.username) }}">
-                                        <button>Go to profile</button>
-                                    </a>
-                                </li>
-                            </ul>
-                            {#                            todo: Add a button which gives the room away!#}
-                        </td>
-                    </tr>
+            {% for reaction in listing['opt_in'] %}
+            {% if reaction.status != 'cancelled' and reaction.status != 'rejected' %}
+            <tr>
+                <td> {{ reaction.message }} </td>
+                <td>
+                    {% if reaction.user.picture %}
+                        <img id='profile_picture' src="{{ uploads('user/' ~ reaction.user.picture) }}"
+                             alt="The picture of the user">
+                    {% else %}
+                        {% if reaction.user.role == 'tenant' %}
+                            {% set role_img_loc = 'images/placeholder_tenant.png' %}
+                        {% else %}
+                            {% set role_img_loc = 'images/placeholder_owner.png' %}
+                        {% endif %}
+                        <img id='profile_picture' src="{{ static(role_img_loc) }}"
+                             alt="The profile picture of the account">
+
+                    {% endif %}
+                    <ul>
+                        <li>
+                            <p>
+                                Name: {{ reaction.user.first_name }} {{ reaction.user.last_name }}
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Their biography: {{ reaction.user.biography }}
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Occupation: {{ reaction.user.occupation }}
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Language: {{ reaction.user.language }}
+                            </p>
+                        </li>
+                        <li>
+                            <a href="{{ url('account/u/' ~ reaction.user.username) }}">
+                                <button>Go to profile</button>
+                            </a>
+                        </li>
+                    </ul>
+                    {% if reaction.status == 'open' %}
+                    <a href="{{ url('rooms/list/assign/' ~ listing.listing_id ~ '/' ~ reaction.user.user_id) }}">
+                        <button>You get this room!</button>
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
             </tbody>
-                {% endfor %}
+            {% endif %}
             {% endfor %}
+
         </table>
     {% endfor %}
 

@@ -2,6 +2,7 @@
 
 
 use Bramus\Router\Router;
+use Cake\ORM\Query;
 use Twig\Environment;
 
 class AccountController {
@@ -33,8 +34,8 @@ class AccountController {
 
 			$all_info = $db->opt_in->find('all', ['contain' => 'Listing.room'])
 			                       ->where([
-				                       'user_id' => $me['user_id'],
-				                       'opt_in.status !='  => 'cancelled'
+				                       'user_id'          => $me['user_id'],
+				                       'opt_in.status !=' => 'cancelled'
 			                       ]);
 
 			echo $twig->render('opt_ins.twig', ['all_info' => $all_info]);
@@ -50,8 +51,14 @@ class AccountController {
 				redirect('account');
 			}
 
-			$all_info = $db->room->find('all', ['contain' => 'Listing.Opt_in.User'])
-			                     ->where(['owner_id' => $me['user_id']]);
+			// in the cakeorm docs it says you should use 'matching' to connect tables, but that doesn't seem to work
+			// and gives an unhandy data structure. (so does innerjoin)
+			$all_info = $db->listing->find('all', ['contain' => ['Opt_in.User', 'Room']])
+			                        ->where([
+				                        'Room.owner_id' => $me['user_id'],
+				                        'status !='     => 'cancelled',
+			                        ]);
+
 
 			echo $twig->render('reactions.twig', ['all_info' => $all_info]);
 		});
