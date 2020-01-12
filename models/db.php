@@ -118,7 +118,7 @@ class RoomTable extends Table {
 	public function initialize(array $config) {
 		// 1 room can have many listings
 		$this->hasMany('Listing', ['className' => 'RoomHub\ListingTable'])
-			// ->setConditions(['status' => 'active'])
+			// ->setConditions(['status' => 'open'])
 			 ->setForeignKey('room_id');
 	}
 

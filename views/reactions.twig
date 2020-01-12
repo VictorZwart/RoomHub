@@ -52,7 +52,7 @@
                                 </li>
                                 <li>
                                     <p>
-                                        His/her biography: {{ reaction.user.biography }}
+                                        Their biography: {{ reaction.user.biography }}
                                     </p>
                                 </li>
                                 <li>
@@ -64,6 +64,11 @@
                                     <p>
                                         Language: {{ reaction.user.language }}
                                     </p>
+                                </li>
+                                <li>
+                                    <a href="{{ url('account/u/' ~ reaction.user.username) }}">
+                                        <button>Go to profile</button>
+                                    </a>
                                 </li>
                             </ul>
                             {#                            todo: Add a button which gives the room away!#}
