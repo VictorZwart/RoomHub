@@ -1,7 +1,18 @@
 <?php namespace RoomHub;
 
 
+use Bramus\Router\Router;
+use Twig\Environment;
+
 class AccountController {
+
+	/**
+	 * AccountController constructor. Used to define all routes for account
+	 *
+	 * @param Router $router
+	 * @param DB $db
+	 * @param Environment $twig
+	 */
 	public function __construct($router, $db, $twig) {
 
 		/* GET to view your account */
@@ -21,7 +32,7 @@ class AccountController {
 			}
 
 			$all_info = $db->opt_in->find('all', ['contain' => 'Listing.room'])
-			                       ->where(['user_id' => $me['user_id']])->toList();
+			                       ->where(['user_id' => $me['user_id']]);
 
 			echo $twig->render('opt_ins.twig', ['all_info' => $all_info]);
 		});
@@ -37,13 +48,13 @@ class AccountController {
 			}
 
 			$all_info = $db->room->find('all', ['contain' => 'Listing.Opt_in.User'])
-			                     ->where(['owner_id' => $me['user_id']])->toList();
+			                     ->where(['owner_id' => $me['user_id']]);
 
 			echo $twig->render('reactions.twig', ['all_info' => $all_info]);
 		});
 
 		/* GET to view specific account by username */
-		$router->get('/u/(\w +)', function($username) use ($db, $twig) {
+		$router->get('/u/(\w+)', function($username) use ($db, $twig) {
 			$user_info = get_info($db->user, 'username', $username);
 
 			if (!$user_info) {
@@ -55,6 +66,7 @@ class AccountController {
 			// we dont want that in the front end!
 			unset($user_info['password']);
 
+			// TODO: hide menu or show a different one (because its not your account)
 			echo $twig->render('account.twig', ['user' => $user_info]);
 		});
 
