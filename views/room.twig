@@ -15,6 +15,7 @@
 
     {% set listings = room.listing %}
 
+    {# show controls and information for the owner of this room #}
     {% if user.role == 'owner' and room.owner_id == user.user_id %}
         <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
             <button class="btn btn-xlarge btn-dark">
@@ -24,7 +25,6 @@
         </a>
         {% if listings %}
             {% for listing in listings %}
-                {{ listing }}
 
                 {% if listing.status == 'open' %}
                     <li> ... show interested people here + accept-button ...</li>
@@ -51,13 +51,23 @@
             </a>
         {% endif %}
 
-    {% elseif user.role == 'tenant' %}
-        <!-- todo: check if opted-in -->
 
-        <a href="{{ url('rooms/opt-in/' ~ listings.0.listing_id) }}">
+        {# if there is an active listing for this room, show opt in/out buttons for tenant #}
+    {% elseif active_listing and user.role == 'tenant' and opted %}
+
+        <a href="{{ url('rooms/opt-in/cancel/' ~ active_listing) }}">
             <button class="btn btn-xlarge btn-dark">
+                <i class="fad fa-heart-broken colored-icon-reverse"></i> Cancel opt-in.
+            </button>
+        </a>
+    {% elseif active_listing and user.role == 'tenant' %}
+
+        <a href="{{ url('rooms/opt-in/' ~ active_listing) }}">
+            <button class="btn btn-xlarge btn-dark">
+                <!-- TODO: nevermind button -->
                 <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
             </button>
         </a>
+
     {% endif %}
 {% endblock %}

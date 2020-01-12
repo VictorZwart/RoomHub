@@ -23,6 +23,19 @@
                         <div class="alert alert-warning" role="alert">
                             This room is currently not listed.
                         </div>
+                    {% else %}
+
+                        {# this loop makes the button turn to 'cancel' if you already opted-in and shows a banner #}
+                        {% set is_liked = 0 %}
+                        {% for opt_in in my_optins %}
+                            {% if opt_in.listing_id == listing.listing_id and not is_liked %}
+                                {% set is_liked = 1 %}
+                                <div class="alert alert-success" role="alert">
+                                    You have opted-in to this room
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
                     {% endif %}
                     {% if not room.picture %}
                         <img src="{{ static('images/room_placeholder.jpg') }}" class="card-img-top" alt="Pic of room">
@@ -40,12 +53,20 @@
                         <a href="{{ url('rooms/' ~ room.room_id) }}">
                             <button class="square_button">More details</button>
                         </a>
-                        {% if user.role == 'tenant' %}
-                            <a href="{{ url('rooms/opt-in/' ~ listing.listing_id) }}">
-                                <button class="square_button">
-                                    <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
-                                </button>
-                            </a>
+                        {% if user.role == 'tenant' and listing %}
+                            {% if is_liked %}
+                                <a href="{{ url('rooms/opt-in/cancel/' ~ listing.listing_id) }}">
+                                    <button class="square_button">
+                                        <i class="fad fa-heart-broken colored-icon-reverse"></i> Cancel opt-in.
+                                    </button>
+                                </a>
+                            {% else %}
+                                <a href="{{ url('rooms/opt-in/' ~ listing.listing_id) }}">
+                                    <button class="square_button">
+                                        <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
+                                    </button>
+                                </a>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>

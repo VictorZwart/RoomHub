@@ -1,7 +1,18 @@
 <?php namespace RoomHub;
 
+use Bramus\Router\Router;
+use Cake\ORM\Query;
+use Twig\Environment;
 
 class RoomController {
+
+	/**
+	 * RoomController constructor. Used to define all routes for room
+	 *
+	 * @param Router $router
+	 * @param DB $db
+	 * @param Environment $twig
+	 */
 	public function __construct($router, $db, $twig) {
 		/* GET for getting an overview of all rooms */
 		$router->get('/', function() use ($db, $twig) {
@@ -29,15 +40,21 @@ class RoomController {
 				// if you want to see your rooms or those of a user, you should just see rooms
 				$listings = $db->room->find('all', ['contain' => 'Listing'])
 				                     ->where(['owner_id' => $user_id]);
-
 			} else {
 				// else you should see listings
 				$listings = $db->listing->find('all', ['contain' => 'Room'])
 				                        ->where(['status' => 'open']);
+
+			}
+
+			if ($me) {
+				$my_optins = $db->opt_in->find()->where(['user_id' => $me['user_id']]);
+			} else {
+				$my_optins = [];
 			}
 
 
-			echo $twig->render('rooms.twig', ['all_rooms' => $listings, 'role' => $me['role']]);
+			echo $twig->render('rooms.twig', ['all_rooms' => $listings, 'my_optins' => $my_optins]);
 		});
 
 		/* GET for getting the opt_in form */
@@ -58,11 +75,41 @@ class RoomController {
 		});
 
 		/* GET for reading specific rooms */
-		$router->get('/(\d+)', function($id) use ($db, $twig) {
-			$room = get_info($db->room, 'room_id', $id, ['contain' => 'Listing']);
+		$router->get('/(\d+)', function($room_id) use ($db, $twig) {
+			$room = get_info($db->room, 'room_id', $room_id, ['contain' => 'Listing']);
 			require_exists($room);
 
-			echo $twig->render('room.twig', ['room' => $room]);
+			$is_opted          = false;
+			$active_listing_id = 0;
+			if (@$_SESSION['user_id']) {
+				// user is logged in
+
+				foreach ($room['listing'] as $index => $listing) {
+					if ($listing['status'] == 'open') {
+						$active_listing_id = $listing['listing_id'];
+
+						$opt_in = $db->opt_in->find()->where([
+							'user_id'    => $_SESSION['user_id'],
+							'listing_id' => $active_listing_id
+						]);
+
+						if ($opt_in->count() > 0) {
+							// the user has an opt-in for this listing (room)
+							$is_opted = true;
+						}
+
+						break;
+					}
+				}
+
+			}
+
+			echo $twig->render('room.twig',
+				[
+					'room'           => $room,
+					'opted'          => $is_opted,
+					'active_listing' => $active_listing_id
+				]);
 
 
 		});
