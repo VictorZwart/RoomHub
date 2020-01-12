@@ -48,30 +48,16 @@ class RoomController {
 			}
 
 			if ($me) {
-				$my_optins = $db->opt_in->find()->where(['user_id' => $me['user_id']]);
+				$my_optins = $db->opt_in->find()->where([
+					'user_id' => $me['user_id'],
+					'status'  => 'open'
+				]);
 			} else {
 				$my_optins = [];
 			}
 
 
 			echo $twig->render('rooms.twig', ['all_rooms' => $listings, 'my_optins' => $my_optins]);
-		});
-
-		/* GET for getting the opt_in form */
-		$router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
-			require_login();
-
-			$userdata = get_info($db->user, 'user_id', @$_SESSION['user_id']);
-
-			if ($userdata && $userdata['role'] !== 'tenant') {
-				$_SESSION['feedback'] = ['message' => 'Only tenants can react on a room!'];
-				redirect("rooms");
-			}
-
-			$roomdata = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
-
-
-			echo $twig->render('optinform.twig', ['room' => $roomdata, 'user' => $userdata]);
 		});
 
 		/* GET for reading specific rooms */
@@ -90,7 +76,8 @@ class RoomController {
 
 						$opt_in = $db->opt_in->find()->where([
 							'user_id'    => $_SESSION['user_id'],
-							'listing_id' => $active_listing_id
+							'listing_id' => $active_listing_id,
+							'status'     => 'open'
 						]);
 
 						if ($opt_in->count() > 0) {
@@ -114,101 +101,6 @@ class RoomController {
 
 		});
 
-		/* GET for adding listing */
-		$router->get('/list/add/(\d+)', function($room_id) use ($twig, $db) {
-			require_login();
-			require_mine(get_info($db->room, 'room_id', $room_id));
-			echo $twig->render('listing_form.twig', ['room_id' => $room_id]);
-		});
-
-		/* POST for adding listing */
-		$router->post('/list/add/(\d+)', function($room_id) use ($db) {
-			require_login();
-			$listing_result = handle_add_listing($room_id, $_POST, $db->listing);
-			if ($listing_result) {
-				$_SESSION['feedback'] = ['message' => 'Room successfully listed!', 'state' => 'success'];
-				redirect("rooms/$room_id");
-			} else {
-				redirect("rooms/list/add/$room_id");
-			}
-		});
-
-		/* GET for editing listing */
-		$router->get('/list/edit/(\d+)', function($listing_id) use ($twig, $db) {
-			require_login();
-
-
-			$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
-
-			require_exists($listing_info);
-			require_mine($listing_info['room']);
-
-			if ($listing_info['status'] != 'open') {
-				$_SESSION['feedback'] = ['message' => 'This listing is not active.'];
-				redirect('rooms');
-			}
-
-			echo $twig->render('listing_form.twig', ['listing' => $listing_info, 'is_edit' => true]);
-		});
-
-
-		/* GET for canceling listing */
-		$router->get('/list/cancel/(\d+)', function() {
-			require_login();
-			echo 'weg yeeten jwz';
-		});
-
-		/* POST for editing listing */
-		$router->post('/list/edit/(\d+)', function($listing_id) use ($db) {
-			require_login();
-
-			$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
-
-			require_exists($listing_info);
-			require_mine($listing_info['room']);
-
-			$room_id = $listing_info['room_id'];
-
-
-			$listing_data = [
-				'available_from' => @$_POST['available_from']
-			];
-			if (!@$_POST['is_indefinite'] == 'on') {
-				// do something with available_to
-				$listing_data['available_to'] = @$_POST['available_to'];
-			}
-
-
-			$db->listing->patchEntity($listing_info, $listing_data, ['validate' => 'update']);
-
-
-			if (safe_save($listing_info, $db->listing)) {
-				$_SESSION['feedback'] = ['message' => 'Listing successfully updated', 'state' => 'success'];
-				redirect("rooms/$room_id");
-			} else {
-				redirect("rooms/list/edit/$listing_id");
-			}
-
-
-		});
-
-		/* GET for editing room */
-		$router->get('/edit/(\d+)', function($room_id) use ($db, $twig) {
-			require_login();
-			$db_room_info = get_info($db->room, 'room_id', $room_id);
-
-			require_mine($db_room_info);
-
-			if (@$_SESSION['post']) {
-				$room_info = $_SESSION['post'];
-			} else {
-				$room_info = $db_room_info;
-			}
-
-
-			echo $twig->render('room_form.twig', ['room_info' => $room_info, 'is_edit' => true]);
-		});
-
 		/* GET for adding room */
 		$router->get('/new', function() use ($db, $twig) {
 			require_login();
@@ -219,42 +111,6 @@ class RoomController {
 			}
 			echo $twig->render('room_form.twig', ['room_info' => @$_SESSION['post']]);
 		});
-
-
-		/* DELETE for removing your own room */
-		$router->delete('/(\d+)', function($id) use ($db) {
-			require_login();
-			echo 'TODO' . $id;
-		});
-
-
-		/* POST for adding opt in */
-		$router->post('/opt-in/(\d+)', function($listing_id) use ($db) {
-			require_login();
-			$optin_data  = [
-				'listing_id' => $listing_id,
-				'user_id'    => @$_SESSION['user_id'],
-				'message'    => @$_POST['message'],
-				'date'       => date('Y-m-d h:i:s')
-			];
-			$new_message = $db->opt_in->newEntity($optin_data);
-			pprint($new_message);
-			$result = safe_save($new_message, $db->opt_in);
-			pprint($result);
-			if ($result) {
-				$opt_in_id = $result->opt_in_id;
-				if ($db->opt_in->get($opt_in_id)) {
-					$_SESSION['feedback'] = ['message' => 'Message successfully sent!', 'state' => 'success'];
-				} else {
-					$_SESSION['feedback'] = [
-						'message' => 'Your message was not sent succesfully!',
-						'state'   => 'alert'
-					];
-				}
-				redirect("rooms");
-			}
-		});
-
 
 		/* POST for adding room */
 		$router->post('/new', function() use ($db) {
@@ -315,6 +171,22 @@ class RoomController {
 
 		});
 
+		/* GET for editing room */
+		$router->get('/edit/(\d+)', function($room_id) use ($db, $twig) {
+			require_login();
+			$db_room_info = get_info($db->room, 'room_id', $room_id);
+
+			require_mine($db_room_info);
+
+			if (@$_SESSION['post']) {
+				$room_info = $_SESSION['post'];
+			} else {
+				$room_info = $db_room_info;
+			}
+
+
+			echo $twig->render('room_form.twig', ['room_info' => $room_info, 'is_edit' => true]);
+		});
 
 		/* POST for editing room */
 		$router->post('/edit/(\d+)', function($room_id) use ($db) {
@@ -357,7 +229,178 @@ class RoomController {
 			}
 		});
 
+		/* GET for removing your own room */
+		$router->get('/remove/(\d+)', function($id) use ($db) {
+			require_login();
+			echo 'TODO' . $id;
+		});
 
+		$this->listing($router, $db, $twig);
+		$this->opt_in($router, $db, $twig);
+
+	}
+
+	/**
+	 * Define all opt-in routes
+	 *
+	 * @param Router $router
+	 * @param DB $db
+	 * @param Environment $twig
+	 */
+	private function opt_in($router, $db, $twig) {
+		/* GET for getting the opt_in form */
+		$router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
+			require_login();
+
+			$userdata = get_info($db->user, 'user_id', @$_SESSION['user_id']);
+
+			if ($userdata && $userdata['role'] !== 'tenant') {
+				$_SESSION['feedback'] = ['message' => 'Only tenants can react on a room!'];
+				redirect("rooms");
+			}
+
+			$roomdata = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
+
+
+			echo $twig->render('optinform.twig', ['room' => $roomdata, 'user' => $userdata]);
+		});
+
+		/* POST for adding opt in */
+		$router->post('/opt-in/(\d+)', function($listing_id) use ($db) {
+			require_login();
+			$optin_data  = [
+				'listing_id' => $listing_id,
+				'user_id'    => @$_SESSION['user_id'],
+				'message'    => @$_POST['message'],
+				'date'       => date('Y-m-d h:i:s'),
+				'status'     => 'open',
+			];
+			$new_message = $db->opt_in->newEntity($optin_data);
+			pprint($new_message);
+			$result = safe_save($new_message, $db->opt_in);
+			pprint($result);
+			if ($result) {
+				$opt_in_id = $result->opt_in_id;
+				if ($db->opt_in->get($opt_in_id)) {
+					$_SESSION['feedback'] = ['message' => 'Message successfully sent!', 'state' => 'success'];
+				} else {
+					$_SESSION['feedback'] = [
+						'message' => 'Your message was not sent succesfully!',
+						'state'   => 'alert'
+					];
+				}
+				redirect("rooms");
+			}
+		});
+
+		/* GET for cancelling opt in */
+		$router->get('/opt-in/cancel/(\d+)', function($listing_id) use ($db) {
+			// get because DELETE is not supported by browsers, and POST won't work with a button (easily that is)
+			require_login();
+
+			$opt_in = $db->opt_in->find()->where([
+				'listing_id' => $listing_id,
+				'user_id'    => $_SESSION['user_id'],
+				'status'     => 'open',
+			])->first();
+
+			if (!$opt_in) {
+				$_SESSION['feedback'] = ['message' => 'You are not opted-in to this listing.'];
+				redirect('rooms');
+			} else {
+				$db->opt_in->patchEntity($opt_in, ['status' => 'cancelled']);
+				if (safe_save($opt_in, $db->opt_in)) {
+					$_SESSION['feedback'] = ['message' => 'Opt-in successfully removed!', 'state' => 'success'];
+					redirect('rooms');
+				}
+			}
+		});
+	}
+
+	/**
+	 * Define all listing routes
+	 *
+	 * @param Router $router
+	 * @param DB $db
+	 * @param Environment $twig
+	 */
+	private function listing($router, $db, $twig) {
+		/* GET for adding listing */
+		$router->get('/list/add/(\d+)', function($room_id) use ($twig, $db) {
+			require_login();
+			require_mine(get_info($db->room, 'room_id', $room_id));
+			echo $twig->render('listing_form.twig', ['room_id' => $room_id]);
+		});
+
+		/* POST for adding listing */
+		$router->post('/list/add/(\d+)', function($room_id) use ($db) {
+			require_login();
+			$listing_result = handle_add_listing($room_id, $_POST, $db->listing);
+			if ($listing_result) {
+				$_SESSION['feedback'] = ['message' => 'Room successfully listed!', 'state' => 'success'];
+				redirect("rooms/$room_id");
+			} else {
+				redirect("rooms/list/add/$room_id");
+			}
+		});
+
+		/* GET for editing listing */
+		$router->get('/list/edit/(\d+)', function($listing_id) use ($twig, $db) {
+			require_login();
+
+
+			$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
+
+			require_exists($listing_info);
+			require_mine($listing_info['room']);
+
+			if ($listing_info['status'] != 'open') {
+				$_SESSION['feedback'] = ['message' => 'This listing is not active.'];
+				redirect('rooms');
+			}
+
+			echo $twig->render('listing_form.twig', ['listing' => $listing_info, 'is_edit' => true]);
+		});
+
+		/* POST for editing listing */
+		$router->post('/list/edit/(\d+)', function($listing_id) use ($db) {
+			require_login();
+
+			$listing_info = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'Room']);
+
+			require_exists($listing_info);
+			require_mine($listing_info['room']);
+
+			$room_id = $listing_info['room_id'];
+
+
+			$listing_data = [
+				'available_from' => @$_POST['available_from']
+			];
+			if (!@$_POST['is_indefinite'] == 'on') {
+				// do something with available_to
+				$listing_data['available_to'] = @$_POST['available_to'];
+			}
+
+
+			$db->listing->patchEntity($listing_info, $listing_data, ['validate' => 'update']);
+
+
+			if (safe_save($listing_info, $db->listing)) {
+				$_SESSION['feedback'] = ['message' => 'Listing successfully updated', 'state' => 'success'];
+				redirect("rooms/$room_id");
+			} else {
+				redirect("rooms/list/edit/$listing_id");
+			}
+
+
+		});
+
+		/* GET for canceling listing */
+		$router->get('/list/cancel/(\d+)', function() {
+			require_login();
+			echo 'weg yeeten jwz';
+		});
 	}
 
 }

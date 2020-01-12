@@ -3,7 +3,7 @@
 {% block title %}Your reactions{% endblock %}
 {% block content %}
 
-<!-- hier een tabel toevoegen met of jouw reactiesop alle kamers -->
+    <!-- hier een tabel toevoegen met of jouw reacties op alle kamers -->
     <table class="table table-bordered">
         <tr>
             <th colspan="2">View all your opt-ins below!<br></th>
@@ -11,6 +11,7 @@
         <tr>
             <th>Room:</th>
             <th>Your message:</th>
+            <th>State</th>
         </tr>
         {% for opt_in in all_info %}
             <tr>
@@ -24,8 +25,12 @@
                              alt="A placeholder (because no picture was uploaded)">
                     {% endif %}
 
+                    <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
+                        <button>got to room</button>
+                    </a>
                 </td>
-                <td>{{  opt_in.message }}</td>
+                <td>{{ opt_in.message }}</td>
+                <td>{{ opt_in.status }}</td>
             </tr>
         {% endfor %}
 

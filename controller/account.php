@@ -32,7 +32,10 @@ class AccountController {
 			}
 
 			$all_info = $db->opt_in->find('all', ['contain' => 'Listing.room'])
-			                       ->where(['user_id' => $me['user_id']]);
+			                       ->where([
+				                       'user_id' => $me['user_id'],
+				                       'opt_in.status !='  => 'cancelled'
+			                       ]);
 
 			echo $twig->render('opt_ins.twig', ['all_info' => $all_info]);
 		});
