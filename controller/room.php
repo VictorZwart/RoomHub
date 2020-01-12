@@ -47,7 +47,7 @@ class RoomController {
 
 			}
 
-			if ($me) {
+			if ($me && $me['role'] == 'tenant') {
 				$my_optins = $db->opt_in->find()->where([
 					'user_id' => $me['user_id'],
 					'status'  => 'open'
