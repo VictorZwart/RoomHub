@@ -16,7 +16,8 @@
         {% for opt_in in all_info %}
             <tr>
                 <td>
-                    <h1>{{ opt_in.Room.street_name }} {{ opt_in.Room.number }}</h1>
+                    <h1>[{{ opt_in.Listing.status }}] {{ opt_in.Room.street_name }} {{ opt_in.Room.number }}
+                        From {{ opt_in.Listing.available_from|date('d-m-Y') }}</h1>
                     {% if opt_in.Room.picture %}
                         <img id='room_picture' src="{{ uploads('room/' ~ opt_in.Room.picture) }}"
                              alt="The picture of the room">

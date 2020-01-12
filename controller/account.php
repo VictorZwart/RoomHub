@@ -32,7 +32,7 @@ class AccountController {
 				redirect('account');
 			}
 
-			$all_info = $db->opt_in->find('all', ['contain' => 'Listing.room'])
+			$all_info = $db->opt_in->find('all', ['contain' => 'listing.room'])
 			                       ->where([
 				                       'user_id'          => $me['user_id'],
 				                       'opt_in.status !=' => 'cancelled'
