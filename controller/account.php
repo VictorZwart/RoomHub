@@ -23,7 +23,7 @@ class AccountController {
 		});
 
 		/* GET to view optins */
-		$router->get('/opt-in', function() use ($db, $twig) {
+		$router->get('/opt-ins', function() use ($db, $twig) {
 			require_login();
 			$me = $db->user->get($_SESSION['user_id']);
 			//check to see if the user is a tenant
@@ -35,7 +35,7 @@ class AccountController {
 			$all_info = $db->opt_in->find('all', ['contain' => 'listing.room'])
 			                       ->where([
 				                       'user_id'          => $me['user_id'],
-				                       'opt_in.status !=' => 'cancelled'
+				                       'Opt_in.status !=' => 'cancelled'
 			                       ]);
 
 			echo $twig->render('opt_ins.twig', ['all_info' => $all_info]);
