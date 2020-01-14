@@ -35,10 +35,12 @@
     <a href="{{ base() }}">
         <img id='header_logo' src="{{ static('images/RoomhubLogo.png') }}" alt="The Roomhub Logo">
     </a>
-    <a href="{{ url('rooms') }}">
-        <button class="btn btn-xlarge btn-dark">Rooms overview (Front-End please fix design)</button>
-    </a>
 
+    <div id="desktop_header_view">
+        <a id='room_header_button' href="{{ url('rooms') }}">
+            <button class="btn btn-xlarge btn-dark">Rooms overview</button>
+        </a>
+    </div>
 
     {% if user.loggedin %}
         <!-- logged in -->
@@ -72,9 +74,15 @@
                 <button type="button" class="btn btn-outline-light">Register</button>
             </a>
         </div>
-
     {% endif %}
 </header>
+{# Mobile view #}
+
+<div id="mobile_header_view">
+    <a id='room_header_button' href="{{ url('rooms') }}">
+        <button class="btn btn-xlarge btn-dark">Rooms overview</button>
+    </a>
+</div>
 <div class="errors">
     {% if feedback.errors %}
         <b>Front-end: please use this feedback in the form</b>

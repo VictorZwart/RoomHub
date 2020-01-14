@@ -8,20 +8,23 @@
     <link rel="stylesheet" href="{{ static('css/index.css') }}" type="text/css">
 {% endblock %}
 {% block content %}
-    <h1>Welcome to RoomHub!</h1>
-    <h3 class="intro"> A place for both tenants and owners to meet.</h3>
-    <h3 class="iam">I am a...</h3>
-    <a href="{{ url('account/signup?role=tenant') }}">
-        <button class="btn btn-xlarge btn-dark tenant" type="button" >Tenant</button>
-    </a>
-    <a href="{{ url('account/signup?role=owner') }}">
-        <button class="btn btn-xlarge btn-dark owner" type="button" >Owner</button>
-    </a>
-    <h3 class="outro">Not your first time visiting? Log in directly using the button above!</h3>
-    <h2 class="rooms">We currently have {{ availablerooms }} rooms available!</h2>
-    <a href="{{ url('rooms') }}">
-        <button class="btn btn-xlarge btn-dark owner" type="button" >See all available rooms!</button>
-    </a>
-
+    <div id="index_div">
+        <h1>Welcome to RoomHub!</h1>
+        <h3 class="intro"> A place for both tenants and owners to meet.</h3>
+        <h3 class="iam">I am a...</h3>
+        <div id="buttons">
+            <a href="{{ url('account/signup?role=tenant') }}">
+                <button class="btn btn-xlarge btn-dark tenant" type="button" >Tenant</button>
+            </a>
+            <a href="{{ url('account/signup?role=owner') }}">
+                <button class="btn btn-xlarge btn-dark owner" type="button" >Owner</button>
+            </a>
+        </div>
+        <h3 class="outro">Not your first time visiting? Log in directly using the button above!</h3>
+        <h2 class="rooms">We currently have {{ availablerooms }} rooms available!</h2>
+        <a id='room_view_link' href="{{ url('rooms') }}">
+            <button class="btn btn-xlarge btn-dark owner" type="button" >See all available rooms!</button>
+        </a>
+    </div>
 {% endblock %}
 

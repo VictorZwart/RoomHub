@@ -1,9 +1,10 @@
-#content {
+#index_div{
     text-align: center;
     padding-top: 50px;
     min-height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
-
 .intro {
     padding-bottom: 50px;
 }
@@ -12,7 +13,7 @@
     padding-bottom: 20px;
 }
 
-.btn-xlarge {
+#index_div .btn-xlarge {
     padding: 18px 28px;
     font-size: 35px;
     line-height: normal;
@@ -26,8 +27,14 @@
 }
 
 .owner {
-    margin-left: 100px;
+    margin: 0px 50px 0px 50px;
 }
+
+#room_view_link{
+    display: block;
+    margin: 10px auto 0px auto;
+}
+
 .rooms {
     padding-top: 80px;
     font-weight: bold;

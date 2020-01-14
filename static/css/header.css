@@ -66,3 +66,21 @@ header {
 #account_menu:hover .dropbtn {
 	background-color: #3e8e41;
 }
+
+#mobile_header_view{
+	width: 100%;
+	background: black;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+}
+
+@media(max-width: 800px){
+	#desktop_header_view{
+		display: none;
+	}
+	#mobile_header_view{
+		display: flex;
+	}
+}
