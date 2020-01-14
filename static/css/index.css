@@ -20,7 +20,9 @@
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
     border-radius: 8px;
+    margin: 20px;
 }
+
 
 .outro {
     padding-top: 50px;

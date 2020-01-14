@@ -1,79 +1,101 @@
 {% extends "generic.twig" %}
 
 {% block title %}Room ...{% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/room.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
-    Hier specifieke room info<br/>
-    {% if room.picture %}
-        <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
-             alt="The picture of the room">
-    {% else %}
-        <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
-             alt="A placeholder (because no picture was uploaded)">
-    {% endif %}
-    <br/>
-    {{ room }}<br/>
+    <div id="room_page">
+        <div id="room_content">
+            {% if room.picture %}
+                <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
+                     alt="The picture of the room">
+            {% else %}
+                <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
+                     alt="A placeholder (because no picture was uploaded)">
+            {% endif %}
+            <br/>
+            {{ room }}<br/>
+            <h1>{{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
+            <p>{{ room.description }}</p>
+            <table id="room_information">
+                <tr>
+                    <th><i></i></th>
+                    <td>{{ room.number }}</td>
+                </tr><tr>
+                    <th>Size: </th>
+                    <td>{{ room.size }}</td>
+                </tr><tr>
+                    <th>Price: </th>
+                    <td>{{ room.price }}</td>
+                </tr><tr>
+                    <th>City: </th>
+                    <td>{{ room.city }}</td>
+                </tr>
+            </table>
 
-    {% set listings = room.listing %}
 
-    {# show controls and information for the owner of this room #}
-    {% if user.role == 'owner' and room.owner_id == user.user_id %}
-        <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
-            <button class="btn btn-xlarge btn-dark">
-                <i class="fad fa-edit colored-icon light-icon"></i> Edit my room
-            </button>
+            {# if there is an active listing for this room, show opt in/out buttons for tenant #}
+            {% if active_listing and user.role == 'tenant' and opted %}
 
-        </a>
-        {% if listings %}
-            {% for listing in listings %}
-
-                {% if listing.status == 'open' %}
-                    <li> ... show interested people here + accept-button ...</li>
-
-                    <a href="{{ url('rooms/list/edit/' ~ listing.listing_id) }}">
-                        <button class="btn btn-xlarge btn-dark">
-                            <i class="fad fa-pencil colored-icon light-icon"></i> Edit active listing
-                        </button>
-                    </a>
-
-                {% endif %}
-                <br/>
-                <a href="{{ url('... TODO ...') }}">
+                <a href="{{ url('rooms/opt-in/cancel/' ~ active_listing) }}">
                     <button class="btn btn-xlarge btn-dark">
-                        <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for {{ listing }}
+                        <i class="fad fa-heart-broken colored-icon-reverse"></i> Cancel opt-in.
                     </button>
                 </a>
+            {% elseif active_listing and user.role == 'tenant' %}
 
-            {% endfor %}
+                <a href="{{ url('rooms/opt-in/' ~ active_listing) }}">
+                    <button class="btn btn-xlarge btn-dark">
+                        <!-- TODO: nevermind button -->
+                        <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
+                    </button>
+                </a>
+            {% endif %}
+        </div>
+        {% set listings = room.listing %}
 
-        {% else %}
-            <div class="alert alert-danger" role="alert">
-                This room is not listed yet!
+        {# show controls and information for the owner of this room #}
+        {% if user.role == 'owner' and room.owner_id == user.user_id %}
+            <div id="owner_room_info">
+                <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
+                    <button class="btn btn-xlarge btn-dark">
+                        <i class="fad fa-edit colored-icon light-icon"></i> Edit my room
+                    </button>
+                </a>
+                {% if listings %}
+                    {% for listing in listings %}
+
+                        {% if listing.status == 'open' %}
+                            <li> ... show interested people here + accept-button ...</li>
+
+                            <a href="{{ url('rooms/list/edit/' ~ listing.listing_id) }}">
+                                <button class="btn btn-xlarge btn-dark">
+                                    <i class="fad fa-pencil colored-icon light-icon"></i> Edit active listing
+                                </button>
+                            </a>
+
+                        {% endif %}
+                        <br/>
+                        <a href="{{ url('... TODO ...') }}">
+                            <button class="btn btn-xlarge btn-dark">
+                                <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for {{ listing }}
+                            </button>
+                        </a>
+
+                    {% endfor %}
+
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    This room is not listed yet!
+                </div>
+                <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
+                    <button class="btn btn-xlarge btn-dark">
+                        <i class="fad fa-list colored-icon light-icon"></i> List this room
+                    </button>
+                </a>
+            {% endif %}
             </div>
-            <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
-                <button class="btn btn-xlarge btn-dark">
-                    <i class="fad fa-list colored-icon light-icon"></i> List this room
-                </button>
-
-            </a>
         {% endif %}
-
-
-        {# if there is an active listing for this room, show opt in/out buttons for tenant #}
-    {% elseif active_listing and user.role == 'tenant' and opted %}
-
-        <a href="{{ url('rooms/opt-in/cancel/' ~ active_listing) }}">
-            <button class="btn btn-xlarge btn-dark">
-                <i class="fad fa-heart-broken colored-icon-reverse"></i> Cancel opt-in.
-            </button>
-        </a>
-    {% elseif active_listing and user.role == 'tenant' %}
-
-        <a href="{{ url('rooms/opt-in/' ~ active_listing) }}">
-            <button class="btn btn-xlarge btn-dark">
-                <!-- TODO: nevermind button -->
-                <i class="fad fa-heart colored-icon-reverse"></i> I want this room!
-            </button>
-        </a>
-
-    {% endif %}
+    </div>
 {% endblock %}

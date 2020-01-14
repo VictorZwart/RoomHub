@@ -48,7 +48,7 @@
             <button id='account_button'
                     type="button"
                     class="btn btn-light">
-                Welcome, {{ user.first_name }} <img alt="v"
+                Welcome, {{ user.first_name|capitalize }} <img alt="v"
                                                     style="margin-left: 2px;"
                                                     src="{{ static('images/drop-down-arrow.png') }}">
             </button>

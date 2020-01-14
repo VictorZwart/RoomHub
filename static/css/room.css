@@ -1,0 +1,25 @@
+#room_page{
+    display: flex;
+    justify-content: center;
+}
+
+#room_content{
+    width: 60%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+#room_picture{
+    width: 100%;
+}
+
+#owner_room_info{
+    position: absolute;
+    right: 10px;
+    width: 200px;
+    background: #4e555b;
+    padding: 5px;
+    height: 500px;
+}
+

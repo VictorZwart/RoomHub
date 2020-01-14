@@ -52,3 +52,13 @@ img.avatar {
 #user {
 	font-size: 20px;
 }
+
+@media(max-width: 800px){
+	form{
+		max-width: 90vw;
+	}
+
+	input[type=text], input[type=password]{
+		width: 90%;
+	}
+}
