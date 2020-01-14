@@ -14,8 +14,7 @@
                 <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
                      alt="A placeholder (because no picture was uploaded)">
             {% endif %}
-            <br/>
-            {{ room }}<br/>
+
             <h1>{{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
             <p>{{ room.description }}</p>
             <table id="room_information">
@@ -34,6 +33,39 @@
                 </tr>
             </table>
 
+            <table id="address_table">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>City: </th>
+                        <td> {{ room.city|capitalize }}</td>
+                    </tr>
+                    <tr>
+                        <th>Street: </th>
+                        <td>{{ room.street_name|capitalize ~ " " ~ room.number}}</td>
+                    </tr>
+                    <tr>
+                        <th>Postal code: </th>
+                        <td>{{ room.zipcode }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- TODO display owner of the room not logged in user.-->
+            <!-- TODO display correct profile picture of owner -->
+
+            {# Card displaying the owner of the room#}
+            <div id="owner_info_row">
+                <img id="profile_pic" src="{{ static('images/placeholder_owner.png') }}" alt="Profile picture of the owner">
+                <div>
+                    <h4>{{ user.first_name|capitalize ~ " " ~ user.last_name|capitalize }}</h4>
+                    <p>Owner of this room and N other rooms on RoomHub.</p>
+                </div>
+            </div>
 
             {# if there is an active listing for this room, show opt in/out buttons for tenant #}
             {% if active_listing and user.role == 'tenant' and opted %}
@@ -58,6 +90,8 @@
         {# show controls and information for the owner of this room #}
         {% if user.role == 'owner' and room.owner_id == user.user_id %}
             <div id="owner_room_info">
+                <h2> Owner panel </h2>
+                <p>Only you get to see this.</p>
                 <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
                     <button class="btn btn-xlarge btn-dark">
                         <i class="fad fa-edit colored-icon light-icon"></i> Edit my room

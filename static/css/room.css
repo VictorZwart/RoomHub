@@ -4,9 +4,10 @@
 }
 
 #room_content{
-    width: 60%;
+    width: 50%;
     background: white;
     display: flex;
+    align-items: center;
     flex-direction: column;
 }
 
@@ -14,12 +15,49 @@
     width: 100%;
 }
 
-#owner_room_info{
-    position: absolute;
-    right: 10px;
-    width: 200px;
-    background: #4e555b;
+#owner_info_row{
+    height: 100px;
+    width: 95%;
+    background: #e1e4e4;
     padding: 5px;
-    height: 500px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    margin: 10px;
+}
+#owner_info_row img{
+    height: 100%;
 }
 
+#owner_info_row *{
+    margin: 0;
+}
+
+
+#owner_room_info{
+    position: absolute;
+    right: 1%;
+    left: 76%;
+    background: #000000;
+    padding: 5px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media(max-width: 1200px){
+    #room_page{
+        flex-direction: column-reverse;
+    }
+
+    #room_content{
+        width: 100vw;
+    }
+
+    #owner_room_info{
+        position: unset;
+        width: 100vw;
+        height: auto;
+    }
+}
