@@ -197,16 +197,8 @@ class AccountController {
 
 
 			$_SESSION['post'] = $_POST;
-			$errors           = validate_user($user_data, $db->user, false);
 
-			if ($errors) {
-				// there are errors
-				$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
-
-				redirect('account/edit');
-			};
-
-			$db->user->patchEntity($current_user, $user_data);
+			$db->user->patchEntity($current_user, $user_data, ['validate' => 'update']);
 
 
 			$result = safe_save($current_user, $db->user);
@@ -238,14 +230,6 @@ class AccountController {
 			require_anonymous();
 
 			$_SESSION['post'] = $_POST;
-			$errors           = validate_user($_POST, $db->user);
-
-			if ($errors) {
-				// there are errors
-				$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
-
-				redirect('account/signup');
-			};
 
 			$user_data = [
 				'username'     => @$_POST['username'],
