@@ -1,30 +1,51 @@
 {% extends "generic.twig" %}
 
 {% block title %}Reactions{% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/reactions.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
-    <marquee>Front-end please fix!</marquee>
     {% for listing in all_info %}
         {% set room = listing.room %}
 
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th class="tg-cly1" colspan="2">
-                    <h1>
-                        [{{ listing.status }}] {{ room.street_name }} {{ room.number }}
-                        From {{ listing.available_from|date('d-m-Y') }}
-                    </h1>
+        <div class="roominfo">
+            {% if room.picture %}
+                <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
+                     alt="The picture of the room">
+            {% else %}
+                <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
+                     alt="A placeholder (because no picture was uploaded)">
+            {% endif %}
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th scope="row">Size</th>
+                    <td>{{ room.size }}m<sup>2</sup></td>
+                </tr>
+                <tr>
+                    <th scope="row">Price</th>
+                    <td>&euro;{{ room.price }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">City</th>
+                    <td>{{ room.city|capitalize }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Street</th>
+                    <td>{{ room.street_name|capitalize ~ " " ~ room.number}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Postal Code</th>
+                    <td>{{ room.zipcode }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-                    {% if room.picture %}
-                        <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
-                             alt="The picture of the room">
-                    {% else %}
-                        <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
-                             alt="A placeholder (because no picture was uploaded)">
-                    {% endif %}
-                </th>
-            </tr>
-            </thead>
+
+
+
+        <table class="table table-bordered">
             <tbody>
             <tr>
                 <th scope="row"><h3>Message</h3></th>
