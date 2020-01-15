@@ -64,14 +64,14 @@ class RoomController {
 		$router->get('/(\d+)', function($room_id) use ($db, $twig) {
 			$room = get_info($db->room, 'room_id', $room_id, ['contain' => 'Listing']);
 			require_exists($room);
-            $owner = $db->room->find('all', ['contain' => ['User']])
-                ->where([
-                    'room_id' => $room_id
-                ])->first();
-            $query = $db->room->find()->where([
-                'owner_id' => $owner['owner_id']
-                ]);
-            $amount_of_rooms = $query->select(['count' => $query->func()->count('*') ])->first();
+			$owner             = $db->room->find('all', ['contain' => ['User']])
+			                              ->where([
+				                              'room_id' => $room_id
+			                              ])->first();
+			$query             = $db->room->find()->where([
+				'owner_id' => $owner['owner_id']
+			]);
+			$amount_of_rooms   = $query->select(['count' => $query->func()->count('*')])->first();
 			$is_opted          = false;
 			$active_listing_id = 0;
 			if (@$_SESSION['user_id']) {
@@ -100,11 +100,11 @@ class RoomController {
 
 			echo $twig->render('room.twig',
 				[
-					'room'           => $room,
-					'opted'          => $is_opted,
-					'active_listing' => $active_listing_id,
-                    'owner'          => $owner,
-                    'amount_of_rooms'=> $amount_of_rooms
+					'room'            => $room,
+					'opted'           => $is_opted,
+					'active_listing'  => $active_listing_id,
+					'owner'           => $owner,
+					'amount_of_rooms' => $amount_of_rooms
 				]);
 
 
@@ -439,7 +439,7 @@ class RoomController {
 			// WIP
 
 			$db->opt_in->patchEntity($opt_in, ['opt_in.status' => 'accepted']);
-			if(!safe_save($opt_in, $db->opt_in)){
+			if (!safe_save($opt_in, $db->opt_in)) {
 				$_SESSION['feedback'] = ['message' => 'Opt-in could not be accepted.'];
 				// redirect('/rooms/' . $listing_info['room']['room_id']);
 			}

@@ -177,14 +177,8 @@ function handle_file_upload($id, $db, $dbname) {
 	$uploadFolder  = 'uploads/' . $dbname;
 
 	if (!file_exists($uploadFolder)) {
-		pprint('IK GA DE MAP AANMAKEN');
 		mkdir($uploadFolder, 0777, true);
-		pprint('MAP ZOU AANGEMAAKT MOETEN ZIJN');
-	} else {
-		pprint('de uploads map bestaat al!');
 	}
-
-	die();
 
 	$uploadPath = realpath($uploadFolder) . '/' . basename($newfileName);
 
@@ -212,11 +206,11 @@ function handle_file_upload($id, $db, $dbname) {
 
 			return true;
 		} else {
-			$_SESSION['feedback'] = ['message' => "Something went wrong uploading your picture (met move)."];
+			$_SESSION['feedback'] = ['message' => "Something went wrong uploading your picture."];
 		}
 	} else {
 		$_SESSION['feedback'] = [
-			'message' => "Something went wrong uploading your picture (met errors).",
+			'message' => "Something went wrong uploading your picture.",
 			'errors'  => $errors
 		];
 	}
