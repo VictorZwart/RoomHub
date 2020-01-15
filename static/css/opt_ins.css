@@ -6,6 +6,7 @@
     width: 70vw;
     background: #f7f7f7;
     padding: 15px;
+    overflow-x: scroll;
 }
 
 #room_pic_div{
