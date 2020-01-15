@@ -71,3 +71,7 @@
 #introtext {
     text-align: center;
 }
+
+.des {
+    max-width: 60%;
+}
