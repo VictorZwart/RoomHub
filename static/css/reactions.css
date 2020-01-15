@@ -19,15 +19,17 @@
     padding: 14px 20px;
     margin-top: 20px;
     cursor: pointer;
-    width: 50%;
+    width: 40%;
 }
 
 .square_button:hover {
-    font-weight: bold;
     color: black;
     background-color: var(--roomhub-orange);
 }
 
 .card {
-    display: inline-block;
+    display: block;
+    max-width: 80%;
+    float: none;
+    margin: 15px auto 15px ;
 }

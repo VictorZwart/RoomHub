@@ -41,27 +41,27 @@
             </table>
         </div>
 
-            {% for reaction in listing['opt_in'] %}
-            {% if reaction.status != 'cancelled' and reaction.status != 'rejected' %}
-            <div class="card" style="width: 30rem;">
-                <div class="card-header">
-                    Reaction to room
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ reaction.user.first_name }} {{ reaction.user.last_name }} said:</h5>
-                    <p class="card-text">{{ reaction.message }}</p>
-                    <a href="{{ url('account/u/' ~ reaction.user.username) }}">
-                        <button class="square_button">Go to profile</button>
-                    </a>
-                    {% if reaction.status == 'open' %}
-                        <a href="{{ url('rooms/list/assign/' ~ reaction.opt_in_id) }}">
-                            <button class="square_button">You get this room!</button>
-                        </a>
-                    {% endif %}
-                </div>
+        {% for reaction in listing['opt_in'] %}
+        {% if reaction.status != 'cancelled' and reaction.status != 'rejected' %}
+        <div class="card" style="width: 30rem;">
+            <div class="card-header">
+                Reaction to your room at {{ room.street_name|capitalize ~ " " ~ room.number}}
             </div>
-            {% endif %}
-            {% endfor %}
+            <div class="card-body">
+                <h5 class="card-title">{{ reaction.user.first_name }} {{ reaction.user.last_name }} said:</h5>
+                <p class="card-text">{{ reaction.message }}</p>
+                <a href="{{ url('account/u/' ~ reaction.user.username) }}">
+                    <button class="square_button">Go to profile</button>
+                </a>
+                {% if reaction.status == 'open' %}
+                    <a href="{{ url('rooms/list/assign/' ~ reaction.opt_in_id) }}">
+                        <button class="square_button">You get this room!</button>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
     {% endfor %}
 
 {% endblock %}
