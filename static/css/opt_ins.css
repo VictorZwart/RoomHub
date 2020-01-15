@@ -1,0 +1,40 @@
+#content{
+    display: flex;
+    justify-content: center;
+}
+#optins{
+    width: 70vw;
+    background: #f7f7f7;
+    padding: 15px;
+}
+
+#room_pic_div{
+    position: relative;
+    height: 200px;
+    width: 300px;
+}
+
+#room_pic_div:hover{
+    transition: 0.2s ease;
+    background-color: rgba(0, 0, 0, 0.56);
+}
+
+#room_picture{
+    height: 100%;
+    object-fit: cover;
+}
+
+#roombutton{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
+
+#roombutton .square_button{
+    margin: 0;
+    width: unset;
+}
+
+
