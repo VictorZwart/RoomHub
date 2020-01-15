@@ -269,6 +269,17 @@ class RoomController {
 		$router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
 			require_login();
 
+			// todo: check no opt-in yet
+			$existing_optin = $_SERVER['db']->opt_in->find()->where([
+				'listing_id' => $listing_id,
+				'user_id'    => $_SESSION['user_id'],
+				'status'     => 'open'
+			])->count();
+
+			if ($existing_optin) {
+				redirect('rooms', 'You are already opted-in for this listing!');
+			}
+
 			$userdata = get_info($db->user, 'user_id', @$_SESSION['user_id']);
 
 			if ($userdata && $userdata['role'] !== 'tenant') {
@@ -285,6 +296,7 @@ class RoomController {
 		/* POST for adding opt in */
 		$router->post('/opt-in/(\d+)', function($listing_id) use ($db) {
 			require_login();
+
 			$optin_data  = [
 				'listing_id' => $listing_id,
 				'user_id'    => @$_SESSION['user_id'],
@@ -305,6 +317,8 @@ class RoomController {
 					];
 				}
 				redirect("rooms");
+			} else {
+				redirect("rooms/opt-in/$listing_id");
 			}
 		});
 
@@ -323,9 +337,11 @@ class RoomController {
 				$_SESSION['feedback'] = ['message' => 'You are not opted-in to this listing.'];
 				redirect('rooms');
 			} else {
-				$db->opt_in->patchEntity($opt_in, ['status' => 'cancelled']);
+				$db->opt_in->patchEntity($opt_in, ['status' => 'cancelled'], ['validate' => 'cancel']);
 				if (safe_save($opt_in, $db->opt_in)) {
 					$_SESSION['feedback'] = ['message' => 'Opt-in successfully removed!', 'state' => 'success'];
+					redirect('rooms');
+				} else {
 					redirect('rooms');
 				}
 			}
