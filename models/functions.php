@@ -100,7 +100,7 @@ function load_templating($config) {
  *
  * @return mixed array with all the account info
  */
-function get_info($table, $id_name, $id, $options=[]) {
+function get_info($table, $id_name, $id, $options = []) {
 	return $table
 		->find('all', $options)
 		->where([$id_name => $id])
@@ -177,7 +177,11 @@ function handle_file_upload($id, $db, $dbname) {
 	$uploadFolder  = 'uploads/' . $dbname;
 
 	if (!file_exists($uploadFolder)) {
+		pprint('IK GA DE MAP AANMAKEN');
 		mkdir($uploadFolder, 0777, true);
+		pprint('MAP ZOU AANGEMAAKT MOETEN ZIJN');
+	} else {
+		pprint('de uploads map bestaat al!');
 	}
 
 	$uploadPath = realpath($uploadFolder) . '/' . basename($newfileName);
@@ -189,7 +193,7 @@ function handle_file_upload($id, $db, $dbname) {
 		$errors[] = "This file is more than 2MB. Sorry, it has to be less than or equal to 2MB";
 	}
 	if (empty($errors)) {
-		if(file_exists($uploadPath)){
+		if (file_exists($uploadPath)) {
 			// enable 'overwrite'
 			unlink($uploadPath);
 		}
@@ -206,11 +210,11 @@ function handle_file_upload($id, $db, $dbname) {
 
 			return true;
 		} else {
-			$_SESSION['feedback'] = ['message' => "Something went wrong uploading your picture."];
+			$_SESSION['feedback'] = ['message' => "Something went wrong uploading your picture (met move)."];
 		}
 	} else {
 		$_SESSION['feedback'] = [
-			'message' => "Something went wrong uploading your picture.",
+			'message' => "Something went wrong uploading your picture (met errors).",
 			'errors'  => $errors
 		];
 	}
@@ -247,14 +251,14 @@ function require_anonymous($fallback = 'account') {
 
 }
 
-function require_exists($item){
+function require_exists($item) {
 	if (!$item) {
 		$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
 		redirect('rooms');
 	}
 }
 
-function require_mine($item){
+function require_mine($item) {
 	require_exists($item);
 
 	if ($item['owner_id'] !== $_SESSION['user_id']) {
