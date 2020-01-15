@@ -37,11 +37,11 @@
 
 
 #owner_room_info{
-    position: absolute;
-    right: 1%;
-    left: 76%;
+    position: fixed;
+    border-radius: 25px;
+    left: 20px;
     background: #000000;
-    padding: 5px;
+    padding: 10px;
     color: white;
     display: flex;
     flex-direction: column;
@@ -66,4 +66,8 @@
 
 .table {
     max-width: 70%;
+}
+
+#introtext {
+    text-align: center;
 }

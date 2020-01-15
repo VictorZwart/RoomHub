@@ -14,7 +14,7 @@
                 <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
                      alt="A placeholder (because no picture was uploaded)">
             {% endif %}
-            <h1>{{ room.type }} at {{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
+            <h1 id="introtext">{{ room.type }} at {{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
             <p>{{ room.description }}</p>
             <table class="table">
                 <tbody>
@@ -90,7 +90,6 @@
             <div id="owner_room_info">
                 <h2> Owner panel </h2>
                 <p>Only you get to see this.</p>
-                <marquee>front-end: notificaties verschijnen nu ACHTER dit block. please fix</marquee>
                 <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
                     <button class="btn btn-xlarge btn-dark">
                         <i class="fad fa-edit colored-icon light-icon"></i> Edit my room
@@ -112,7 +111,7 @@
                         <br/>
                         <a href="{{ url('account/reactions?listing_id=' ~ listing.listing_id) }}">
                             <button class="btn btn-xlarge btn-dark">
-                                <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for [{{ listing.status }}] {{ listing.available_from|date('d-m-Y') }}
+                                <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for this room
                             </button>
                         </a>
 
