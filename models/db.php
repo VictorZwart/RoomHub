@@ -116,7 +116,36 @@ class Opt_inTable extends Table {
 		     ->setForeignKey('user_id');
 	}
 
-	public function _validate($validator, $skip = null) {
+	private function _validate($validator, $skip = null) {
+		_validate_required_fields($validator, $this->getSchema(), $skip);
+
+		//		$validator->add('')
+
+		return $validator;
+
+	}
+
+	public function validationDefault($validator) {
+		$this->_validate($validator);
+		$validator->add('listing_id', 'no active opt-in for this listing', [
+			'rule'    => function($listing_id) {
+				return $_SERVER['db']->opt_in->find()->where([
+						'listing_id' => $listing_id,
+						'user_id'    => $_SESSION['user_id'],
+						'status'  => 'open'
+					])->count() == 0;
+
+			},
+			'message' => 'You have already opted-in for this listing!'
+		]);
+
+
+		return $validator;
+	}
+
+	public function validationCancel($validator) {
+		// don't validate fields when cancelling opt-in
+		return $validator;
 	}
 
 }
@@ -139,7 +168,7 @@ class UserTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function _validate($validator, $skip = null) {
+	private function _validate($validator, $skip = null) {
 		_validate_required_fields($validator, $this->getSchema(), $skip);
 
 		$validator
