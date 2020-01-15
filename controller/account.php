@@ -53,12 +53,18 @@ class AccountController {
 
 			// in the cakeorm docs it says you should use 'matching' to connect tables, but that doesn't seem to work
 			// and gives an unhandy data structure. (so does innerjoin)
-			$all_info = $db->listing->find('all', ['contain' => ['Opt_in.User', 'Room']])
-			                        ->where([
-				                        'Room.owner_id' => $me['user_id'],
-				                        'status !='     => 'cancelled',
-			                        ]);
 
+			$criteria = [
+				'Room.owner_id' => $me['user_id'],
+				'status !='     => 'cancelled',
+			];
+
+			if(@$_GET['listing_id'] && is_numeric($_GET['listing_id'])){
+				$criteria['listing_id'] = $_GET['listing_id'];
+			}
+
+			$all_info = $db->listing->find('all', ['contain' => ['Opt_in.User', 'Room']])
+			                        ->where($criteria);
 
 			echo $twig->render('reactions.twig', ['all_info' => $all_info]);
 		});

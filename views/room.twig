@@ -15,6 +15,7 @@
                      alt="A placeholder (because no picture was uploaded)">
             {% endif %}
 
+            <marquee>Front-end please fix, this be looking weird rn</marquee>
             <h1>{{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
             <p>{{ room.description }}</p>
             <table id="room_information">
@@ -95,6 +96,7 @@
             <div id="owner_room_info">
                 <h2> Owner panel </h2>
                 <p>Only you get to see this.</p>
+                <marquee>front-end: notificaties verschijnen nu ACHTER dit block. please fix</marquee>
                 <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
                     <button class="btn btn-xlarge btn-dark">
                         <i class="fad fa-edit colored-icon light-icon"></i> Edit my room
@@ -104,7 +106,7 @@
                     {% for listing in listings %}
 
                         {% if listing.status == 'open' %}
-                            <li> ... show interested people here + accept-button ...</li>
+                            <br/>
 
                             <a href="{{ url('rooms/list/edit/' ~ listing.listing_id) }}">
                                 <button class="btn btn-xlarge btn-dark">
@@ -114,13 +116,14 @@
 
                         {% endif %}
                         <br/>
-                        <a href="{{ url('... TODO ...') }}">
+                        <a href="{{ url('account/reactions?listing_id=' ~ listing.listing_id) }}">
                             <button class="btn btn-xlarge btn-dark">
-                                <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for {{ listing }}
+                                <i class="fad fa-comments colored-icon light-icon"></i> Show [count] reactions for [{{ listing.status }}] {{ listing.available_from|date('d-m-Y') }}
                             </button>
                         </a>
 
                     {% endfor %}
+                    <br/>
 
             {% else %}
                 <div class="alert alert-danger" role="alert">
