@@ -98,7 +98,7 @@ function validate_user($post, $table, $new = true) {
 			'rule'    => function($number) {
 				return (preg_match('/^\d{2}-?\d{8}$/', $number) or preg_match('/^\d{4}-?\d{6}$/', $number));
 			},
-			'message' => 'You have not entered a good number'
+			'message' => 'You have not entered a good phone number'
 
 		])
 		//add a validator for birthdate
