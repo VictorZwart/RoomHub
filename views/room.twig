@@ -19,15 +19,11 @@
             <h1>{{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
             <p>{{ room.description }}</p>
             <table id="room_information">
-                <tr>
-                    <th><i></i></th>
-                    <td>{{ room.number }}</td>
-                </tr><tr>
                     <th>Size: </th>
-                    <td>{{ room.size }}</td>
+                    <td>{{ room.size }}m<sup>2</sup></td>
                 </tr><tr>
                     <th>Price: </th>
-                    <td>{{ room.price }}</td>
+                    <td>&euro;{{ room.price }}</td>
                 </tr><tr>
                     <th>City: </th>
                     <td>{{ room.city }}</td>
@@ -58,20 +54,13 @@
 
             <!-- TODO display owner of the room not logged in user.-->
             <!-- TODO display correct profile picture of owner -->
-            <!-- TODO display amount of rooms teh owner has-->
 
             {# Card displaying the owner of the room#}
             <div id="owner_info_row">
-                {% if owner.user.picture %}
-                <img id='profile_picture' src="{{ uploads('user/' ~ owner.user.picture) }}"
-                     alt="Profile picture of the owner">
-                {% else %}
-                    <img id='profile_picture' src="{{ static('images/placeholder_owner.png') }}"
-                         alt="Profile picture of the owner">
-                {% endif %}
+                <img id="profile_pic" src="{{ static('images/placeholder_owner.png') }}" alt="Profile picture of the owner">
                 <div>
-                    <h4>{{ owner.user.first_name|capitalize ~ " " ~ owner.user.last_name|capitalize }}</h4>
-                    <p>Owner of {{ amount_of_rooms.count }} rooms on RoomHub.</p>
+                    <h4>{{ user.first_name|capitalize ~ " " ~ user.last_name|capitalize }}</h4>
+                    <p>Owner of this room and N other rooms on RoomHub.</p>
                 </div>
             </div>
 
