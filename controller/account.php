@@ -198,7 +198,7 @@ class AccountController {
 
 			$_SESSION['post'] = $_POST;
 
-			$db->user->patchEntity($current_user, $user_data);
+			$db->user->patchEntity($current_user, $user_data, ['validate' => 'update']);
 
 
 			$result = safe_save($current_user, $db->user);

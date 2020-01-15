@@ -115,6 +115,10 @@ class Opt_inTable extends Table {
 		$this->belongsTo('User', ['className' => 'Roomhub\UserTable'])
 		     ->setForeignKey('user_id');
 	}
+
+	public function _validate($validator, $skip = null) {
+	}
+
 }
 
 class UserTable extends Table {
@@ -219,6 +223,11 @@ class UserTable extends Table {
 		return $this->_validate($validator, ['username', 'password']);
 	}
 
+	public function validationPicture($validator) {
+		// when updating the user with a picture, no extra validation should be done
+		return $validator;
+	}
+
 }
 
 // table for room that allows linking 'listing's
@@ -319,6 +328,11 @@ class RoomTable extends Table {
 			'message' => 'You dont\'t own this room'
 		]);
 
+		return $validator;
+	}
+
+	public function validationPicture($validator) {
+		// when updating the room with a picture, no extra validation should be done
 		return $validator;
 	}
 

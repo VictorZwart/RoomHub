@@ -173,6 +173,7 @@ function handle_file_upload($id, $db, $dbname) {
 	$fileName       = $_FILES['fileToUpload']['name'];
 	$fileSize       = $_FILES['fileToUpload']['size'];
 	$fileTmpName    = $_FILES['fileToUpload']['tmp_name'];
+	
 
 	if (!$fileTmpName) {
 		// no file was uploaded
@@ -208,9 +209,10 @@ function handle_file_upload($id, $db, $dbname) {
 				'picture' => $newfileName
 			];
 			$active = $db->$dbname->get($id);
-			$db->$dbname->patchEntity($active, $dbpic);
+			$db->$dbname->patchEntity($active, $dbpic, ['validate' => 'picture']);
 
 			safe_save($active, $db->$dbname);
+
 
 			return true;
 		} else {
@@ -230,7 +232,7 @@ function handle_file_upload($id, $db, $dbname) {
 /**
  * Function to dump some data to the screen (debug)
  *
- * @param object $something whatever you want to dump
+ * @param mixed $something whatever you want to dump
  */
 function pprint($something) {
 	echo '<pre>';
