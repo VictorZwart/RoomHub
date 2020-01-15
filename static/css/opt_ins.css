@@ -37,4 +37,8 @@
     width: unset;
 }
 
-
+@media(max-width: 1000px){
+    #optins{
+        width: 100vw;
+    }
+}
