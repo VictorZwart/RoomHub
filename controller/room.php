@@ -64,6 +64,10 @@ class RoomController {
 		$router->get('/(\d+)', function($room_id) use ($db, $twig) {
 			$room = get_info($db->room, 'room_id', $room_id, ['contain' => 'Listing']);
 			require_exists($room);
+            $owner = $db->room->find('all', ['contain' => ['User']])
+                ->where([
+                    'room_id' => $room_id
+                ])->first();
 
 			$is_opted          = false;
 			$active_listing_id = 0;
@@ -95,7 +99,8 @@ class RoomController {
 				[
 					'room'           => $room,
 					'opted'          => $is_opted,
-					'active_listing' => $active_listing_id
+					'active_listing' => $active_listing_id,
+                    'owner'          => $owner
 				]);
 
 

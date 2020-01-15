@@ -57,12 +57,19 @@
 
             <!-- TODO display owner of the room not logged in user.-->
             <!-- TODO display correct profile picture of owner -->
+            <!-- TODO display amount of rooms teh owner has-->
 
             {# Card displaying the owner of the room#}
             <div id="owner_info_row">
-                <img id="profile_pic" src="{{ static('images/placeholder_owner.png') }}" alt="Profile picture of the owner">
+                {% if owner.user.picture %}
+                <img id='profile_picture' src="{{ uploads('user/' ~ owner.user.picture) }}"
+                     alt="Profile picture of the owner">
+                {% else %}
+                    <img id='profile_picture' src="{{ static('images/placeholder_owner.png') }}"
+                         alt="Profile picture of the owner">
+                {% endif %}
                 <div>
-                    <h4>{{ user.first_name|capitalize ~ " " ~ user.last_name|capitalize }}</h4>
+                    <h4>{{ owner.user.first_name|capitalize ~ " " ~ owner.user.last_name|capitalize }}</h4>
                     <p>Owner of this room and N other rooms on RoomHub.</p>
                 </div>
             </div>
