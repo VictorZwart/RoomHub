@@ -13,6 +13,10 @@ use Cake\Validation\Validator;
  * @param array $skip not-required fields (for edit)
  */
 function _validate_required_fields($validator, $schema, $skip = []) {
+	if($skip == null){
+		// skip has to be an array
+		$skip = [];
+	}
 	$required_fields = [];
 
 	foreach ($schema->columns() as $column_name) {

@@ -14,53 +14,46 @@
                 <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
                      alt="A placeholder (because no picture was uploaded)">
             {% endif %}
-
-            <marquee>Front-end please fix, this be looking weird rn</marquee>
-            <h1>{{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
-            <p>{{ room.description }}</p>
-            <table id="room_information">
-                    <th>Size: </th>
-                    <td>{{ room.size }}m<sup>2</sup></td>
-                </tr><tr>
-                    <th>Price: </th>
-                    <td>&euro;{{ room.price }}</td>
-                </tr><tr>
-                    <th>City: </th>
-                    <td>{{ room.city }}</td>
-                </tr>
-            </table>
-
-            <table id="address_table">
-                <thead>
-                    <tr>
-                        <th>Address</th>
-                    </tr>
-                </thead>
+            <h1 id="introtext">{{ room.type }} at {{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
+            <p class="des">{{ room.description }}</p>
+            <table class="table">
                 <tbody>
-                    <tr>
-                        <th>City: </th>
-                        <td> {{ room.city|capitalize }}</td>
-                    </tr>
-                    <tr>
-                        <th>Street: </th>
-                        <td>{{ room.street_name|capitalize ~ " " ~ room.number}}</td>
-                    </tr>
-                    <tr>
-                        <th>Postal code: </th>
-                        <td>{{ room.zipcode }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row">Size</th>
+                    <td>{{ room.size }}m<sup>2</sup></td>
+                </tr>
+                <tr>
+                    <th scope="row">Price</th>
+                    <td>&euro;{{ room.price }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">City</th>
+                    <td>{{ room.city|capitalize }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Street</th>
+                    <td>{{ room.street_name|capitalize ~ " " ~ room.number }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Postal Code</th>
+                    <td>{{ room.zipcode }}</td>
+                </tr>
                 </tbody>
             </table>
 
-            <!-- TODO display owner of the room not logged in user.-->
-            <!-- TODO display correct profile picture of owner -->
 
             {# Card displaying the owner of the room#}
             <div id="owner_info_row">
-                <img id="profile_pic" src="{{ static('images/placeholder_owner.png') }}" alt="Profile picture of the owner">
+                {% if owner.picture %}
+                    <img id='profile_picture' src="{{ uploads('user/' ~ owner.picture) }}"
+                         alt="Profile picture of the owner">
+                {% else %}
+                    <img id='profile_picture' src="{{ static('images/placeholder_owner.png') }}"
+                         alt="Profile picture of the owner">
+                {% endif %}
                 <div>
-                    <h4>{{ user.first_name|capitalize ~ " " ~ user.last_name|capitalize }}</h4>
-                    <p>Owner of this room and N other rooms on RoomHub.</p>
+                    <h4>{{ owner.first_name|capitalize ~ " " ~ owner.last_name|capitalize }}</h4>
+                    <p>Owner of {{ amount_of_rooms }} rooms on RoomHub.</p>
                 </div>
             </div>
 
@@ -96,7 +89,6 @@
             <div id="owner_room_info">
                 <h2> Owner panel </h2>
                 <p>Only you get to see this.</p>
-                <marquee>front-end: notificaties verschijnen nu ACHTER dit block. please fix</marquee>
                 <a href="{{ url('rooms/edit/' ~ room.room_id) }}">
                     <button class="btn btn-xlarge btn-dark">
                         <i class="fad fa-edit colored-icon light-icon"></i> Edit my room
@@ -118,23 +110,29 @@
                         <br/>
                         <a href="{{ url('account/reactions?listing_id=' ~ listing.listing_id) }}">
                             <button class="btn btn-xlarge btn-dark">
-                                <i class="fad fa-comments colored-icon light-icon"></i> Show [count] reactions for [{{ listing.status }}] {{ listing.available_from|date('d-m-Y') }}
+                                <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for
+                                [{{ listing.status }}] {{ listing.available_from|date('d-m-Y') }}
                             </button>
                         </a>
 
                     {% endfor %}
                     <br/>
+                    <a href="{{ url('rooms/delete/' ~ room.room_id) }}">
+                        <button class="btn btn-xlarge btn-dark" onclick="return confirm('are you sure?')">
+                            <i class="fad fa-bomb colored-icon light-icon"></i> Destroy my room
+                        </button>
+                    </a>
 
-            {% else %}
-                <div class="alert alert-danger" role="alert">
-                    This room is not listed yet!
-                </div>
-                <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
-                    <button class="btn btn-xlarge btn-dark">
-                        <i class="fad fa-list colored-icon light-icon"></i> List this room
-                    </button>
-                </a>
-            {% endif %}
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        This room is not listed yet!
+                    </div>
+                    <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
+                        <button class="btn btn-xlarge btn-dark">
+                            <i class="fad fa-list colored-icon light-icon"></i> List this room
+                        </button>
+                    </a>
+                {% endif %}
             </div>
         {% endif %}
     </div>

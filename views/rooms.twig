@@ -48,7 +48,12 @@
                         <p class="card-text"><b>{{ room.street_name|title ~ ' ' ~ room.number }}</b></p>
                         <p class="card-text">{{ room.description }}</p>
                         {% if listing.available_from %}
-                            <p class="card-text">Availabe from: {{ listing.available_from|date }}</p>
+                            <p class="card-text">Available from: {{ listing.available_from|date('d-m-Y') }}</p>
+                        {% endif %}
+                        {% if listing and listing.available_to %}
+                            <p class="card-text">Available to: {{ listing.available_to|date('d-m-Y') }}</p>
+                        {% elseif listing %}
+                            <p class="card-text">Available Indefinite</p>
                         {% endif %}
                         <a href="{{ url('rooms/' ~ room.room_id) }}">
                             <button class="square_button">More details</button>
