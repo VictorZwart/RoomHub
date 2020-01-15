@@ -1,0 +1,31 @@
+#new_optin_form{
+    margin: 0px auto 0px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50vw;
+    background: white;
+    padding: 0px 0px 10px 0px;
+    text-align: center;
+    min-height: calc(100vh - 80px);
+    min-width: 600px;
+}
+
+#new_optin_form img{
+    width: 100%;
+}
+#new_optin_form h3{
+    margin: 20px 25px 0px 25px;
+}
+
+#new_optin_form form{
+    width: 90%;
+    margin-top: 20px;
+}
+
+@media(max-width: 600px){
+    #new_optin_form{
+        width: 100vw;
+        min-width: unset;
+    }
+}

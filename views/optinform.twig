@@ -1,13 +1,11 @@
 {% extends "generic.twig" %}
 
 {% block title %}Opt in formpjee huehh{% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/optinform.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
-    <marquee>Front-end please fix!</marquee>
     <div id="new_optin_form">
-        <h1>
-            {{ title }}
-        </h1>
-        <h3>Hello  {{ user.first_name }}! Do you want to send a message to react on the following room: </h3>
         {% if room.room.picture %}
             <img id='room_picture' src="{{ uploads('room/' ~ room.room.picture) }}"
                  alt="The picture of the room">
@@ -15,7 +13,7 @@
             <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
                  alt="A placeholder (because no picture was uploaded)">
         {% endif %}
-
+        <h3>Hello  {{ user.first_name }}! Do you want to send a message to react on the following room: </h3>
         <form action="" method="POST">
             <div class="form-group">
                 <label for="inputMessage">Message</label>
@@ -28,5 +26,4 @@
             </button>
         </form>
     </div>
-
 {% endblock %}
