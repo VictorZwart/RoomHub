@@ -1,6 +1,7 @@
 #room_page{
     display: flex;
     justify-content: center;
+    padding-top: 10px;
 }
 
 #room_content{
@@ -13,6 +14,7 @@
 
 #room_picture{
     width: 100%;
+    padding-top: 10px;
 }
 
 #owner_info_row{
@@ -60,4 +62,8 @@
         width: 100vw;
         height: auto;
     }
+}
+
+#address_table {
+    padding-top: 10px;
 }
