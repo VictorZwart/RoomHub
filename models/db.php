@@ -91,6 +91,18 @@ class ListingTable extends Table {
 		return $this->_validate($validator, ['status', 'room_id']);
 	}
 
+	/**
+	 * Validator to use when closing entry
+	 * Use as $db->listing->patchEntity($listing, $listing_data, ['validate' => 'close']);
+	 *
+	 * @param Validator $validator
+	 *
+	 * @return Validator
+	 */
+	public function validationClose($validator) {
+		return $this->_validate($validator, ['room_id', 'available_from']);
+	}
+
 }
 
 // table for opt-ins that allows linking 'listing's
@@ -111,8 +123,8 @@ class UserTable extends Table {
 		$this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
 		     ->setForeignKey('user_id');
 		// 1 user can have many rooms
-        $this->hasMany('Room', ['classname' => 'Roomhub\RoomTable'])
-            ->setForeignKey('user_id');
+		$this->hasMany('Room', ['classname' => 'Roomhub\RoomTable'])
+		     ->setForeignKey('user_id');
 	}
 }
 
@@ -125,7 +137,7 @@ class RoomTable extends Table {
 			 ->setForeignKey('room_id');
 		// 1 owner can have many rooms
 		$this->belongsTo('User', ['className' => 'Roomhub\UserTable'])
-            ->setForeignKey('owner_id');
+		     ->setForeignKey('owner_id');
 	}
 
 	/**

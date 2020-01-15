@@ -218,6 +218,7 @@ function handle_file_upload($id, $db, $dbname) {
 	return false;
 }
 
+// TODO: write docs
 
 // debug
 function pprint($something) {
@@ -226,7 +227,17 @@ function pprint($something) {
 	echo '</pre>';
 }
 
-function redirect($to) {
+// redirect with optional feedback
+function redirect($to, $feedback = null, $feedback_state = null) {
+
+	if ($feedback) {
+		$fb = ['message' => $feedback];
+		if ($feedback_state) {
+			$fb['state'] = $feedback_state;
+		}
+		$_SESSION['feedback'] = $fb;
+	}
+
 	$basepath = $_SERVER['basepath'];
 	header("Location: $basepath$to");
 	die();
