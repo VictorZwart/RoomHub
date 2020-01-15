@@ -141,6 +141,13 @@ class Config {
 	}
 }
 
+/**
+ * Remove the - from a phone number
+ *
+ * @param $phone_number
+ *
+ * @return mixed|string
+ */
 function fix_phone($phone_number) {
 	$phone_number = $phone_number ?: '';
 	if (strpos($phone_number, '-') !== false) {
@@ -150,12 +157,13 @@ function fix_phone($phone_number) {
 	return $phone_number;
 }
 
-/**Takes the db name and the db and the id and then saves the picture to the database
+/**
+ * Takes the db name, the db and the id and then saves the picture to the database
  * with a name consisting of the dbname and the id
  *
- * @param $id int an id for either room or user
- * @param $db mixed connection to the database
- * @param $dbname string either 'user' or 'room'
+ * @param int $id int an id for either room or user
+ * @param mixed $db mixed connection to the database
+ * @param string $dbname for example 'user' or 'room'
  *
  * @return bool whether it succeeded
  */
@@ -218,16 +226,25 @@ function handle_file_upload($id, $db, $dbname) {
 	return false;
 }
 
-// TODO: write docs
 
-// debug
+/**
+ * Function to dump some data to the screen (debug)
+ *
+ * @param object $something whatever you want to dump
+ */
 function pprint($something) {
 	echo '<pre>';
 	print_r($something);
 	echo '</pre>';
 }
 
-// redirect with optional feedback
+/**
+ * redirect with optional feedback
+ *
+ * @param string $to the page you want to redirect the user to
+ * @param null|string $feedback message to show to the user
+ * @param null|string $feedback_state (success, alert, null) whether the feedback is positive, negative or neutral
+ */
 function redirect($to, $feedback = null, $feedback_state = null) {
 
 	if ($feedback) {
@@ -243,7 +260,10 @@ function redirect($to, $feedback = null, $feedback_state = null) {
 	die();
 }
 
-
+/**
+ * Middle-ware for enforcing login
+ *
+ */
 function require_login() {
 	if (!isset($_SESSION['user_id'])) {
 		$_SESSION['feedback'] = ['message' => 'Please log-in first!'];
@@ -251,6 +271,12 @@ function require_login() {
 	}
 }
 
+/**
+ * Middle-ware for enforcing not being logged in
+ *
+ * @param string $fallback where to go if the user is logged in
+ *
+ */
 function require_anonymous($fallback = 'account') {
 	if (isset($_SESSION['user_id'])) {
 		redirect($fallback);
@@ -258,6 +284,13 @@ function require_anonymous($fallback = 'account') {
 
 }
 
+
+/**
+ * Middle-ware for making sure $item is not null
+ *
+ * @param object $item anything but null
+ *
+ */
 function require_exists($item) {
 	if (!$item) {
 		$_SESSION['feedback'] = ['message' => 'This room does not exist.'];
@@ -265,6 +298,12 @@ function require_exists($item) {
 	}
 }
 
+/**
+ * Middle-ware for checking if $item's owner_id is the user_id of the current user (and $item exists)
+ *
+ * @param object $item probably a room
+ *
+ */
 function require_mine($item) {
 	require_exists($item);
 

@@ -126,6 +126,99 @@ class UserTable extends Table {
 		$this->hasMany('Room', ['classname' => 'Roomhub\RoomTable'])
 		     ->setForeignKey('user_id');
 	}
+
+	/**
+	 * Wrapper for default validate for users
+	 *
+	 * @param Validator $validator
+	 * @param null|array $skip
+	 *
+	 * @return Validator
+	 */
+	public function _validate($validator, $skip = null) {
+		_validate_required_fields($validator, $this->getSchema(), $skip);
+
+		$validator
+			->add('email', 'validFormat',
+				[
+					'rule'    => 'email',
+					'message' => 'Please enter a valid email format.'
+				])
+			// add a validator for the phone number
+			->add('phone_number', 'phone number check', [
+				'rule'    => function($number) {
+					return (preg_match('/^\d{2}-?\d{8}$/', $number) or
+					        preg_match('/^\d{4}-?\d{6}$/', $number));
+				},
+				'message' => 'You have not entered a good number'
+
+			])
+			//add a validator for birthdate
+			->add('birthdate', 'legal ages', [
+				'rule' => function($dateString) {
+
+					return valid_dates($dateString);
+				}
+			]);
+
+		return $validator;
+	}
+
+	/**
+	 * Validator to use when adding entry
+	 *
+	 * @param Validator $validator
+	 *
+	 * @return Validator
+	 */
+	public function validationDefault($validator) {
+		$validator
+			->add('username', 'unique username', [
+				// username must not exist!
+				'rule' => function($username) {
+
+					return unique($this, 'username', $username);
+
+				}
+			])
+			->add('username', 'valid username', [
+				// username can only have letters and numbers
+				'rule'    => function($username) {
+					return (bool) preg_match('/^\w+$/', $username);
+				},
+				'message' => 'Invalid username, please use only alphanumerical characters'
+			])
+			->add('email', 'unique email', [
+				// email must not exist
+				'rule' => function($email) {
+					return unique($this, 'email', $email);
+				}
+			])
+			->add('password', 'matching password and validation', [
+				// password must match validation
+				'rule'    => function() {
+					return isset($_POST['password']) and
+					       isset($_POST['password2']) and
+					       $_POST['password'] == $_POST['password2'];
+				},
+				'message' => 'The password does not match'
+			]);
+
+		return $this->_validate($validator);
+	}
+
+	/**
+	 * Validator to use when updating entry
+	 * Use as $db->room->patchEntity($room, $room_data, ['validate' => 'update']);
+	 *
+	 * @param Validator $validator
+	 *
+	 * @return Validator
+	 */
+	public function validationUpdate($validator) {
+		return $this->_validate($validator, ['username', 'password']);
+	}
+
 }
 
 // table for room that allows linking 'listing's
@@ -156,7 +249,7 @@ class RoomTable extends Table {
 			->add('zipcode', 'valid zipcode', [
 				//zipcode must have format of 0000AA
 				'rule'    => function($zipcode) {
-					return (bool) preg_match('/^\d{4}[a-zA-Z]{2}$/', $zipcode);
+					return (bool) preg_match('/^\d{4} ?[a-zA-Z]{2}$/', $zipcode);
 				},
 				'message' => 'You have entered a wrong zipcode format'
 			])
