@@ -19,21 +19,6 @@ input[type=text], input[type=password] {
 	box-sizing: border-box;
 }
 
-.square_button {
-	background-color: black;
-	color: white;
-	padding: 14px 20px;
-	margin-top: 20px;
-	border: none;
-	cursor: pointer;
-	width: 50%;
-}
-
-.square_button:hover {
-	border: 3px solid black;
-	background-color: var(--roomhub-orange);
-}
-
 .imgcontainer {
 	text-align: center;
 	margin: 24px 0 12px 0;
