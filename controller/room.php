@@ -62,15 +62,13 @@ class RoomController {
 
 		/* GET for reading specific rooms */
 		$router->get('/(\d+)', function($room_id) use ($db, $twig) {
-			$room = get_info($db->room, 'room_id', $room_id, ['contain' => 'Listing']);
+			$room = get_info($db->room, 'room_id', $room_id, ['contain' => ['Listing', 'User']]);
 			require_exists($room);
-            $owner              = $db->room->find('all', ['contain' => ['User']])
-                ->where([
-                    'room_id' => $room_id
-                ])->first();
-            $amount_of_rooms    = $db->room->find()->where([
-                'owner_id' => $owner['owner_id']
-                ])->count();
+			$amount_of_rooms   = $db->room->find()->where([
+				'owner_id' => $room['owner_id']
+			])->count();
+
+
 			$is_opted          = false;
 			$active_listing_id = 0;
 			if (@$_SESSION['user_id']) {
@@ -102,9 +100,8 @@ class RoomController {
 					'room'            => $room,
 					'opted'           => $is_opted,
 					'active_listing'  => $active_listing_id,
-					'owner'           => $owner,
+					'owner'           => $room['user'],
 					'amount_of_rooms' => $amount_of_rooms,
-//					'reaction_count'  => $reaction_count,
 				]);
 
 

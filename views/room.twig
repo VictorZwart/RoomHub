@@ -59,7 +59,7 @@
             <div id="owner_info_row">
                 <img id="profile_pic" src="{{ static('images/placeholder_owner.png') }}" alt="Profile picture of the owner">
                 <div>
-                    <h4>{{ owner.user.first_name|capitalize ~ " " ~ owner.user.last_name|capitalize }}</h4>
+                    <h4>{{ owner.first_name|capitalize ~ " " ~ owner.last_name|capitalize }}</h4>
                     <p>Owner of {{ amount_of_rooms }} rooms on RoomHub.</p>
                 </div>
             </div>
