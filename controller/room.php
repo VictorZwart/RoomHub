@@ -64,11 +64,11 @@ class RoomController {
 		$router->get('/(\d+)', function($room_id) use ($db, $twig) {
 			$room = get_info($db->room, 'room_id', $room_id, ['contain' => 'Listing']);
 			require_exists($room);
-            $owner = $db->room->find('all', ['contain' => ['User']])
+            $owner              = $db->room->find('all', ['contain' => ['User']])
                 ->where([
                     'room_id' => $room_id
                 ])->first();
-            $amount_of_rooms = $db->room->find()->where([
+            $amount_of_rooms    = $db->room->find()->where([
                 'owner_id' => $owner['owner_id']
                 ])->count();
 			$is_opted          = false;
@@ -99,11 +99,12 @@ class RoomController {
 
 			echo $twig->render('room.twig',
 				[
-					'room'           => $room,
-					'opted'          => $is_opted,
-					'active_listing' => $active_listing_id,
-                    'owner'          => $owner,
-                    'amount_of_rooms'=> $amount_of_rooms
+					'room'            => $room,
+					'opted'           => $is_opted,
+					'active_listing'  => $active_listing_id,
+					'owner'           => $owner,
+					'amount_of_rooms' => $amount_of_rooms,
+//					'reaction_count'  => $reaction_count,
 				]);
 
 
@@ -284,9 +285,7 @@ class RoomController {
 				'status'     => 'open',
 			];
 			$new_message = $db->opt_in->newEntity($optin_data);
-			pprint($new_message);
-			$result = safe_save($new_message, $db->opt_in);
-			pprint($result);
+			$result      = safe_save($new_message, $db->opt_in);
 			if ($result) {
 				$opt_in_id = $result->opt_in_id;
 				if ($db->opt_in->get($opt_in_id)) {
@@ -414,7 +413,7 @@ class RoomController {
 		/* GET for assigning user to listing */
 		$router->get('/list/assign/(\d+)', function($optin_id) use ($db) {
 			require_login();
-			$opt_in = get_info($db->opt_in, 'opt_in_id', $optin_id, ['contain' => ['Listing.Room']]);
+			$opt_in = get_info($db->opt_in, 'opt_in_id', $optin_id, ['contain' => 'Listing.Room']);
 
 			$listing_info = $opt_in['listing'];
 			require_exists($listing_info);
@@ -431,16 +430,18 @@ class RoomController {
 				'status'     => 'open',
 			]);
 
-			# TODO: update this opt-in $optin_id
-			# TODO: update listing $listing['listing_id']
+
+			$db->listing->patchEntity($listing_info, ['status' => 'closed'], ['validate' => 'close']);
+			if (!safe_save($listing_info, $db->listing)) {
+				$_SESSION['feedback'] = ['message' => 'Listing could not be closed.'];
+				redirect('rooms/' . $listing_info['room']['room_id']);
+			}
 
 
-			// WIP
-
-			$db->opt_in->patchEntity($opt_in, ['opt_in.status' => 'accepted']);
-			if(!safe_save($opt_in, $db->opt_in)){
+			$db->opt_in->patchEntity($opt_in, ['status' => 'accepted']);
+			if (!safe_save($opt_in, $db->opt_in)) {
 				$_SESSION['feedback'] = ['message' => 'Opt-in could not be accepted.'];
-				// redirect('/rooms/' . $listing_info['room']['room_id']);
+				redirect('rooms/' . $listing_info['room']['room_id']);
 			}
 
 			$errors = false;
@@ -457,8 +458,7 @@ class RoomController {
 				$_SESSION['feedback'] = ['message' => 'Listing successfully closed!', 'state' => 'success'];
 			}
 
-			pprint($_SESSION['feedback']);
-			// redirect('/rooms/' . $listing_info['room']['room_id']);
+			redirect('rooms/' . $listing_info['room']['room_id']);
 		});
 	}
 
