@@ -41,12 +41,17 @@
                 </tbody>
             </table>
 
-            <!-- TODO display owner of the room not logged in user.-->
-            <!-- TODO display correct profile picture of owner -->
+
 
             {# Card displaying the owner of the room#}
             <div id="owner_info_row">
-                <img id="profile_pic" src="{{ static('images/placeholder_owner.png') }}" alt="Profile picture of the owner">
+                {% if owner.picture %}
+                    <img id='profile_picture' src="{{ uploads('user/' ~ owner.picture) }}"
+                         alt="Profile picture of the owner">
+                {% else %}
+                    <img id='profile_picture' src="{{ static('images/placeholder_owner.png') }}"
+                         alt="Profile picture of the owner">
+                {% endif %}
                 <div>
                     <h4>{{ owner.first_name|capitalize ~ " " ~ owner.last_name|capitalize }}</h4>
                     <p>Owner of {{ amount_of_rooms }} rooms on RoomHub.</p>
