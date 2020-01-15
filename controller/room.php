@@ -401,6 +401,57 @@ class RoomController {
 			require_login();
 			echo 'weg yeeten jwz';
 		});
+
+
+		/* GET for assigning user to listing */
+		$router->get('/list/assign/(\d+)', function($optin_id) use ($db) {
+			require_login();
+			$opt_in = get_info($db->opt_in, 'opt_in_id', $optin_id, ['contain' => ['Listing.Room']]);
+
+			$listing_info = $opt_in['listing'];
+			require_exists($listing_info);
+			require_mine($listing_info['room']);
+
+			if ($listing_info['status'] != 'open' || $opt_in['status'] != 'open') {
+				$_SESSION['feedback'] = ['message' => 'This listing or opt-in is not open!'];
+				redirect("rooms/" . $listing_info['room']['room_id']);
+			}
+
+			$other_optins = $db->opt_in->find()->where([
+				'listing_id' => $listing_info['listing_id'],
+				'user_id !=' => $opt_in['user_id'],
+				'status'     => 'open',
+			]);
+
+			# TODO: update this opt-in $optin_id
+			# TODO: update listing $listing['listing_id']
+
+
+			// WIP
+
+			$db->opt_in->patchEntity($opt_in, ['opt_in.status' => 'accepted']);
+			if(!safe_save($opt_in, $db->opt_in)){
+				$_SESSION['feedback'] = ['message' => 'Opt-in could not be accepted.'];
+				// redirect('/rooms/' . $listing_info['room']['room_id']);
+			}
+
+			$errors = false;
+			foreach ($other_optins as $other_optin) {
+				$db->opt_in->patchEntity($other_optin, ['status' => 'rejected']);
+				$res = safe_save($other_optin, $db->opt_in);
+				if (!$res) {
+					$errors = true;
+				}
+			}
+			if ($errors) {
+				$_SESSION['feedback'] = ['message' => 'Not all opt-ins could be rejected! Please try again'];
+			} else {
+				$_SESSION['feedback'] = ['message' => 'Listing successfully closed!', 'state' => 'success'];
+			}
+
+			pprint($_SESSION['feedback']);
+			// redirect('/rooms/' . $listing_info['room']['room_id']);
+		});
 	}
 
 }
