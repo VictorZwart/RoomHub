@@ -1,6 +1,5 @@
 {% extends "generic.twig" %}
 
-{#TODO Make newer comments appear on top#}
 {#TODO Remove extra room info at bottom#}
 
 {% block title %}Reactions{% endblock %}
@@ -44,7 +43,8 @@
             </table>
         </div>
 
-        {% for reaction in listing['opt_in'] %}
+
+        {% for reaction in listing['opt_in']|reverse %}
         {% if reaction.status != 'cancelled' and reaction.status != 'rejected' %}
         <div class="card" style="width: 50rem;">
             <div class="card-header">
