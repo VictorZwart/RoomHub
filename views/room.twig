@@ -16,37 +16,28 @@
             {% endif %}
             <h1>{{ room.type }} at {{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
             <p>{{ room.description }}</p>
-            <table id="room_information">
-                    <th>Size: </th>
-                    <td>{{ room.size }}m<sup>2</sup></td>
-                </tr><tr>
-                    <th>Price: </th>
-                    <td>&euro;{{ room.price }}</td>
-                </tr><tr>
-                    <th>City: </th>
-                    <td>{{ room.city }}</td>
-                </tr>
-            </table>
-
-            <table id="address_table">
-                <thead>
-                    <tr>
-                        <th>Address</th>
-                    </tr>
-                </thead>
+            <table class="table">
                 <tbody>
-                    <tr>
-                        <th>City: </th>
-                        <td> {{ room.city|capitalize }}</td>
-                    </tr>
-                    <tr>
-                        <th>Street: </th>
-                        <td>{{ room.street_name|capitalize ~ " " ~ room.number}}</td>
-                    </tr>
-                    <tr>
-                        <th>Postal code: </th>
-                        <td>{{ room.zipcode }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row">Size</th>
+                    <td>{{ room.size }}m<sup>2</sup></td>
+                </tr>
+                <tr>
+                    <th scope="row">Price</th>
+                    <td>&euro;{{ room.price }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">City</th>
+                    <td>{{ room.city|capitalize }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Street</th>
+                    <td>{{ room.street_name|capitalize ~ " " ~ room.number}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Postal Code</th>
+                    <td>{{ room.zipcode }}</td>
+                </tr>
                 </tbody>
             </table>
 

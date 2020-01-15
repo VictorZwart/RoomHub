@@ -64,6 +64,6 @@
     }
 }
 
-#address_table {
-    padding-top: 10px;
+.table {
+    max-width: 70%;
 }
