@@ -44,11 +44,11 @@
                              alt="{{ room.description }}">
                     {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">{{ room.type|title }} At {{ room.street_name|title }}</h5>
+                        <h5 class="card-title">{{ room.type|title }} in {{ room.city }}</h5>
                         <p class="card-text"><b>{{ room.street_name|title ~ ' ' ~ room.number }}</b></p>
                         <p class="card-text">{{ room.description }}</p>
                         {% if listing.available_from %}
-                            <p class="card-text">{{ listing.available_from|date }}</p>
+                            <p class="card-text">Availabe from: {{ listing.available_from|date }}</p>
                         {% endif %}
                         <a href="{{ url('rooms/' ~ room.room_id) }}">
                             <button class="square_button">More details</button>
