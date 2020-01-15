@@ -72,6 +72,13 @@
                                     </button>
                                 </a>
                             {% endif %}
+                        {% elseif user.role == 'owner' and room.owner_id == user.user_id %}
+                            <a href="{{ url('rooms/delete/' ~ room.room_id) }}">
+                                <button class="btn btn-xlarge btn-dark" onclick="return confirm('are you sure?')">
+                                    <i class="fad fa-bomb colored-icon light-icon"></i> Destroy my room
+                                </button>
+                            </a>
+
                         {% endif %}
                     </div>
                 </div>
