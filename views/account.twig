@@ -74,6 +74,15 @@
                         <th>Occupation</th>
                         <td> {{ user.occupation }}</td>
                     </tr>
+                    <tr>
+                        <th colspan="2">
+                    <a href="{{ url('account/delete/' ~ user.user_id) }}">
+                        <button class="btn btn-xlarge btn-dark" onclick="return confirm('are you sure?')">
+                            <i class="fad fa-user-minus colored-icon-reverse"></i> Delete your account
+                        </button>
+                    </a>
+                        </th>
+                    </tr>
                 </table>
             </div>
         {% endautoescape %}
