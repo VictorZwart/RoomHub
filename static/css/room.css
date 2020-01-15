@@ -14,7 +14,6 @@
 
 #room_picture{
     width: 100%;
-    padding-top: 10px;
 }
 
 #owner_info_row{
@@ -27,6 +26,7 @@
     border-radius: 10px;
     margin: 10px;
 }
+
 #owner_info_row img{
     height: 100%;
     width: 100px;
@@ -38,6 +38,13 @@
     margin: 0;
 }
 
+#optin_button{
+    margin: 10px;
+}
+
+#optin_button button{
+    padding: 24px 50px 24px 50px;
+}
 
 #owner_room_info{
     position: fixed;
@@ -64,6 +71,14 @@
         position: unset;
         width: 100vw;
         height: auto;
+    }
+
+    #optin_button {
+        width: 90%;
+    }
+
+    #optin_button button{
+        width: 100%;
     }
 }
 
