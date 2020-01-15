@@ -64,7 +64,7 @@ class RoomController {
 		$router->get('/(\d+)', function($room_id) use ($db, $twig) {
 			$room = get_info($db->room, 'room_id', $room_id, ['contain' => ['Listing', 'User']]);
 			require_exists($room);
-			$amount_of_rooms   = $db->room->find()->where([
+			$amount_of_rooms = $db->room->find()->where([
 				'owner_id' => $room['owner_id']
 			])->count();
 
@@ -244,6 +244,17 @@ class RoomController {
 		$this->listing($router, $db, $twig);
 		$this->opt_in($router, $db, $twig);
 
+		/* DELETE for removing your room */
+		$router->get('/delete/(\d+)', function($room_id) use ($db) {
+			require_login();
+			$active_room = get_info($db->room, 'room_id', $room_id);
+
+			require_mine($active_room);
+			$entity = get_info($db->room, 'room_id', $room_id);
+			$db->room->delete($entity);
+			$_SESSION['feedback'] = ['message' => 'Your room was deleted succesfully!', 'state' => 'succes'];
+			redirect('/rooms');
+		});
 	}
 
 	/**

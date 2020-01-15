@@ -23,7 +23,8 @@
         <table class="table table-bordered">
             <tr>
                 <th>Room:</th>
-                <th>Opt-in Date: </th>
+                <th>Available:</th>
+                <th>Opt-in Date:</th>
                 <th>Your message:</th>
                 <th>State</th>
             </tr>
@@ -34,7 +35,7 @@
                         {% if opt_in.Room.picture %}
                             <div id="room_pic_div">
                                 <img id='room_picture' src="{{ uploads('room/' ~ opt_in.Room.picture) }}"
-                                    alt="The picture of the room">
+                                     alt="The picture of the room">
                                 <a id='roombutton' href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
                                     <button class="square_button">Go to Room</button>
                                 </a>
@@ -49,7 +50,14 @@
                             </div>
                         {% endif %}
                     </td>
-                    <td>From {{ opt_in.Listing.available_from|date('d-m-Y') }}</td>
+                    <td>From {{ opt_in.Listing.available_from|date('d-m-Y') }}
+                        {% if opt_in.Listing.available_to %}
+                            to {{ opt_in.Listing.available_to|date('d-m-Y') }}
+                        {% else %}
+                            for an indefinite period
+                        {% endif %}
+                    </td>
+                    <td>{{ opt_in.date|date('d-m-Y') }}</td>
                     <td>{{ opt_in.message }}</td>
                     <td><b>{{ opt_in.status|upper }}</b></td>
                 </tr>

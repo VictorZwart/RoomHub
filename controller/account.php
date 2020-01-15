@@ -288,13 +288,16 @@ class AccountController {
 		});
 
 		/* DELETE for removing your account */
-		$router->post('/delete/(\d+)', function($id) use ($db) {
+		$router->get('/delete/(\d+)', function($id) use ($db) {
 			require_login();
-			if ($_SESSION['user_id'] !== $id) {
+			if ($_SESSION['user_id'] != $id) {
 				$_SESSION['feedback'] = ['message' => 'You can only delete your own account!', 'state' => 'warning'];
 				redirect('account');
 			}
-			echo 'TODO' . $id;
+			$entity = get_info($db->user, 'user_id', $id);
+			$db->user->delete($entity);
+			$_SESSION['feedback'] = ['message' => 'Your account was deleted succesfully!', 'state' => 'succes'];
+			redirect('/');
 		});
 	}
 }
