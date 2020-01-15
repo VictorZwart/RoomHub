@@ -1,7 +1,6 @@
 <?php namespace RoomHub;
 
 use Cake\Database\Schema\TableSchema;
-use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -13,7 +12,7 @@ use Cake\Validation\Validator;
  * @param array $skip not-required fields (for edit)
  */
 function _validate_required_fields($validator, $schema, $skip = []) {
-	if($skip == null){
+	if ($skip == null) {
 		// skip has to be an array
 		$skip = [];
 	}
@@ -53,14 +52,22 @@ function unique($table, $field, $value) {
 	}
 }
 
-function valid_dates($dateString, $allow_future = false) {
+/**
+ * Check if a date is in a legal range
+ *
+ * @param string $date datetime object or string
+ * @param bool $allow_future whether dates after today are okay
+ *
+ * @return bool|string if the date is legal or not (true if legal, feedback string if not)
+ */
+function valid_dates($date, $allow_future = false) {
 	// re-used validator
-	if ($dateString < '1920-01-01') {
+	if ($date < '1920-01-01') {
 		return "Please fill in a date later than 1920";
 	}
-	if (!$allow_future && $dateString > date("Y-m-d")) {
+	if (!$allow_future && $date > date("Y-m-d")) {
 		return "Please fill in a date that is not in the future";
-	} elseif ($allow_future && $dateString > '2050-01-01') {
+	} elseif ($allow_future && $date > '2050-01-01') {
 		return "Please fill in a date that is not that far in the future";
 	} else {
 		return true;

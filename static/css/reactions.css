@@ -1,0 +1,35 @@
+.roominfo {
+    width: 50%;
+    margin: 0 auto;
+    padding-top: 40px;
+}
+
+#room_picture {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    padding-bottom: 20px;
+}
+
+.square_button {
+    border: 3px solid black;
+    background-color: black;
+    color: white;
+    padding: 14px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    width: 40%;
+}
+
+.square_button:hover {
+    color: black;
+    background-color: var(--roomhub-orange);
+}
+
+.card {
+    display: block;
+    max-width: 80%;
+    float: none;
+    margin: 15px auto 15px ;
+}

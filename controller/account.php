@@ -19,7 +19,8 @@ class AccountController {
 		/* GET to view your account */
 		$router->get('/', function() use ($db, $twig) {
 			require_login();
-			echo $twig->render('account.twig', []);
+			$me = $_SESSION['user_id'];
+			echo $twig->render('account.twig', ['me' => $me]);
 		});
 
 		/* GET to view optins */
@@ -72,6 +73,7 @@ class AccountController {
 		/* GET to view specific account by username */
 		$router->get('/u/(\w+)', function($username) use ($db, $twig) {
 			$user_info = get_info($db->user, 'username', $username);
+			$me        = $_SESSION['user_id'];
 
 			if (!$user_info) {
 				$_SESSION['feedback'] = ['message' => 'This user does not exist!'];
@@ -83,7 +85,7 @@ class AccountController {
 			unset($user_info['password']);
 
 			// TODO: hide menu or show a different one (because its not your account)
-			echo $twig->render('account.twig', ['user' => $user_info]);
+			echo $twig->render('account.twig', ['user' => $user_info, 'me' => $me]);
 		});
 
 
@@ -197,16 +199,8 @@ class AccountController {
 
 
 			$_SESSION['post'] = $_POST;
-			$errors           = validate_user($user_data, $db->user, false);
 
-			if ($errors) {
-				// there are errors
-				$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
-
-				redirect('account/edit');
-			};
-
-			$db->user->patchEntity($current_user, $user_data);
+			$db->user->patchEntity($current_user, $user_data, ['validate' => 'update']);
 
 
 			$result = safe_save($current_user, $db->user);
@@ -238,14 +232,6 @@ class AccountController {
 			require_anonymous();
 
 			$_SESSION['post'] = $_POST;
-			$errors           = validate_user($_POST, $db->user);
-
-			if ($errors) {
-				// there are errors
-				$_SESSION['feedback'] = ['message' => 'Some fields were not filled in correctly!', 'errors' => $errors];
-
-				redirect('account/signup');
-			};
 
 			$user_data = [
 				'username'     => @$_POST['username'],
