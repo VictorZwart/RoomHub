@@ -99,7 +99,7 @@ class Opt_inTable extends Table {
 		// Many opt-ins belong to a listing
 		$this->belongsTo('Listing', ['className' => 'Roomhub\ListingTable'])
 		     ->setForeignKey('listing_id');
-		//Many opt-ins belong to a user
+		// Many opt-ins belong to a user
 		$this->belongsTo('User', ['className' => 'Roomhub\UserTable'])
 		     ->setForeignKey('user_id');
 	}
@@ -107,9 +107,12 @@ class Opt_inTable extends Table {
 
 class UserTable extends Table {
 	public function initialize(array $config) {
-		//1 user can have many opt_ins
+		// 1 user can have many opt_ins
 		$this->hasMany('Opt_in', ['className' => 'Roomhub\Opt_inTable'])
 		     ->setForeignKey('user_id');
+		// 1 user can have many rooms
+        $this->hasMany('Room', ['classname' => 'Roomhub\RoomTable'])
+            ->setForeignKey('user_id');
 	}
 }
 
@@ -120,6 +123,9 @@ class RoomTable extends Table {
 		$this->hasMany('Listing', ['className' => 'RoomHub\ListingTable'])
 			// ->setConditions(['status' => 'open'])
 			 ->setForeignKey('room_id');
+		// 1 owner can have many rooms
+		$this->belongsTo('User', ['className' => 'Roomhub\UserTable'])
+            ->setForeignKey('owner_id');
 	}
 
 	/**
