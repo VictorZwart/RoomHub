@@ -18,15 +18,11 @@
             <h1>{{ room.street_name|capitalize ~ " " ~ room.number }}</h1>
             <p>{{ room.description }}</p>
             <table id="room_information">
-                <tr>
-                    <th><i></i></th>
-                    <td>{{ room.number }}</td>
-                </tr><tr>
                     <th>Size: </th>
-                    <td>{{ room.size }}</td>
+                    <td>{{ room.size }}m<sup>2</sup></td>
                 </tr><tr>
                     <th>Price: </th>
-                    <td>{{ room.price }}</td>
+                    <td>&euro;{{ room.price }}</td>
                 </tr><tr>
                     <th>City: </th>
                     <td>{{ room.city }}</td>
