@@ -1,0 +1,13 @@
+.roominfo {
+    width: 50%;
+    margin: 0 auto;
+    padding-top: 40px;
+}
+
+#room_picture {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    padding-bottom: 20px;
+}

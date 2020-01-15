@@ -29,6 +29,9 @@
 }
 #owner_info_row img{
     height: 100%;
+    width: 100px;
+    object-fit: cover;
+    clip-path: circle(45% at 50% 50%);
 }
 
 #owner_info_row *{

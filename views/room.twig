@@ -32,7 +32,7 @@
                 </tr>
                 <tr>
                     <th scope="row">Street</th>
-                    <td>{{ room.street_name|capitalize ~ " " ~ room.number}}</td>
+                    <td>{{ room.street_name|capitalize ~ " " ~ room.number }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Postal Code</th>
@@ -40,7 +40,6 @@
                 </tr>
                 </tbody>
             </table>
-
 
 
             {# Card displaying the owner of the room#}
@@ -110,23 +109,29 @@
                         <br/>
                         <a href="{{ url('account/reactions?listing_id=' ~ listing.listing_id) }}">
                             <button class="btn btn-xlarge btn-dark">
-                                <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for [{{ listing.status }}] {{ listing.available_from|date('d-m-Y') }}
+                                <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for
+                                [{{ listing.status }}] {{ listing.available_from|date('d-m-Y') }}
                             </button>
                         </a>
 
                     {% endfor %}
                     <br/>
+                    <a href="{{ url('rooms/delete/' ~ room.room_id) }}">
+                        <button class="btn btn-xlarge btn-dark" onclick="return confirm('are you sure?')">
+                            <i class="fad fa-bomb colored-icon light-icon"></i> Destroy my room
+                        </button>
+                    </a>
 
-            {% else %}
-                <div class="alert alert-danger" role="alert">
-                    This room is not listed yet!
-                </div>
-                <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
-                    <button class="btn btn-xlarge btn-dark">
-                        <i class="fad fa-list colored-icon light-icon"></i> List this room
-                    </button>
-                </a>
-            {% endif %}
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        This room is not listed yet!
+                    </div>
+                    <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
+                        <button class="btn btn-xlarge btn-dark">
+                            <i class="fad fa-list colored-icon light-icon"></i> List this room
+                        </button>
+                    </a>
+                {% endif %}
             </div>
         {% endif %}
     </div>
