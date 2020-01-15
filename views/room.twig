@@ -19,9 +19,11 @@
             <p>{{ room.description }}</p>
             <table id="room_information">
                 <tr>
+                    <th><i></i></th>
+                    <td>{{ room.number }}</td>
                 </tr><tr>
                     <th>Size: </th>
-                    <td>{{ room.size }}m<sup>2</sup></td>
+                    <td>{{ room.size }}</td>
                 </tr><tr>
                     <th>Price: </th>
                     <td>{{ room.price }}</td>
@@ -31,7 +33,6 @@
                 </tr>
             </table>
 
-            <br/>
             <table id="address_table">
                 <thead>
                     <tr>
@@ -40,15 +41,15 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <th>City:</th>
+                        <th>City: </th>
                         <td> {{ room.city|capitalize }}</td>
                     </tr>
                     <tr>
-                        <th>Street:</th>
+                        <th>Street: </th>
                         <td>{{ room.street_name|capitalize ~ " " ~ room.number}}</td>
                     </tr>
                     <tr>
-                        <th>Postal code:</th>
+                        <th>Postal code: </th>
                         <td>{{ room.zipcode }}</td>
                     </tr>
                 </tbody>
@@ -57,17 +58,9 @@
             <!-- TODO display owner of the room not logged in user.-->
             <!-- TODO display correct profile picture of owner -->
 
-
             {# Card displaying the owner of the room#}
             <div id="owner_info_row">
-                {% if user.picture %}
-                    <img id='profile_pic' src="{{ uploads('room/' ~ user.picture) }}"
-                         alt="The picture of the owner">
-                {% else %}
-                    <img id='profile_pic' src="{{ static('images/placeholder_owner.png') }}"
-                         alt="A placeholder (because no picture was uploaded)">
-                {% endif %}
-
+                <img id="profile_pic" src="{{ static('images/placeholder_owner.png') }}" alt="Profile picture of the owner">
                 <div>
                     <h4>{{ user.first_name|capitalize ~ " " ~ user.last_name|capitalize }}</h4>
                     <p>Owner of this room and N other rooms on RoomHub.</p>
