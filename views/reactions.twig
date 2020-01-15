@@ -11,7 +11,8 @@
             <tr>
                 <th class="tg-cly1" colspan="2">
                     <h1>
-                        [{{ listing.status }}] {{ room.street_name }} {{ room.number }} From {{ listing.available_from|date('d-m-Y') }}
+                        [{{ listing.status }}] {{ room.street_name }} {{ room.number }}
+                        From {{ listing.available_from|date('d-m-Y') }}
                     </h1>
 
                     {% if room.picture %}
@@ -70,15 +71,20 @@
                             </p>
                         </li>
                         <li>
+                            <p>
+                                Reaction state: {{ reaction.status }}
+                            </p>
+                        </li>
+                        <li>
                             <a href="{{ url('account/u/' ~ reaction.user.username) }}">
                                 <button>Go to profile</button>
                             </a>
                         </li>
                     </ul>
                     {% if reaction.status == 'open' %}
-                    <a href="{{ url('rooms/list/assign/' ~ listing.listing_id ~ '/' ~ reaction.user.user_id) }}">
-                        <button>You get this room!</button>
-                    </a>
+                        <a href="{{ url('rooms/list/assign/' ~ reaction.opt_in_id) }}">
+                            <button>You get this room!</button>
+                        </a>
                     {% endif %}
                 </td>
             </tr>

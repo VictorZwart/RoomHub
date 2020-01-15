@@ -184,6 +184,8 @@ function handle_file_upload($id, $db, $dbname) {
 		pprint('de uploads map bestaat al!');
 	}
 
+	die();
+
 	$uploadPath = realpath($uploadFolder) . '/' . basename($newfileName);
 
 	if (!in_array($fileExtension, $fileExtensions)) {
