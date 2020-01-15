@@ -83,12 +83,18 @@
         <button class="btn btn-xlarge btn-dark">Rooms overview</button>
     </a>
 </div>
+{% if feedback.errors %}
 <div class="errors">
-    {% if feedback.errors %}
-        <b>Front-end: please use this feedback in the form</b>
-        errors: {{ feedback.errors|json_encode() }}
-    {% endif %}
+    {% for errors in feedback.errors %}
+        {% for error in errors %}
+            <div class="error">
+                <img src="{{ static('images/cross_error.png') }}">
+                <p>{{ error }}</p>
+            </div>
+        {% endfor %}
+    {% endfor %}
 </div>
+{% endif %}
 
 <div id="content">{% block content %}{% endblock %}</div>
 <div id="footer">
