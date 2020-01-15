@@ -105,7 +105,7 @@ class RoomController {
 					'active_listing'  => $active_listing_id,
 					'owner'           => $owner,
 					'amount_of_rooms' => $amount_of_rooms,
-					'reaction_count'  => $reaction_count,
+//					'reaction_count'  => $reaction_count,
 				]);
 
 
