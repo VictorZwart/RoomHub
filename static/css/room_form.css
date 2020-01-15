@@ -9,17 +9,10 @@ form {
     min-width: 40%;
 }
 
-.button {
-    background-color: black;
-    color: white;
-    border: none;
-    cursor: pointer;
-    width: 50%;
-}
-
-.button:hover {
-    border: 3px solid black;
-    background-color: #ffa31a;
+.square_button:hover {
+    font-weight: bold;
+    color: black;
+    background-color: var(--roomhub-orange);
 }
 
 .square_button {
