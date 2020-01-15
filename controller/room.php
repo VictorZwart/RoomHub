@@ -68,7 +68,10 @@ class RoomController {
                 ->where([
                     'room_id' => $room_id
                 ])->first();
-
+            $query = $db->room->find()->where([
+                'owner_id' => $owner['owner_id']
+                ]);
+            $amount_of_rooms = $query->select(['count' => $query->func()->count('*') ])->first();
 			$is_opted          = false;
 			$active_listing_id = 0;
 			if (@$_SESSION['user_id']) {
@@ -100,7 +103,8 @@ class RoomController {
 					'room'           => $room,
 					'opted'          => $is_opted,
 					'active_listing' => $active_listing_id,
-                    'owner'          => $owner
+                    'owner'          => $owner,
+                    'amount_of_rooms'=> $amount_of_rooms
 				]);
 
 
