@@ -34,9 +34,18 @@
             {% for opt_in in all_info %}
                 <tr>
                     <td>
-                        <h6><a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">{{ opt_in.Room.street_name }} {{ opt_in.Room.number }}</a></h6>
-                            </div>
-                            </div>
+                        <h6>{{ opt_in.Room.street_name }} {{ opt_in.Room.number }}</h6>
+                        {% if room.picture %}
+                                <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
+                                    <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
+                                         alt="The picture of the room">
+                                </a>
+                        {% else %}
+                            <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
+                                <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
+                                     alt="A placeholder (because no picture was uploaded)">
+                            </a>
+                        {% endif %}
                     </td>
                     <td>From {{ opt_in.Listing.available_from|date('d-m-Y') }}
                         {% if opt_in.Listing.available_to %}

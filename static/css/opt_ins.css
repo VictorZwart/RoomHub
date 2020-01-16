@@ -21,8 +21,8 @@
 }
 
 #room_picture{
-    height: 100%;
-    object-fit: cover;
+    max-height: 50%;
+    max-width: 50%;
 }
 
 #roombutton{
@@ -44,6 +44,11 @@
     }
 }
 
-a {
-    color: black;
+@media(max-width: 400px){
+    #room_picture{
+        max-height: 90%;
+        max-width: 90%;
+    }
 }
+
+
