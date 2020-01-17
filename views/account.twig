@@ -11,6 +11,7 @@
                 <ul class="list-group">
                     <li class="list-group-item"><a href="{{ url('account/edit') }}"><i
                                     class="fad fa-cog colored-icon fill"></i> Change Settings</a></li>
+
                     {% if user.role == 'owner' %}
                         <li class="list-group-item"><a href="{{ url('rooms?filter=mine') }}"><i
                                         class="fad fa-list colored-icon fill"></i> My Rooms</a></li>
@@ -24,6 +25,13 @@
                     {% endif %}
                     <li class="list-group-item"><a href="{{ url('account/logout') }}"><i
                                     class="fad fa-sign-out colored-icon fill"></i> Log out</a></li>
+                    {% if user.user_id == me %}
+                        <li class="list-group-item"><a href="{{ url('account/delete/' ~ user.user_id) }}"
+                                                       onclick="return confirm('are you sure?')">
+                                <i class=" fad fa-user-minus colored-icon fill"></i> Delete your account
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         {% endif %}
@@ -76,17 +84,6 @@
                         <th>Occupation</th>
                         <td> {{ user.occupation }}</td>
                     </tr>
-                    {% if user.user_id == me %}
-                        <tr>
-                            <th colspan="2">
-                                <a href="{{ url('account/delete/' ~ user.user_id) }}">
-                                    <button class="btn btn-xlarge btn-dark" onclick="return confirm('are you sure?')">
-                                        <i class="fad fa-user-minus colored-icon-reverse"></i> Delete your account
-                                    </button>
-                                </a>
-                            </th>
-                        </tr>
-                    {% endif %}
                 </table>
             </div>
         {% endautoescape %}

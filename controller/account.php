@@ -84,7 +84,6 @@ class AccountController {
 			// we dont want that in the front end!
 			unset($user_info['password']);
 
-			// TODO: hide menu or show a different one (because its not your account)
 			echo $twig->render('account.twig', ['user' => $user_info, 'me' => $me]);
 		});
 
