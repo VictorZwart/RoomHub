@@ -1,15 +1,17 @@
 #room_page{
     display: flex;
     justify-content: center;
-    padding-top: 10px;
 }
 
 #room_content{
-    width: 50%;
+    --room_width: 50%;
+    width: var(--room_width);
     background: white;
     display: flex;
     align-items: center;
     flex-direction: column;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 #room_picture{
@@ -34,6 +36,15 @@
     clip-path: circle(45% at 50% 50%);
 }
 
+#owner_info_row a{
+    text-decoration: none;
+    color: #062c33;
+}
+
+#owner_info_row a:hover{
+    color: var(--roomhub-orange);
+}
+
 #owner_info_row *{
     margin: 0;
 }
@@ -48,8 +59,10 @@
 
 #owner_room_info{
     position: fixed;
-    border-radius: 25px;
-    left: 20px;
+    border-radius: 10px;
+    top: 90px;
+    left: 1vw;
+    right: 75vw;
     background: #000000;
     padding: 10px;
     color: white;
@@ -58,19 +71,35 @@
     align-items: center;
 }
 
+#owner_room_info > a{
+    width: 90%;
+}
+
+#owner_room_info > a > button{
+    padding: 10px;
+    margin: 5px 0 5px 0px;
+    width: 100%;
+}
+
 @media(max-width: 1200px){
     #room_page{
         flex-direction: column-reverse;
+
     }
 
     #room_content{
-        width: 100vw;
+        width: 100%;
     }
 
     #owner_room_info{
         position: unset;
-        width: 100vw;
+        width: 100%;
         height: auto;
+        border-radius: 0px;
+    }
+
+    #owner_room_info > a > button{
+        width: 100%;
     }
 
     #optin_button {
@@ -80,6 +109,8 @@
     #optin_button button{
         width: 100%;
     }
+
+
 }
 
 .table {
@@ -88,6 +119,7 @@
 
 #introtext {
     text-align: center;
+    margin-top: 10px;
 }
 
 .des {
