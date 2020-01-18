@@ -1,2 +1,0 @@
-ALTER TABLE room
-    ADD COLUMN picture VARCHAR(20) NULL;
