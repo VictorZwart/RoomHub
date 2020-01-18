@@ -123,10 +123,10 @@
                             <i class="fad fa-bomb colored-icon light-icon"></i> Destroy my room
                         </button>
                     </a>
-
-                {% else %}
+                {% endif %}
+                {% if not active_listing %}
                     <div class="alert alert-danger" role="alert">
-                        This room is not listed yet!
+                        This room does not have any active listings!
                     </div>
                     <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
                         <button class="btn btn-xlarge btn-dark">
