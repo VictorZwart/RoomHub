@@ -428,9 +428,18 @@ class RoomController {
 		});
 
 		/* GET for canceling listing */
-		$router->get('/list/cancel/(\d+)', function() {
+		$router->get('/list/cancel/(\d+)', function($listing_id) use ($db) {
 			require_login();
-			echo 'weg yeeten jwz';
+
+			$listing = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'room']);
+
+			require_exists($listing);
+			require_mine($listing['room']);
+
+			$db->listing->delete($listing);
+			$_SESSION['feedback'] = ['message' => 'Your listing was deleted succesfully!', 'state' => 'succes'];
+			redirect('/');
+
 		});
 
 
