@@ -4,39 +4,57 @@
 }
 #optins{
     width: 70vw;
-    background: #f7f7f7;
     padding: 15px;
-    overflow-x: scroll;
 }
 
-#room_pic_div{
+#optins > h1, h4{
+    text-align: center;
+    padding: 10px 0px 10px 0px;
+}
+
+.image_div{
     position: relative;
-    height: 200px;
-    width: 300px;
+    width: 100%;
+    height: 100%;
 }
 
-#room_pic_div:hover{
-    transition: 0.2s ease;
-    background-color: rgba(0, 0, 0, 0.56);
-}
-
-#room_picture{
-    max-height: 50%;
-    max-width: 50%;
-}
-
-#roombutton{
+.hover_img{
     position: absolute;
+    height: 90%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
 }
 
-#roombutton .square_button{
-    margin: 0;
-    width: unset;
+.opt_in_card{
+    width: 100%;
+    height: 250px;
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+    margin-bottom: 10px;
 }
+
+.opt_in_info{
+    margin-left: 25px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.opt_in_card > a{
+    width: 40%;
+    height: 100%;
+}
+#room_picture{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 
 @media(max-width: 1000px){
     #optins{
@@ -44,11 +62,16 @@
     }
 }
 
-@media(max-width: 500px){
-    #room_picture{
-        max-height: 90%;
-        max-width: 90%;
+@media(max-width: 800px){
+    .opt_in_card{
+        flex-direction: column;
+        height: auto;
     }
+    .opt_in_card > a{
+        width: 100%;
+        height: 30vh;
+    }
+
 }
 
 
