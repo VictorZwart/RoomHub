@@ -20,7 +20,6 @@
     <div id="optins">
         <h1>My opt-ins</h1>
         <h4>Click image for more info on each room</h4>
-        <!-- hier een tabel toevoegen met of jouw reacties op alle kamers -->
         {% for opt_in in all_info %}
             {% if opt_in.status == 'accepted' %}
                 {% set status_img_src = 'accepted.png' %}
