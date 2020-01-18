@@ -471,7 +471,7 @@ class RoomController {
 			}
 
 
-			$db->opt_in->patchEntity($opt_in, ['status' => 'accepted']);
+			$db->opt_in->patchEntity($opt_in, ['status' => 'accepted'], ['validate' => 'cancel']);
 			if (!safe_save($opt_in, $db->opt_in)) {
 				$_SESSION['feedback'] = ['message' => 'Opt-in could not be accepted.'];
 				redirect('rooms/' . $listing_info['room']['room_id']);
