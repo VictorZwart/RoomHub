@@ -129,7 +129,7 @@ class RoomController {
 				'size'        => @$_POST['size'],
 				'type'        => @$_POST['type'],
 				'city'        => @$_POST['city'],
-				'zipcode'     => @$_POST['zipcode'],
+				'zipcode'     => fix_zip(@$_POST['zipcode']),
 				'street_name' => @$_POST['street_name'],
 				'number'      => @$_POST['number'],
 				'owner_id'    => @$_SESSION['user_id']
@@ -204,7 +204,7 @@ class RoomController {
 				'size'        => @$_POST['size'],
 				'type'        => @$_POST['type'],
 				'city'        => @$_POST['city'],
-				'zipcode'     => @$_POST['zipcode'],
+				'zipcode'     => fix_zip(@$_POST['zipcode']),
 				'street_name' => @$_POST['street_name'],
 				'number'      => @$_POST['number']
 			];
