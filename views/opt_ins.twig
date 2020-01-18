@@ -33,14 +33,20 @@
             </thead>
             <tbody>
             {% for opt_in in all_info %}
-                <tr>
+                {% if opt_in.status == 'accepted' %}
+                    {% set bg_class = 'bg-success' %}
+                {% elseif opt_in.status == 'rejected' %}
+                    {% set bg_class = 'bg-danger' %}
+                {% endif %}
+
+                <tr class="{{ bg_class }}">
                     <td>
                         <h6>{{ opt_in.Room.street_name }} {{ opt_in.Room.number }}</h6>
                         {% if room.picture %}
-                                <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
-                                    <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
-                                         alt="The picture of the room">
-                                </a>
+                            <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
+                                <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
+                                     alt="The picture of the room">
+                            </a>
                         {% else %}
                             <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
                                 <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
