@@ -1,15 +1,20 @@
 {% extends "generic.twig" %}
 
 {% block title %}Succes!{% endblock %}
+{% block page_stylesheet %}
+    <link rel="stylesheet" href="{{ static('css/success.css') }}" type="text/css">
+{% endblock %}
 {% block content %}
     <h1>Congratulations on renting {{ opt_in.listing.room.street_name }}!</h1>
     <p>Message {{ tenant.user.first_name }} the good news directly or save the information:</p>
-    <p>Email him/her! <a
+    <p>Email {{ tenant.user.first_name }}! <a
                 href="mailto:{{ tenant.user.email }}?subject=You%20have%20the%20room%20at%20{{ opt_in.listing.room.street_name }}%20{{ opt_in.listing.room.number }}">
             {{ tenant.user.email }}</a>
     </p>
-    <p>Call him right now: <a href="tel:{{ tenant.user.phone_number }}">{{ tenant.user.phone_number }}</a></p>
+    <p>Or call your new tenant right now: <a
+                href="tel:{{ tenant.user.phone_number }}">{{ tenant.user.phone_number }}</a></p>
 
     <p>For more information view {{ tenant.user.first_name }}'s account page <a
                 href="{{ url('account/u/' ~ tenant.user.username) }}"> here</a>.</p>
+    <img id="rented" width="300" height="300" src="{{ static('images/rented_out.png') }}"/>
 {% endblock %}

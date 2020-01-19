@@ -73,7 +73,7 @@ class AccountController {
 		/* GET to view specific account by username */
 		$router->get('/u/(\w+)', function($username) use ($db, $twig) {
 			$user_info = get_info($db->user, 'username', $username);
-			$me        = $_SESSION['user_id'];
+			$me        = @$_SESSION['user_id'];
 
 			if (!$user_info) {
 				$_SESSION['feedback'] = ['message' => 'This user does not exist!'];
