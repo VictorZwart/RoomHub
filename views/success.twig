@@ -2,9 +2,11 @@
 
 {% block title %}Succes!{% endblock %}
 {% block content %}
+        <p>{{ tenant }}</p>
+        <h1>Congratulations on renting {{ room.listing.room.street_name }}!</h1>
+        <p>Message {{ tenant.user.first_name }} the good news directly or save the information:</p>
+    <p>Email him/her! <a href=mailto:{{ tenant.user.email }}?subject="Room">{{ tenant.user.email }}</a></p>
+    <p>Call him right now: <a href="tel:{{ tenant.user.phone_number }}">{{ tenant.user.phone_number }}</a></p>
 
-        <h1>congratulations on renting your room!</h1>
-        <p>Message your new tenant directly:</p>
-    <p>Email him/her!<a href=mailto:{{ tenant['email'] }}?subject="Room">{{ tenant['email'] }}</a></p>
-    <p>Call him right now:<a href="tel:{{ tenant['telephone_number'] }}">Call!</a></p>
+    <p>For more information view {{ tenant.user.first_name }}'s account page <a href="{{ url('account/u/' ~ tenant.user.username) }}"> here</a>.</p>
 {% endblock %}

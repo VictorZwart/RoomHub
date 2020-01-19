@@ -493,8 +493,7 @@ class RoomController {
 			}
 
 			$contact_info = get_info($db->opt_in, 'opt_in_id', $optin_id, ['contain' => 'User']);
-            pprint($contact_info);
-            echo $twig->render('success.twig', ['tenant' => $contact_info]);
+            echo $twig->render('success.twig', ['tenant' => $contact_info, 'room' => $opt_in]);
 		});
 	}
 
