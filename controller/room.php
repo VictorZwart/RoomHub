@@ -427,6 +427,7 @@ class RoomController {
 
 		});
 
+
 		/* GET for canceling listing */
 		$router->get('/list/cancel/(\d+)', function() {
 			require_login();
@@ -435,7 +436,7 @@ class RoomController {
 
 
 		/* GET for assigning user to listing */
-		$router->get('/list/assign/(\d+)', function($optin_id) use ($db) {
+		$router->get('/list/assign/(\d+)', function($optin_id) use ($db, $twig) {
 			require_login();
 			$opt_in = get_info($db->opt_in, 'opt_in_id', $optin_id, ['contain' => 'Listing.Room']);
 
@@ -482,7 +483,9 @@ class RoomController {
 				$_SESSION['feedback'] = ['message' => 'Listing successfully closed!', 'state' => 'success'];
 			}
 
-			redirect('rooms/' . $listing_info['room']['room_id']);
+			$contact_info = get_info($db->opt_in, 'opt_in_id', $optin_id, ['contain' => 'User']);
+            pprint($contact_info);
+            echo $twig->render('success.twig', ['tenant' => $contact_info]);
 		});
 	}
 

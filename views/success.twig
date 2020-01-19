@@ -1,0 +1,10 @@
+{% extends "generic.twig" %}
+
+{% block title %}Succes!{% endblock %}
+{% block content %}
+
+        <h1>congratulations on renting your room!</h1>
+        <p>Message your new tenant directly:</p>
+    <p>Email him/her!<a href=mailto:{{ tenant['email'] }}?subject="Room">{{ tenant['email'] }}</a></p>
+    <p>Call him right now:<a href="tel:{{ tenant['telephone_number'] }}">Call!</a></p>
+{% endblock %}
