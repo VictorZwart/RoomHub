@@ -6,13 +6,13 @@
 {% endblock %}
 {% block content %}
     <div id="account_homepage">
-        {% if user.user_id == me %}
+        {% if user_info.user_id == me %}
             <div id="sidebar">
                 <ul class="list-group">
                     <li class="list-group-item"><a href="{{ url('account/edit') }}"><i
                                     class="fad fa-cog colored-icon fill"></i> Change Settings</a></li>
 
-                    {% if user.role == 'owner' %}
+                    {% if user_info.role == 'owner' %}
                         <li class="list-group-item"><a href="{{ url('rooms?filter=mine') }}"><i
                                         class="fad fa-list colored-icon fill"></i> My Rooms</a></li>
                         <li class="list-group-item"><a href="{{ url('rooms/new') }}"><i
@@ -25,8 +25,8 @@
                     {% endif %}
                     <li class="list-group-item"><a href="{{ url('account/logout') }}"><i
                                     class="fad fa-sign-out colored-icon fill"></i> Log out</a></li>
-                    {% if user.user_id == me %}
-                        <li class="list-group-item"><a href="{{ url('account/delete/' ~ user.user_id) }}"
+                    {% if user_info.user_id == me %}
+                        <li class="list-group-item"><a href="{{ url('account/delete/' ~ user_info.user_id) }}"
                                                        onclick="return confirm('are you sure?')">
                                 <i class=" fad fa-user-minus colored-icon fill"></i> Delete your account
                             </a>
@@ -39,11 +39,11 @@
             <div id="account_information">
                 <h1>Account Information</h1>
 
-                {% if user.picture %}
-                    <img id='profile_picture' src="{{ uploads('user/' ~ user.picture) }}"
+                {% if user_info.picture %}
+                    <img id='profile_picture' src="{{ uploads('user/' ~ user_info.picture) }}"
                          alt="The picture of the user">
                 {% else %}
-                    {% if user.role == 'tenant' %}
+                    {% if user_info.role == 'tenant' %}
                         {% set role_img_loc = 'images/placeholder_tenant.png' %}
                     {% else %}
                         {% set role_img_loc = 'images/placeholder_owner.png' %}
@@ -55,34 +55,34 @@
                 {% endif %}
 
 
-                <h5><b>{{ user.first_name }} {{ user.last_name }}</b></h5>
-                <p><b>{{ user.role }}</b></p>
+                <h5><b>{{ user_info.first_name }} {{ user_info.last_name }}</b></h5>
+                <p><b>{{ user_info.role }}</b></p>
                 <p><b>Biography</b></p>
-                <p>{{ user.biography }}</p>
+                <p>{{ user_info.biography }}</p>
                 <table class="table table-borderd" id="account_info">
                     <tr>
                         <th>Username</th>
-                        <td> {{ user.username }}</td>
+                        <td> {{ user_info.username }}</td>
                     </tr>
                     <tr>
                         <th>Phone number</th>
-                        <td> {{ user.phone_number }}</td>
+                        <td> {{ user_info.phone_number }}</td>
                     </tr>
                     <tr>
                         <th>Email address</th>
-                        <td> {{ user.email }}</td>
+                        <td> {{ user_info.email }}</td>
                     </tr>
                     <tr>
                         <th>Language</th>
-                        <td> {{ user.language }}</td>
+                        <td> {{ user_info.language }}</td>
                     </tr>
                     <tr>
                         <th>Birthdate</th>
-                        <td> {{ user.birthdate|date('d-m-Y') }}</td>
+                        <td> {{ user_info.birthdate|date('d-m-Y') }}</td>
                     </tr>
                     <tr>
                         <th>Occupation</th>
-                        <td> {{ user.occupation }}</td>
+                        <td> {{ user_info.occupation }}</td>
                     </tr>
                 </table>
             </div>

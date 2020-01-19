@@ -84,7 +84,7 @@ class AccountController {
 			// we dont want that in the front end!
 			unset($user_info['password']);
 
-			echo $twig->render('account.twig', ['user' => $user_info, 'me' => $me]);
+			echo $twig->render('account.twig', ['user_info' => $user_info, 'me' => $me]);
 		});
 
 
