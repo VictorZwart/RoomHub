@@ -52,19 +52,20 @@
                            required>
                 </div>
             {% endif %}
-            <div class="form-group">
-                <label for="inputFirstname">First name</label>
-                <input type="text" class="form-control" id="inputFirstname" placeholder="Jan" name="first_name"
-                       value="{{ account_info.first_name }}"
-                       required>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="inputFirstname">First name</label>
+                    <input type="text" class="form-control" id="inputFirstname" placeholder="Jan" name="first_name"
+                           value="{{ account_info.first_name }}"
+                           required>
+                </div>
+                <div class="form-group col-6">
+                    <label for="inputLastname">Last name</label>
+                    <input type="text" class="form-control" id="inputLastname" placeholder="Jansen" name="last_name"
+                           value="{{ account_info.last_name }}"
+                           required>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="inputLastname">Last name</label>
-                <input type="text" class="form-control" id="inputLastname" placeholder="Jansen" name="last_name"
-                       value="{{ account_info.last_name }}"
-                       required>
-            </div>
-
 
             <div class="form-group">
                 <label for="inputPhoneNumber">Phone number</label>
@@ -88,11 +89,11 @@
             <div class="form-group">
                 <label for="inputBiography">Biography</label>
                 <textarea name="biography" class="form-control" id="inputBiography"
-                          placeholder="Enter Sth aboot yrslf">{{ account_info.biography }}</textarea>
+                          placeholder="Enter something about yourself here">{{ account_info.biography }}</textarea>
             </div>
             <div class="form-group">
                 <label for="inputOccupation">Occupation</label>
-                <input type="text" class="form-control" id="inputOccupation" placeholder="Student/Scientist/Glasswasher"
+                <input type="text" class="form-control" id="inputOccupation" placeholder="Student/Scientist"
                        name="occupation" value="{{ account_info.occupation }}" required>
             </div>
             <div class="form-group">
