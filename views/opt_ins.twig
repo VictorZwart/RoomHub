@@ -32,8 +32,8 @@
                 <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
                     <div class="image_div">
                         <img class="hover_img" src="{{ static('images/' ~ status_img_src ) }}">
-                        {% if room.picture %}
-                            <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
+                        {% if opt_in.Room.picture %}
+                            <img id='room_picture' src="{{ uploads('room/' ~ opt_in.Room.picture) }}"
                                  alt="The picture of the room">
                         {% else %}
                             <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
