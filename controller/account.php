@@ -20,7 +20,8 @@ class AccountController {
 		$router->get('/', function() use ($db, $twig) {
 			require_login();
 			$me = $_SESSION['user_id'];
-			echo $twig->render('account.twig', ['me' => $me]);
+			$user_info = get_info($db->user, 'user_id', $me);
+			echo $twig->render('account.twig', ['me' => $me, 'user_info' => $user_info]);
 		});
 
 		/* GET to view optins */
