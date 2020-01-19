@@ -48,7 +48,9 @@ $router->set404(function() {
 // GET for welcome page
 $router->get('/', function() use ($db, $twig) {
 	require_anonymous('rooms');
-	$available_rooms = $db->room->find()->count();
+	$available_rooms = $db->listing->find()->where(
+		['status' => 'open']
+	)->count();
 	echo $twig->render('index.twig', ['availablerooms' => $available_rooms]);
 
 });
