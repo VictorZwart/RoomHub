@@ -32,7 +32,7 @@
                         {% for opt_in in my_optins %}
                             {% if opt_in.listing_id == listing.listing_id and not is_liked %}
                                 {% set is_liked = 1 %}
-                                <div class="alert alert-success" role="alert">
+                                <div class="alert alert-success" role="alert" style="margin-bottom: 0px;">
                                     You have opted-in to this room
                                 </div>
                             {% endif %}
