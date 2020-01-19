@@ -20,48 +20,41 @@
     <div id="optins">
         <h1>My opt-ins</h1>
         <h4>Click image for more info on each room</h4>
-        <!-- hier een tabel toevoegen met of jouw reacties op alle kamers -->
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th scope="col">Room</th>
-                <th scope="col">Available</th>
-                <th scope="col">Opt-in Date</th>
-                <th scope="col">Your Message</th>
-                <th scope="col">Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for opt_in in all_info %}
-                <tr>
-                    <td>
-                        <h6>{{ opt_in.Room.street_name }} {{ opt_in.Room.number }}</h6>
-                        {% if room.picture %}
-                                <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
-                                    <img id='room_picture' src="{{ uploads('room/' ~ room.picture) }}"
-                                         alt="The picture of the room">
-                                </a>
+        {% for opt_in in all_info %}
+            {% if opt_in.status == 'accepted' %}
+                {% set status_img_src = 'accepted.png' %}
+            {% elseif opt_in.status == 'rejected' %}
+                {% set status_img_src = 'rejected.png' %}
+            {% else %}
+                {% set status_img_src = 'open.png' %}
+            {% endif %}
+            <div class="opt_in_card">
+                <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
+                    <div class="image_div">
+                        <img class="hover_img" src="{{ static('images/' ~ status_img_src ) }}">
+                        {% if opt_in.Room.picture %}
+                            <img id='room_picture' src="{{ uploads('room/' ~ opt_in.Room.picture) }}"
+                                 alt="The picture of the room">
                         {% else %}
-                            <a href="{{ url('rooms/' ~  opt_in.Room.room_id ) }}">
-                                <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
-                                     alt="A placeholder (because no picture was uploaded)">
-                            </a>
+                            <img id='room_picture' src="{{ static('images/room_placeholder.jpg') }}"
+                                 alt="A placeholder (because no picture was uploaded)">
                         {% endif %}
-                    </td>
-                    <td>From {{ opt_in.Listing.available_from|date('d-m-Y') }}
-                        {% if opt_in.Listing.available_to %}
-                            to {{ opt_in.Listing.available_to|date('d-m-Y') }}
-                        {% else %}
-                            for an indefinite period
-                        {% endif %}
-                    </td>
-                    <td>{{ opt_in.date|date('d-m-Y') }}</td>
-                    <td>{{ opt_in.message }}</td>
-                    <td><b>{{ opt_in.status|upper }}</b></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    </div>
+                </a>
+                <div class="opt_in_info">
+                    <h1>{{ opt_in.Room.street_name }} {{ opt_in.Room.number }}</h1>
+                    <p><b>Opt-in Date:</b> {{ opt_in.date|date('d-m-Y') }}</p>
+                    <p><b>My Message:</b> {{ opt_in.message }}</p>
+                    <p><b>Current Status:</b> {{ opt_in.status|upper }}</p>
+                    <p><i>From {{ opt_in.Listing.available_from|date('d-m-Y') }}
+                            {% if opt_in.Listing.available_to %}
+                                to {{ opt_in.Listing.available_to|date('d-m-Y') }}
+                            {% else %}
+                                for an indefinite period
+                            {% endif %}</i></p>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
 {% endblock %}

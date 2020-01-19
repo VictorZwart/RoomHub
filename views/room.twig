@@ -99,7 +99,6 @@
                     {% for listing in listings %}
 
                         {% if listing.status == 'open' %}
-                            <br/>
 
                             <a href="{{ url('rooms/list/edit/' ~ listing.listing_id) }}">
                                 <button class="btn btn-xlarge btn-dark">
@@ -108,7 +107,6 @@
                             </a>
 
                         {% endif %}
-                        <br/>
                         <a href="{{ url('account/reactions?listing_id=' ~ listing.listing_id) }}">
                             <button class="btn btn-xlarge btn-dark">
                                 <i class="fad fa-comments colored-icon light-icon"></i> Show reactions for
@@ -117,16 +115,15 @@
                         </a>
 
                     {% endfor %}
-                    <br/>
                     <a href="{{ url('rooms/delete/' ~ room.room_id) }}">
                         <button class="btn btn-xlarge btn-dark" onclick="return confirm('are you sure?')">
                             <i class="fad fa-bomb colored-icon light-icon"></i> Destroy my room
                         </button>
                     </a>
-
-                {% else %}
+                {% endif %}
+                {% if not active_listing %}
                     <div class="alert alert-danger" role="alert">
-                        This room is not listed yet!
+                        This room does not have any active listings!
                     </div>
                     <a href="{{ url('rooms/list/add/' ~ room.room_id) }}">
                         <button class="btn btn-xlarge btn-dark">

@@ -129,7 +129,7 @@ class RoomController {
 				'size'        => @$_POST['size'],
 				'type'        => @$_POST['type'],
 				'city'        => @$_POST['city'],
-				'zipcode'     => @$_POST['zipcode'],
+				'zipcode'     => fix_zip(@$_POST['zipcode']),
 				'street_name' => @$_POST['street_name'],
 				'number'      => @$_POST['number'],
 				'owner_id'    => @$_SESSION['user_id']
@@ -204,7 +204,7 @@ class RoomController {
 				'size'        => @$_POST['size'],
 				'type'        => @$_POST['type'],
 				'city'        => @$_POST['city'],
-				'zipcode'     => @$_POST['zipcode'],
+				'zipcode'     => fix_zip(@$_POST['zipcode']),
 				'street_name' => @$_POST['street_name'],
 				'number'      => @$_POST['number']
 			];
@@ -429,9 +429,18 @@ class RoomController {
 
 
 		/* GET for canceling listing */
-		$router->get('/list/cancel/(\d+)', function() {
+		$router->get('/list/cancel/(\d+)', function($listing_id) use ($db) {
 			require_login();
-			echo 'weg yeeten jwz';
+
+			$listing = get_info($db->listing, 'listing_id', $listing_id, ['contain' => 'room']);
+
+			require_exists($listing);
+			require_mine($listing['room']);
+
+			$db->listing->delete($listing);
+			$_SESSION['feedback'] = ['message' => 'Your listing was deleted succesfully!', 'state' => 'succes'];
+			redirect('/');
+
 		});
 
 
@@ -463,7 +472,7 @@ class RoomController {
 			}
 
 
-			$db->opt_in->patchEntity($opt_in, ['status' => 'accepted']);
+			$db->opt_in->patchEntity($opt_in, ['status' => 'accepted'], ['validate' => 'cancel']);
 			if (!safe_save($opt_in, $db->opt_in)) {
 				$_SESSION['feedback'] = ['message' => 'Opt-in could not be accepted.'];
 				redirect('rooms/' . $listing_info['room']['room_id']);

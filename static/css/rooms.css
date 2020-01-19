@@ -1,10 +1,15 @@
+#content > h1{
+    text-align: center;
+    padding: 25px;
+}
+
 #rooms_overview {
-    max-width: 80%;
+    max-width: 95%;
     text-align: center;
     margin: 0 auto;
-    padding-top: 50px;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 .card{
     margin: 10px;
@@ -22,13 +27,13 @@
     padding: 14px 20px;
     margin-top: 20px;
     cursor: pointer;
-    width: 50%;
+    width: 80%;
 }
 
 .square_button:hover {
     font-weight: bold;
     color: black;
-    background-color: var(--roomhub-orange);
+    background-color: #cf8216;
 }
 
 @media(max-width: 1600px){
@@ -41,7 +46,7 @@
         flex: 0 1 45%;
     }
 }
-@media(max-width: 800px){
+@media(max-width: 700px){
     .card{
         flex: 0 1 100%;
     }

@@ -146,15 +146,21 @@ class Config {
  *
  * @param $phone_number
  *
- * @return mixed|string
+ * @return string
  */
 function fix_phone($phone_number) {
-	$phone_number = $phone_number ?: '';
-	if (strpos($phone_number, '-') !== false) {
-		$phone_number = str_replace('-', '', $phone_number);
-	}
+	return str_replace('-', ' ', (@$phone_number ?: ''));
+}
 
-	return $phone_number;
+/**
+ * Remove the ' ' from a zip code
+ *
+ * @param $zip_code
+ *
+ * @return string
+ */
+function fix_zip($zip_code) {
+	return str_replace('-', ' ', (@$zip_code ?: ''));
 }
 
 /**

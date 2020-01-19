@@ -7,6 +7,8 @@
 {% block content %}
     {#    just for styling, needs to be created with php#}
 
+    <h1>Room Overview</h1>
+
     <div id="rooms_overview">
         {% for listing in all_rooms %}
             {% if listing.room %}
@@ -30,7 +32,7 @@
                         {% for opt_in in my_optins %}
                             {% if opt_in.listing_id == listing.listing_id and not is_liked %}
                                 {% set is_liked = 1 %}
-                                <div class="alert alert-success" role="alert">
+                                <div class="alert alert-success" role="alert" style="margin-bottom: 0px;">
                                     You have opted-in to this room
                                 </div>
                             {% endif %}
@@ -44,8 +46,8 @@
                              alt="{{ room.description }}">
                     {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">{{ room.type|title }} in {{ room.city }}</h5>
-                        <p class="card-text"><b>{{ room.street_name|title ~ ' ' ~ room.number }}</b></p>
+                        <h5 class="card-title">{{ room.type|title }} at {{ room.street_name|title ~ ' ' ~ room.number }}</h5>
+                        <p class="card-text"><b> {{ room.city }}</b></p>
                         <p class="card-text">{{ room.description }}</p>
                         {% if listing.available_from %}
                             <p class="card-text">Available from: {{ listing.available_from|date('d-m-Y') }}</p>
@@ -74,7 +76,7 @@
                             {% endif %}
                         {% elseif user.role == 'owner' and room.owner_id == user.user_id %}
                             <a href="{{ url('rooms/delete/' ~ room.room_id) }}">
-                                <button class="btn btn-xlarge btn-dark" onclick="return confirm('are you sure?')">
+                                <button class="square_button" onclick="return confirm('are you sure?')">
                                     <i class="fad fa-bomb colored-icon light-icon"></i> Destroy my room
                                 </button>
                             </a>
