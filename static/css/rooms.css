@@ -17,6 +17,7 @@
 }
 
 .card-img-top{
+    height: 20vw;
     object-fit: cover;
 }
 
@@ -47,6 +48,9 @@
     }
 }
 @media(max-width: 700px){
+    .card-img-top{
+        height: 35%;
+    }
     .card{
         flex: 0 1 100%;
     }
