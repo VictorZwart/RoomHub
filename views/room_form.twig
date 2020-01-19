@@ -41,17 +41,19 @@
                    value="{{ room_info.zipcode }}"
                    required>
         </div>
-        <div class="form-group">
-            <label for="inputStreetname">Street name</label>
-            <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan" name="street_name"
-                   value="{{ room_info.street_name }}"
-                   required>
-        </div>
-        <div class="form-group">
-            <label for="inputNumber">House number</label>
-            <input type="text" class="form-control" id="inputNumber" placeholder="6/20B" name="number"
-                   value="{{ room_info.number }}"
-                   required>
+        <div class="row">
+            <div class="form-group col-9">
+                <label for="inputStreetname">Street name</label>
+                <input type="text" class="form-control" id="inputStreetname" placeholder="Muilslaan" name="street_name"
+                       value="{{ room_info.street_name }}"
+                       required>
+            </div>
+            <div class="form-group col-3">
+                <label for="inputNumber">House number</label>
+                <input type="text" class="form-control" id="inputNumber" placeholder="6/20B" name="number"
+                       value="{{ room_info.number }}"
+                       required>
+            </div>
         </div>
         <div class="form-group">
             <label for="images">Select image to upload:</label>

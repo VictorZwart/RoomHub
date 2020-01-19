@@ -1,0 +1,11 @@
+#content {
+    width: 50%;
+    margin: auto;
+    padding-top: 20px;
+    text-align: center;
+}
+
+#rented {
+    border-radius: 50%;
+    margin: auto;
+}
