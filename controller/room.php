@@ -269,7 +269,6 @@ class RoomController {
 		$router->get('/opt-in/(\d+)', function($listing_id) use ($db, $twig) {
 			require_login();
 
-			// todo: check no opt-in yet
 			$existing_optin = $_SERVER['db']->opt_in->find()->where([
 				'listing_id' => $listing_id,
 				'user_id'    => $_SESSION['user_id'],
